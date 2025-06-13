@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="vi">
+  <head>
+    <meta charset="utf-8" />
+    <link rel="icon" href="%PUBLIC_URL%/favicon.ico" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"
+    />
+    <meta name="theme-color" content="#FF99AC" />
+
+    <!-- SEO Meta Tags -->
+    <meta
+      name="description"
+      content="🌸 SPA BON LAI 🌸 - Trung tâm làm đẹp và chăm sóc sức khỏe hàng đầu. Dịch vụ massage, spa, chăm sóc da mặt, làm móng chuyên nghiệp với đội ngũ chuyên gia giàu kinh nghiệm."
+    />
+    <meta
+      name="keywords"
+      content="spa, massage, làm đẹp, chăm sóc da, 🌸 SPA BON LAI 🌸, wellness, relaxation, facial, manicure, pedicure"
+    />
+    <meta name="author" content="🌸 SPA BON LAI 🌸" />
+    <meta name="robots" content="index, follow" />
+
+    <!-- Open Graph Meta Tags -->
+    <meta
+      property="og:title"
+      content="🌸 SPA BON LAI 🌸 - Trung Tâm Làm Đẹp Hàng Đầu"
+    />
+    <meta
+      property="og:description"
+      content="Khám phá trải nghiệm làm đẹp đẳng cấp tại 🌸 SPA BON LAI 🌸 với các dịch vụ massage, spa, chăm sóc da chuyên nghiệp."
+    />
+    <meta property="og:image" content="%PUBLIC_URL%/logo512.png" />
+    <meta property="og:url" content="https://beautyspa.vn" />
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="vi_VN" />
+
+    <!-- Twitter Card Meta Tags -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta
+      name="twitter:title"
+      content="🌸 SPA BON LAI 🌸 - Trung Tâm Làm Đẹp Hàng Đầu"
+    />
+    <meta
+      name="twitter:description"
+      content="Khám phá trải nghiệm làm đẹp đẳng cấp tại 🌸 SPA BON LAI 🌸"
+    />
+    <meta name="twitter:image" content="%PUBLIC_URL%/logo512.png" />
+
+    <!-- Apple Touch Icons -->
+    <link rel="apple-touch-icon" href="%PUBLIC_URL%/logo192.png" />
+    <link
+      rel="apple-touch-icon"
+      sizes="57x57"
+      href="%PUBLIC_URL%/logo192.png"
+    />
+    <link
+      rel="apple-touch-icon"
+      sizes="72x72"
+      href="%PUBLIC_URL%/logo192.png"
+    />
+    <link
+      rel="apple-touch-icon"
+      sizes="76x76"
+      href="%PUBLIC_URL%/logo192.png"
+    />
+    <link
+      rel="apple-touch-icon"
+      sizes="114x114"
+      href="%PUBLIC_URL%/logo192.png"
+    />
+    <link
+      rel="apple-touch-icon"
+      sizes="120x120"
+      href="%PUBLIC_URL%/logo192.png"
+    />
+    <link
+      rel="apple-touch-icon"
+      sizes="144x144"
+      href="%PUBLIC_URL%/logo192.png"
+    />
+    <link
+      rel="apple-touch-icon"
+      sizes="152x152"
+      href="%PUBLIC_URL%/logo192.png"
+    />
+    <link
+      rel="apple-touch-icon"
+      sizes="180x180"
+      href="%PUBLIC_URL%/logo192.png"
+    />
+
+    <!-- Web App Manifest -->
+    <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
+
+    <!-- Preconnect to external domains for better performance -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+
+    <!-- Google Fonts -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Structured Data for SEO -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "BeautySalon",
+        "name": "🌸 SPA BON LAI 🌸",
+        "description": "Trung tâm làm đẹp và chăm sóc sức khỏe hàng đầu",
+        "url": "https://beautyspa.vn",
+        "telephone": "(028) 123-4567",
+        "address": {
+          "@type": "PostalAddress",
+          "streetAddress": "123 Đường ABC",
+          "addressLocality": "Quận 1",
+          "addressRegion": "TP.HCM",
+          "addressCountry": "VN"
+        },
+        "openingHours": ["Mo-Su 08:00-22:00"],
+        "priceRange": "$$",
+        "image": "https://beautyspa.vn/logo512.png"
+      }
+    </script>
+
+    <title>
+      🌸 SPA BON LAI 🌸 - Trung Tâm Làm Đẹp & Chăm Sóc Sức Khỏe Hàng Đầu
+    </title>
+  </head>
+  <body>
+    <!-- Loading Screen -->
+    <div
+      id="loading-screen"
+      style="
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(
+          135deg,
+          #ff99ac 0%,
+          #ffb6c1 50%,
+          #fff0f5 100%
+        );
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        z-index: 9999;
+        transition: opacity 0.5s ease-out;
+      "
+    >
+      <div
+        style="
+          width: 80px;
+          height: 80px;
+          border-radius: 50%;
+          background: linear-gradient(135deg, #ff99ac, #ffb6c1);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          color: white;
+          font-size: 32px;
+          font-weight: bold;
+          font-family: 'Playfair Display', serif;
+          box-shadow: 0 8px 32px rgba(255, 153, 172, 0.3);
+          animation: pulse 2s infinite;
+          margin-bottom: 24px;
+        "
+      >
+        S
+      </div>
+      <h1
+        style="
+          color: white;
+          font-family: 'Playfair Display', serif;
+          font-size: 28px;
+          font-weight: 600;
+          margin: 0 0 8px 0;
+          text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        "
+      >
+        🌸 SPA BON LAI 🌸
+      </h1>
+      <p
+        style="
+          color: rgba(255, 255, 255, 0.9);
+          font-family: 'Inter', sans-serif;
+          font-size: 14px;
+          margin: 0;
+          text-transform: uppercase;
+          letter-spacing: 2px;
+          font-weight: 300;
+        "
+      >
+        Luxury & Relax
+      </p>
+      <div
+        style="
+          width: 40px;
+          height: 4px;
+          background: rgba(255, 255, 255, 0.3);
+          border-radius: 2px;
+          margin-top: 32px;
+          overflow: hidden;
+        "
+      >
+        <div
+          style="
+            width: 50%;
+            height: 100%;
+            background: white;
+            border-radius: 2px;
+            animation: loading 2s infinite;
+          "
+        ></div>
+      </div>
+    </div>
+
+    <style>
+      @keyframes pulse {
+        0%,
+        100% {
+          transform: scale(1);
+        }
+        50% {
+          transform: scale(1.05);
+        }
+      }
+
+      @keyframes loading {
+        0% {
+          transform: translateX(-100%);
+        }
+        100% {
+          transform: translateX(200%);
+        }
+      }
+
+      /* Global CSS Reset and Base Styles */
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI",
+          "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans",
+          "Helvetica Neue", sans-serif;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        background-color: #fafafa;
+        color: #333;
+        line-height: 1.6;
+      }
+
+      code {
+        font-family: "Fira Code", "Monaco", "Menlo", "Ubuntu Mono", monospace;
+      }
+
+      /* Custom scrollbar */
+      ::-webkit-scrollbar {
+        width: 8px;
+      }
+
+      ::-webkit-scrollbar-track {
+        background: #f1f1f1;
+      }
+
+      ::-webkit-scrollbar-thumb {
+        background: linear-gradient(135deg, #ff99ac, #ffb6c1);
+        border-radius: 4px;
+      }
+
+      ::-webkit-scrollbar-thumb:hover {
+        background: linear-gradient(135deg, #ff85a1, #ffb6c1);
+      }
+
+      /* Remove loading screen after app loads */
+      .loaded #loading-screen {
+        opacity: 0;
+        pointer-events: none;
+      }
+    </style>
+
+    <script>
+      // Hide loading screen when page is fully loaded
+      window.addEventListener("load", function () {
+        setTimeout(function () {
+          document.body.classList.add("loaded");
+          setTimeout(function () {
+            const loadingScreen = document.getElementById("loading-screen");
+            if (loadingScreen) {
+              loadingScreen.style.display = "none";
+            }
+          }, 500);
+        }, 1000);
+      });
+
+      // Error handling
+      window.addEventListener("error", function (e) {
+        console.error("Application error:", e.error);
+      });
+
+      // Performance monitoring
+      if ("performance" in window) {
+        window.addEventListener("load", function () {
+          setTimeout(function () {
+            const perfData = performance.getEntriesByType("navigation")[0];
+            console.log(
+              "Page load time:",
+              perfData.loadEventEnd - perfData.loadEventStart,
+              "ms"
+            );
+          }, 0);
+        });
+      }
+    </script>
+
+    <noscript>
+      <div
+        style="
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+          align-items: center;
+          height: 100vh;
+          background: linear-gradient(135deg, #ff99ac 0%, #ffb6c1 100%);
+          color: white;
+          font-family: 'Inter', sans-serif;
+          text-align: center;
+          padding: 20px;
+        "
+      >
+        <h1 style="font-size: 32px; margin-bottom: 16px">🌸 SPA BON LAI 🌸</h1>
+        <p style="font-size: 18px; margin-bottom: 24px">
+          Bạn cần kích hoạt JavaScript để sử dụng ứng dụng này.
+        </p>
+        <p style="font-size: 14px; opacity: 0.8">
+          You need to enable JavaScript to run this app.
+        </p>
+      </div>
+    </noscript>
+
+    <div id="root"></div>
+    <!--
+      This HTML file is a template.
+      If you open it directly in the browser, you will see an empty page.
+
+      You can add webfonts, meta tags, or analytics to this file.
+      The build step will place the bundled scripts into the <body> tag.
+
+      To begin the development, run `npm start` or `yarn start`.
+      To create a production bundle, use `npm run build` or `yarn build`.
+    -->
+  </body>
+</html>

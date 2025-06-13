@@ -1,0 +1,15 @@
+# 🌸 SPA BON LAI 🌸 - Robots.txt
+# https://www.robotstxt.org/robotstxt.html
+
+User-agent: *
+Allow: /
+Disallow: /admin/
+Disallow: /api/
+Disallow: /private/
+Disallow: /*.json$
+
+# Sitemap location
+Sitemap: https://spabonlai.vn/sitemap.xml
+
+# Crawl-delay for better server performance
+Crawl-delay: 1

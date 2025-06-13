@@ -1,0 +1,105 @@
+/* ServiceCard.css */
+.service-card {
+  border-radius: 12px;
+  overflow: hidden;
+  transition: all 0.3s ease;
+  border: 1px solid #f0f0f0;
+  height: 100%;
+}
+
+.service-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+  border-color: #1890ff;
+}
+
+.service-card-cover {
+  position: relative;
+  overflow: hidden;
+}
+
+.service-card-cover img {
+  transition: transform 0.3s ease;
+}
+
+.service-card:hover .service-card-cover img {
+  transform: scale(1.05);
+}
+
+.service-card-overlay {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  display: flex;
+  gap: 8px;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.service-card:hover .service-card-overlay {
+  opacity: 1;
+}
+
+.stock-warning {
+  position: absolute;
+  bottom: 8px;
+  left: 8px;
+  background: #ff4d4f;
+  color: white;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: bold;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.service-card .ant-card-meta-title {
+  margin-bottom: 8px;
+}
+
+.service-card .ant-card-meta-description {
+  color: #666;
+}
+
+.service-card .ant-progress-line {
+  margin-top: 4px;
+}
+
+/* Popular service glow effect */
+.service-card.popular {
+  box-shadow: 0 0 0 2px #faad14;
+}
+
+.service-card.popular:hover {
+  box-shadow: 0 0 0 2px #faad14, 0 8px 24px rgba(250, 173, 20, 0.3);
+}
+
+/* Sale badge styling */
+.ant-badge-ribbon {
+  font-weight: bold;
+  font-size: 12px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .service-card-overlay {
+    opacity: 1;
+  }
+
+  .stock-warning {
+    font-size: 10px;
+    padding: 2px 6px;
+  }
+}

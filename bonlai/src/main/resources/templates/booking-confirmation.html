@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Xác nhận đặt lịch hẹn</title>
+    <style>
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        line-height: 1.6;
+        color: #333;
+        max-width: 600px;
+        margin: 0 auto;
+        padding: 20px;
+        background-color: #f9f9f9;
+      }
+
+      .container {
+        background-color: #ffffff;
+        padding: 30px;
+        border-radius: 10px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      }
+
+      .header {
+        text-align: center;
+        margin-bottom: 30px;
+        padding-bottom: 20px;
+        border-bottom: 2px solid #ff69b4;
+      }
+
+      .spa-logo {
+        color: #ff69b4;
+        font-size: 28px;
+        font-weight: bold;
+        margin-bottom: 10px;
+      }
+
+      .subtitle {
+        color: #666;
+        font-size: 16px;
+      }
+
+      .greeting {
+        font-size: 18px;
+        margin-bottom: 20px;
+        color: #333;
+      }
+
+      .order-info {
+        background-color: #fff0f5;
+        padding: 20px;
+        border-radius: 8px;
+        margin: 20px 0;
+        border-left: 4px solid #ff69b4;
+      }
+
+      .info-row {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 10px;
+        padding: 5px 0;
+      }
+
+      .info-label {
+        font-weight: bold;
+        color: #555;
+      }
+
+      .info-value {
+        color: #333;
+      }
+
+      .services-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 20px 0;
+        background-color: #fff;
+      }
+
+      .services-table th,
+      .services-table td {
+        padding: 12px;
+        text-align: left;
+        border-bottom: 1px solid #ddd;
+      }
+
+      .services-table th {
+        background-color: #ff69b4;
+        color: white;
+        font-weight: bold;
+      }
+
+      .services-table tr:nth-child(even) {
+        background-color: #f9f9f9;
+      }
+
+      .total-section {
+        background-color: #f8f9fa;
+        padding: 15px;
+        border-radius: 8px;
+        margin: 20px 0;
+      }
+
+      .total-row {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 8px;
+      }
+
+      .total-final {
+        font-weight: bold;
+        font-size: 18px;
+        color: #ff69b4;
+        border-top: 2px solid #ff69b4;
+        padding-top: 10px;
+      }
+
+      .status-badge {
+        display: inline-block;
+        padding: 6px 12px;
+        border-radius: 20px;
+        color: white;
+        font-weight: bold;
+        font-size: 14px;
+      }
+
+      .status-pending {
+        background-color: #ffc107;
+      }
+
+      .status-confirmed {
+        background-color: #28a745;
+      }
+
+      .status-completed {
+        background-color: #007bff;
+      }
+
+      .status-cancelled {
+        background-color: #dc3545;
+      }
+
+      .note-section {
+        background-color: #e8f4fd;
+        padding: 15px;
+        border-radius: 8px;
+        border-left: 4px solid #007bff;
+        margin: 20px 0;
+      }
+
+      .footer {
+        text-align: center;
+        margin-top: 30px;
+        padding-top: 20px;
+        border-top: 1px solid #eee;
+        color: #666;
+        font-size: 14px;
+      }
+
+      .contact-info {
+        margin: 15px 0;
+      }
+
+      .social-links {
+        margin: 15px 0;
+      }
+
+      .social-links a {
+        color: #ff69b4;
+        text-decoration: none;
+        margin: 0 10px;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="container">
+      <!-- Header -->
+      <div class="header">
+        <div class="spa-logo">🌸 SPA BON LAI 🌸</div>
+        <div class="subtitle">Thư xác nhận đặt lịch hẹn</div>
+      </div>
+
+      <!-- Greeting -->
+      <div class="greeting">
+        Chào <strong th:text="${customerName}">Khách hàng</strong>,
+      </div>
+
+      <p>
+        Cảm ơn bạn đã tin tương và lựa chọn dịch vụ của
+        <strong>SPA Bon Lai</strong>. Chúng tôi đã nhận được yêu cầu đặt lịch
+        của bạn và xin xác nhận thông tin như sau:
+      </p>
+
+      <!-- Order Information -->
+      <div class="order-info">
+        <h3 style="margin-top: 0; color: #ff69b4">📋 Thông tin lịch hẹn</h3>
+        <div class="info-row">
+          <span class="info-label">Mã lịch hẹn:</span>
+          <span class="info-value" th:text="${orderId}">ORD-001</span>
+        </div>
+        <div class="info-row">
+          <span class="info-label">Ngày hẹn:</span>
+          <span class="info-value" th:text="${appointmentDate}"
+            >20/12/2024</span
+          >
+        </div>
+        <div class="info-row">
+          <span class="info-label">Giờ hẹn:</span>
+          <span class="info-value" th:text="${appointmentTime}">14:30</span>
+        </div>
+        <div class="info-row">
+          <span class="info-label">Thời gian dự kiến:</span>
+          <span class="info-value" th:text="${totalDuration} + ' phút'"></span>
+        </div>
+        <div class="info-row">
+          <span class="info-label">Trạng thái:</span>
+          <span class="status-badge status-pending" th:text="${statusName}"
+            >Chờ xác nhận</span
+          >
+        </div>
+      </div>
+
+      <!-- Services Table -->
+      <h3 style="color: #ff69b4">💆‍♀️ Dịch vụ đã đặt</h3>
+      <table class="services-table">
+        <thead>
+          <tr>
+            <th>Dịch vụ</th>
+            <th>Thời gian</th>
+            <th>Số lượng</th>
+            <th>Đơn giá</th>
+            <th>Thành tiền</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr th:each="service : ${services}">
+            <td>
+              <strong th:text="${service.productName}">Massage body</strong>
+              <div
+                th:if="${service.variantName}"
+                style="font-size: 12px; color: #666"
+              >
+                <em th:text="'(' + ${service.variantName} + ')'"
+                  >Loại dịch vụ</em
+                >
+              </div>
+            </td>
+            <td th:text="${service.duration} + ' phút'">60 phút</td>
+            <td th:text="${service.quantity}">1</td>
+            <td>
+              <span
+                th:text="${service.unitPrice != null ? #numbers.formatDecimal(service.unitPrice, 0, 'COMMA', 0, 'POINT') + ' VNĐ' : '0 VNĐ'}"
+                >500,000 VNĐ</span
+              >
+            </td>
+            <td>
+              <span
+                th:text="${service.totalPrice != null ? #numbers.formatDecimal(service.totalPrice, 0, 'COMMA', 0, 'POINT') + ' VNĐ' : '0 VNĐ'}"
+                >500,000 VNĐ</span
+              >
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <!-- Total Section -->
+      <div class="total-section">
+        <div class="total-row">
+          <span>Tổng tiền dịch vụ:</span>
+          <span th:text="${totalAmount}">500,000 VNĐ</span>
+        </div>
+        <div class="total-row" th:if="${discountAmountRaw > 0}">
+          <span>Giảm giá:</span>
+          <span th:text="'-' + ${discountAmount}" style="color: #28a745"
+            >-50,000 VNĐ</span
+          >
+        </div>
+        <div class="total-row total-final">
+          <span>Tổng thanh toán:</span>
+          <span th:text="${finalAmount}">450,000 VNĐ</span>
+        </div>
+      </div>
+
+      <!-- Important Notes -->
+      <div class="note-section">
+        <h4 style="margin-top: 0; color: #007bff">📌 Lưu ý quan trọng</h4>
+        <ul style="margin: 0; padding-left: 20px">
+          <li>
+            Vui lòng có mặt trước giờ hẹn <strong>15 phút</strong> để làm thủ
+            tục
+          </li>
+          <li>
+            Nếu cần thay đổi lịch hẹn, vui lòng liên hệ trước
+            <strong>24 giờ</strong>
+          </li>
+          <li>Mang theo mã lịch hẹn khi đến spa</li>
+          <li>Thanh toán tại spa sau khi hoàn thành dịch vụ</li>
+        </ul>
+      </div>
+
+      <!-- Footer -->
+      <div class="footer">
+        <div class="contact-info">
+          <strong>🏢 SPA BON LAI</strong><br />
+          📍 Địa chỉ: 123 Đường ABC, Quận XYZ, TP.HCM<br />
+          📞 Hotline: (028) 1234 5678<br />
+          ✉️ Email: info@spabonlai.com
+        </div>
+
+        <div class="social-links">
+          <a href="#">Facebook</a> | <a href="#">Instagram</a> |
+          <a href="#">Website</a>
+        </div>
+
+        <p style="margin-top: 20px; font-size: 12px; color: #999">
+          Email này được gửi tự động, vui lòng không trả lời.<br />
+          Cảm ơn bạn đã lựa chọn SPA Bon Lai! 🌸
+        </p>
+      </div>
+    </div>
+  </body>
+</html>
