@@ -1,0 +1,105 @@
+version: '3.8'
+
+services:
+  # MySQL Database - Internal Docker network only
+  mysql:
+    image: mysql:8.0
+    container_name: spa-mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-root123}
+      MYSQL_DATABASE: ${MYSQL_DATABASE:-exercise201}
+      # Không set MYSQL_USER/MYSQL_PASSWORD - backend sẽ dùng root
+      MYSQL_ROOT_HOST: '%'
+    # Không expose port ra ngoài - chỉ accessible từ Docker network
+    expose:
+      - "3306"
+    volumes:
+      # Persistent data
+      - mysql_data:/var/lib/mysql
+      # Custom MySQL config
+      - ./docker/mysql/my.cnf:/etc/mysql/conf.d/my.cnf:ro
+      # Initialization scripts
+      - ./docker/mysql/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    networks:
+      - spa-network
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${MYSQL_ROOT_PASSWORD:-root123}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
+  # Spring Boot Backend
+  backend:
+    build:
+      context: ./bonlai
+      dockerfile: Dockerfile
+    container_name: spa-backend
+    restart: unless-stopped
+    depends_on:
+      mysql:
+        condition: service_healthy
+    environment:
+      # Spring profiles
+      SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE:-prod}
+      
+      # Database - Kết nối với root user
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/${MYSQL_DATABASE:-exercise201}?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: ${MYSQL_ROOT_PASSWORD:-root123}
+      
+      # JPA
+      SPRING_JPA_HIBERNATE_DDL_AUTO: ${JPA_DDL_AUTO:-update}
+      SPRING_JPA_SHOW_SQL: ${JPA_SHOW_SQL:-false}
+      
+      # JWT
+      JWT_SECRET: ${JWT_SECRET}
+      JWT_EXPIRATION: ${JWT_EXPIRATION:-86400000}
+      
+      # File Upload
+      FILE_UPLOAD_DIR: /app/uploads
+      
+      # Firebase
+      FIREBASE_PROJECT_ID: ${FIREBASE_PROJECT_ID}
+      FIREBASE_SERVICE_ACCOUNT_KEY: file:/app/firebase-service-account.json
+      
+      # Email
+      SPRING_MAIL_HOST: ${MAIL_HOST:-smtp.gmail.com}
+      SPRING_MAIL_PORT: ${MAIL_PORT:-587}
+      SPRING_MAIL_USERNAME: ${MAIL_USERNAME}
+      SPRING_MAIL_PASSWORD: ${MAIL_PASSWORD}
+      SPRING_MAIL_PROPERTIES_MAIL_SMTP_AUTH: true
+      SPRING_MAIL_PROPERTIES_MAIL_SMTP_STARTTLS_ENABLE: true
+      SPRING_MAIL_PROPERTIES_MAIL_SMTP_STARTTLS_REQUIRED: true
+      SPRING_MAIL_DEFAULT_ENCODING: UTF-8
+      
+      # Email Template
+      SPA_EMAIL_FROM: ${MAIL_FROM}
+      SPA_EMAIL_FROM_NAME: ${MAIL_FROM_NAME:-SPA Bon Lai}
+      
+    ports:
+      - "${BACKEND_PORT:-8080}:8080"
+    volumes:
+      # Persistent uploads
+      - upload_data:/app/uploads
+      # Uncomment if you have firebase-service-account.json file
+      # - ./bonlai/src/main/resources/firebase-service-account.json:/app/firebase-service-account.json:ro
+    networks:
+      - spa-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/actuator/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+
+networks:
+  spa-network:
+    driver: bridge
+
+volumes:
+  mysql_data:
+    driver: local
+  upload_data:
+    driver: local

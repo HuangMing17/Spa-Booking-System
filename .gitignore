@@ -1,0 +1,99 @@
+# .gitignore for SPA Bon Lai Project
+
+# ============================================
+# ROOT LEVEL
+# ============================================
+
+# Temporary test files (không cần commit)
+test-login.ps1
+test-bcrypt.ps1
+update_admin_password.sql
+GenerateBcryptHash.java
+
+# IDE
+.vscode/
+.idea/
+*.iml
+*.iws
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Logs
+*.log
+logs/
+
+# Backup files
+*.backup
+*.bak
+*~
+
+# Docker volumes (không commit data volumes)
+docker/volumes/
+
+# Uploaded files (production data)
+uploads/
+bonlai/uploads/
+
+# ============================================
+# BACKEND (bonlai/)
+# ============================================
+
+bonlai/target/
+bonlai/.mvn/wrapper/maven-wrapper.jar
+bonlai/mvnw
+bonlai/mvnw.cmd
+
+# Compiled class files
+bonlai/**/*.class
+bonlai/**/target/
+
+# Package Files
+bonlai/**/*.jar
+bonlai/**/*.war
+bonlai/**/*.nar
+bonlai/**/*.ear
+bonlai/**/*.zip
+bonlai/**/*.tar.gz
+bonlai/**/*.rar
+
+# Firebase credentials (nếu có file thật)
+bonlai/firebase-service-account.json
+bonlai/src/main/resources/firebase-*.json
+
+# ============================================
+# FRONTEND (frontendbonlai/)
+# ============================================
+
+# Dependencies
+frontendbonlai/node_modules/
+frontendbonlai/.pnp
+frontendbonlai/.pnp.js
+
+# Testing
+frontendbonlai/coverage/
+
+# Production build
+frontendbonlai/build/
+
+# Misc
+frontendbonlai/.DS_Store
+frontendbonlai/.env.local
+frontendbonlai/.env.development.local
+frontendbonlai/.env.test.local
+frontendbonlai/.env.production.local
+
+frontendbonlai/npm-debug.log*
+frontendbonlai/yarn-debug.log*
+frontendbonlai/yarn-error.log*
+
+# ============================================
+# IMPORTANT: Environment Files
+# ============================================
+# NOTE: .env is COMMITTED for team collaboration
+# If you need to keep secrets, use .env.local instead
+# .env
+# .env.example is kept as template
+
