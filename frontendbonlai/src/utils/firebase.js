@@ -4,8 +4,11 @@ import { getAnalytics } from "firebase/analytics";
 import {
   getAuth,
   GoogleAuthProvider,
+  FacebookAuthProvider,
   signInWithPopup,
   signOut,
+  fetchSignInMethodsForEmail,
+  linkWithCredential,
 } from "firebase/auth";
 
 // Your web app's Firebase configuration
@@ -22,6 +25,7 @@ const firebaseConfig = {
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
+// eslint-disable-next-line no-unused-vars
 const analytics = getAnalytics(app);
 
 // Initialize Firebase Authentication and get a reference to the service
@@ -35,6 +39,11 @@ googleProvider.setCustomParameters({
   prompt: "select_account",
 });
 
+// Initialize Facebook Auth Provider
+export const facebookProvider = new FacebookAuthProvider();
+facebookProvider.addScope('email');
+facebookProvider.addScope('public_profile');
+
 // Firebase Auth Service Functions
 export const firebaseAuthService = {
   /**
@@ -47,6 +56,49 @@ export const firebaseAuthService = {
       return result;
     } catch (error) {
       console.error("Error during Google sign-in:", error);
+      throw error;
+    }
+  },
+
+  /**
+   * Sign in with Facebook
+   * Xử lý Account Linking khi email đã tồn tại với provider khác
+   * @returns {Promise} Firebase User object
+   */
+  signInWithFacebook: async () => {
+    try {
+      const result = await signInWithPopup(auth, facebookProvider);
+      return result;
+    } catch (error) {
+      // Xử lý trường hợp email đã tồn tại với provider khác (VD: Google)
+      if (error.code === "auth/account-exists-with-different-credential") {
+        const email = error.customData?.email;
+        // Lấy Facebook credential từ lỗi để link sau
+        const pendingCredential = FacebookAuthProvider.credentialFromError(error);
+
+        if (email) {
+          // Tìm các phương thức đăng nhập đã liên kết với email này
+          const methods = await fetchSignInMethodsForEmail(auth, email);
+
+          if (methods.includes("google.com")) {
+            // Email đã đăng ký bằng Google → yêu cầu đăng nhập Google để link
+            console.log("Email đã đăng ký bằng Google. Đang link Facebook...");
+
+            // Đăng nhập bằng Google
+            const googleResult = await signInWithPopup(auth, googleProvider);
+
+            // Link Facebook credential vào tài khoản Google
+            if (pendingCredential) {
+              await linkWithCredential(googleResult.user, pendingCredential);
+              console.log("Đã link Facebook vào tài khoản Google thành công!");
+            }
+
+            return googleResult;
+          }
+        }
+      }
+
+      console.error("Error during Facebook sign-in:", error);
       throw error;
     }
   },
@@ -89,3 +141,4 @@ export const firebaseAuthService = {
 };
 
 export default app;
+
