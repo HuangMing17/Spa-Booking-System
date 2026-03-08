@@ -42,9 +42,22 @@ public class FirebaseAuthService {
             String firebaseUid = decodedToken.getUid();
             String email = decodedToken.getEmail();
             String name = decodedToken.getName();
+            String signInProvider = null;
+            // Lấy sign_in_provider từ firebase claims
+            try {
+                @SuppressWarnings("unchecked")
+                java.util.Map<String, Object> firebaseClaims = (java.util.Map<String, Object>) decodedToken.getClaims()
+                        .get("firebase");
+                if (firebaseClaims != null) {
+                    signInProvider = (String) firebaseClaims.get("sign_in_provider");
+                }
+            } catch (Exception ex) {
+                log.warn("Could not extract sign_in_provider from token");
+                signInProvider = "firebase";
+            }
 
             // Tìm hoặc tạo customer
-            Customer customer = findOrCreateCustomer(firebaseUid, email, name);
+            Customer customer = findOrCreateCustomer(firebaseUid, email, name, signInProvider);
 
             // Tạo UserDetails object cho JWT service
             UserDetails userDetails = User.builder()
@@ -63,9 +76,22 @@ public class FirebaseAuthService {
     }
 
     /**
+     * Xác định AuthProvider từ Firebase sign-in provider
+     */
+    private AuthProvider resolveAuthProvider(String signInProvider) {
+        if (signInProvider == null)
+            return AuthProvider.FIREBASE;
+        return switch (signInProvider) {
+            case "google.com" -> AuthProvider.GOOGLE;
+            case "facebook.com" -> AuthProvider.FACEBOOK;
+            default -> AuthProvider.FIREBASE;
+        };
+    }
+
+    /**
      * Tìm hoặc tạo customer từ Firebase user info
      */
-    private Customer findOrCreateCustomer(String firebaseUid, String email, String name) {
+    private Customer findOrCreateCustomer(String firebaseUid, String email, String name, String signInProvider) {
         // Tìm customer theo firebase_uid
         Optional<Customer> existingCustomer = customerRepository.findByFirebaseUid(firebaseUid);
 
@@ -78,7 +104,7 @@ public class FirebaseAuthService {
         if (customerByEmail.isPresent()) {
             Customer customer = customerByEmail.get();
             customer.setFirebaseUid(firebaseUid);
-            customer.setAuth_provider(AuthProvider.FIREBASE);
+            customer.setAuth_provider(resolveAuthProvider(signInProvider));
 
             // Ensure customer has a non-null password if it's not set
             if (customer.getPassword_hash() == null || customer.getPassword_hash().isEmpty()) {
@@ -93,7 +119,7 @@ public class FirebaseAuthService {
         newCustomer.setId(UUID.randomUUID());
         newCustomer.setEmail(email);
         newCustomer.setFirebaseUid(firebaseUid);
-        newCustomer.setAuth_provider(AuthProvider.FIREBASE);
+        newCustomer.setAuth_provider(resolveAuthProvider(signInProvider));
 
         // Set một password dummy không rỗng cho Firebase users
         // Vì Firebase users không sử dụng password local, nhưng Spring Security
