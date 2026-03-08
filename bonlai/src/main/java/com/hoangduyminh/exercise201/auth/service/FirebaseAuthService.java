@@ -38,8 +38,6 @@ public class FirebaseAuthService {
      */
     public String authenticateFirebaseToken(String firebaseToken) {
         try {
-            // TODO: Uncomment sau khi thêm Firebase dependency
-
             FirebaseToken decodedToken = firebaseAuth.verifyIdToken(firebaseToken);
             String firebaseUid = decodedToken.getUid();
             String email = decodedToken.getEmail();
