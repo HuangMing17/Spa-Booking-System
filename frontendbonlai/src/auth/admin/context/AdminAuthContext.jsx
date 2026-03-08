@@ -29,8 +29,11 @@ export const AdminAuthProvider = ({ children }) => {
     const initializeAuth = () => {
       if (isAuthenticated()) {
         const userData = getUserData();
-        // Kiểm tra có phải là admin không
-        if (userData?.roles?.includes("STAFF")) {
+        // Kiểm tra có phải là admin/staff không
+        const hasStaffRole = userData?.roles?.some(role =>
+          role === "ROLE_ADMIN" || role === "ROLE_STAFF" || role === "STAFF"
+        );
+        if (hasStaffRole) {
           setAdmin(userData);
           setIsLoggedIn(true);
         } else {
@@ -54,7 +57,11 @@ export const AdminAuthProvider = ({ children }) => {
         password,
       });
 
-      if (!response.user?.roles?.includes("STAFF")) {
+      // Kiểm tra có role admin hoặc staff không
+      const hasStaffRole = response.user?.roles?.some(role =>
+        role === "ROLE_ADMIN" || role === "ROLE_STAFF" || role === "STAFF"
+      );
+      if (!hasStaffRole) {
         throw new Error("Không có quyền truy cập");
       }
 

@@ -5,8 +5,8 @@ import com.hoangduyminh.exercise201.entity.AuthProvider;
 import com.hoangduyminh.exercise201.repository.CustomerRepository;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseToken;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -19,16 +19,31 @@ import java.util.UUID;
 
 /**
  * Service xử lý Firebase Authentication
- * Note: Cần thêm Firebase Admin SDK dependency để sử dụng FirebaseAuth
+ * Note: Firebase Authentication là optional - service sẽ hoạt động nhưng không hỗ trợ Firebase auth nếu không cấu hình
  */
 @Service
-@RequiredArgsConstructor
 @Slf4j
 public class FirebaseAuthService {
 
     private final CustomerRepository customerRepository;
     private final JwtService jwtService;
     private final FirebaseAuth firebaseAuth;
+    
+    // Constructor với FirebaseAuth optional
+    public FirebaseAuthService(
+            CustomerRepository customerRepository,
+            JwtService jwtService,
+            @Autowired(required = false) FirebaseAuth firebaseAuth) {
+        this.customerRepository = customerRepository;
+        this.jwtService = jwtService;
+        this.firebaseAuth = firebaseAuth;
+        
+        if (firebaseAuth == null) {
+            log.warn("FirebaseAuth is not available. Firebase authentication features will be disabled.");
+        } else {
+            log.info("FirebaseAuth initialized successfully. Firebase authentication is available.");
+        }
+    }
 
     /**
      * Xác thực Firebase ID token và trả về JWT token
@@ -37,9 +52,13 @@ public class FirebaseAuthService {
      * @return JWT token cho backend authentication
      */
     public String authenticateFirebaseToken(String firebaseToken) {
+        // Kiểm tra xem Firebase có available không
+        if (firebaseAuth == null) {
+            log.error("Firebase authentication attempted but FirebaseAuth is not available");
+            throw new UnsupportedOperationException("Firebase authentication is not available. Please configure Firebase Admin SDK.");
+        }
+        
         try {
-            // TODO: Uncomment sau khi thêm Firebase dependency
-
             FirebaseToken decodedToken = firebaseAuth.verifyIdToken(firebaseToken);
             String firebaseUid = decodedToken.getUid();
             String email = decodedToken.getEmail();
