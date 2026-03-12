@@ -6,5 +6,6 @@ package com.hoangduyminh.exercise201.entity;
 public enum AuthProvider {
     LOCAL, // Đăng nhập thông thường với email/password
     GOOGLE, // Đăng nhập qua Google OAuth2
-    FIREBASE // Đăng nhập qua Firebase Authentication
+    FIREBASE, // Đăng nhập qua Firebase Authentication
+    FACEBOOK // Đăng nhập qua Facebook
 }
