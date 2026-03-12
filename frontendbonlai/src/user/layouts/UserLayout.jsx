@@ -1,11 +1,24 @@
+import React, { useState } from "react";
 import { Layout, Row, Col } from "antd";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 import Sidebar from "../components/Sidebar";
+import ChatButton from "../../components/chat/ChatButton";
+import ChatWindow from "../../components/chat/ChatWindow";
 
 const { Content } = Layout;
 
 const UserLayout = ({ children }) => {
+  const [chatOpen, setChatOpen] = useState(false);
+
+  const handleChatOpen = () => {
+    setChatOpen(true);
+  };
+
+  const handleChatClose = () => {
+    setChatOpen(false);
+  };
+
   return (
     <Layout
       style={{
@@ -61,6 +74,10 @@ const UserLayout = ({ children }) => {
         </Row>
       </Content>
       <Footer />
+      
+      {/* Chat Feature */}
+      <ChatButton onClick={handleChatOpen} />
+      <ChatWindow open={chatOpen} onClose={handleChatClose} />
     </Layout>
   );
 };
