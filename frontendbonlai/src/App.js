@@ -10,6 +10,7 @@ import { ConfigProvider } from "antd";
 // Auth Providers
 import { CustomerAuthProvider } from "./auth/customer/context/CustomerAuthContext";
 import { AdminAuthProvider } from "./auth/admin/context/AdminAuthContext";
+import { ChatProvider } from "./context/chat/ChatContext";
 
 // Protected Routes
 import ProtectedRoute from "./auth/customer/components/ProtectedRoute";
@@ -72,12 +73,12 @@ import "antd/dist/reset.css";
 
 function App() {
   return (
-    
-        <ConfigProvider theme={theme}>
-          <Router>
-            <AdminAuthProvider>
-              <CustomerAuthProvider>
-            <Routes>
+    <ConfigProvider theme={theme}>
+      <Router>
+        <AdminAuthProvider>
+          <CustomerAuthProvider>
+            <ChatProvider>
+              <Routes>
               {/* Public Routes */}
               <Route path="/dang-nhap" element={<CustomerLogin />} />
               <Route path="/dang-ky" element={<CustomerRegister />} />
@@ -222,14 +223,14 @@ function App() {
                   </UserLayout>
                 }
               />
-              {/* Default redirect */}
-              <Route path="*" element={<Navigate to="/" replace />} />
-            </Routes>
-              </CustomerAuthProvider>
-            </AdminAuthProvider>
-          </Router>
-        </ConfigProvider>
-   
+                {/* Default redirect */}
+                <Route path="*" element={<Navigate to="/" replace />} />
+              </Routes>
+            </ChatProvider>
+          </CustomerAuthProvider>
+        </AdminAuthProvider>
+      </Router>
+    </ConfigProvider>
   );
 }
 
