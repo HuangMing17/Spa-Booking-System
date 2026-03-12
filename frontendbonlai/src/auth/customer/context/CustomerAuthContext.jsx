@@ -109,6 +109,51 @@ export const CustomerAuthProvider = ({ children }) => {
     }
   };
 
+  // Xử lý đăng nhập với Facebook qua Firebase
+  const facebookLogin = async (redirectPath = "/") => {
+    try {
+      setLoading(true);
+      message.loading("Đang đăng nhập với Facebook...", 0);
+
+      // Đăng nhập với Facebook qua Firebase
+      const firebaseResult = await firebaseAuthService.signInWithFacebook();
+      const idToken = await firebaseResult.user.getIdToken();
+
+      // Gửi Firebase token tới backend (dùng lại endpoint firebase-login)
+      const response = await axiosInstance.post(
+        "/auth/customer/firebase-login",
+        {
+          firebaseToken: idToken,
+        }
+      );
+
+      // Lưu thông tin authentication
+      setAuthData(response);
+      setUser(response.user);
+      setIsLoggedIn(true);
+
+      message.destroy();
+      message.success("Đăng nhập với Facebook thành công!");
+      navigate(redirectPath);
+    } catch (error) {
+      message.destroy();
+      console.error("Facebook login error:", error);
+
+      if (error.code === "auth/popup-closed-by-user") {
+        message.warning("Đăng nhập bị hủy");
+      } else if (error.code === "auth/network-request-failed") {
+        message.error("Lỗi kết nối mạng, vui lòng thử lại");
+      } else if (error.code === "auth/popup-blocked") {
+        message.error("Popup bị chặn. Vui lòng cho phép popup để đăng nhập");
+      } else {
+        message.error(error?.message || "Đăng nhập với Facebook thất bại");
+      }
+      throw error;
+    } finally {
+      setLoading(false);
+    }
+  };
+
   // Xử lý đăng xuất
   const logout = () => {
     clearAuthData();
@@ -132,6 +177,7 @@ export const CustomerAuthProvider = ({ children }) => {
     loading,
     login,
     firebaseLogin,
+    facebookLogin,
     logout,
     updateUserInfo,
   };
