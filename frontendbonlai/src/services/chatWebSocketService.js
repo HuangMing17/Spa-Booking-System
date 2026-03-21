@@ -26,7 +26,7 @@ class ChatWebSocketService {
 
       // Disable debug logging in production
       this.stompClient.debug = (str) => {
-        if (process.env.NODE_ENV === 'development') {
+        if (import.meta.env.DEV) {
           console.log('STOMP: ' + str);
         }
       };
