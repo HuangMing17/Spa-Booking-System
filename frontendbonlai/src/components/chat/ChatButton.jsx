@@ -13,9 +13,11 @@ const ChatButton = () => {
   return (
     <>
       <Fab 
-        color="primary" 
-        onClick={() => setOpen(true)}
+        onClick={() => setOpen((prev) => !prev)}
         sx={{
+          bgcolor: '#FF99AC',
+          color: 'white',
+          '&:hover': { bgcolor: '#FF85A1' },
           position: 'fixed',
           bottom: 20,
           right: 20,
@@ -27,7 +29,7 @@ const ChatButton = () => {
         </Badge>
       </Fab>
       
-      {open && <ChatWindow onClose={() => setOpen(false)} />}
+      <ChatWindow open={open} onClose={() => setOpen(false)} />
     </>
   );
 };
