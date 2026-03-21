@@ -1,6 +1,7 @@
 import { Layout } from "antd";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
+import ChatButton from "../../components/chat/ChatButton";
 
 const { Content } = Layout;
 
@@ -47,6 +48,8 @@ const BookingLayout = ({ children, isHomePage = false }) => {
         )}
       </Content>
       <Footer />
+      {/* Chat Feature */}
+      <ChatButton />
     </Layout>
   );
 };
