@@ -59,6 +59,7 @@ public class SecurityConfig {
                                 "/auth/firebase/register",
                                 "/auth/firebase/health",
                                 "/api/test/**",
+                                "/api/payment/vnpay-ipn", // Cho phép Máy chủ VNPay gọi tự do
                                 "/error")
                         .permitAll()
                         // Public GET endpoints for categories

@@ -63,7 +63,7 @@ const UserLayout = ({ children }) => {
         </Row>
       </Content>
       <Footer />
-      
+
       {/* Chat Feature */}
       <ChatButton />
     </Layout>
