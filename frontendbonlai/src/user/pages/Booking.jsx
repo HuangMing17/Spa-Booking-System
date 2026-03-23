@@ -21,6 +21,7 @@ import {
   Progress,
   Modal,
   Spin,
+  Radio,
 } from "antd";
 import {
   CalendarOutlined,
@@ -52,6 +53,7 @@ import {
 } from "../../admin/pages/customers/customerAPI";
 import { validateCoupon } from "../../admin/pages/coupons/couponAPI";
 import { useCustomerAuth } from "../../auth/customer/context/CustomerAuthContext";
+import axiosInstance from "../../utils/axios";
 
 const { Title, Text } = Typography;
 
@@ -73,6 +75,7 @@ const Booking = () => {
   const [couponDiscount, setCouponDiscount] = useState(0);
   const [backendDiscount, setBackendDiscount] = useState(0); // Actual discount from backend
   const [backendFinalTotal, setBackendFinalTotal] = useState(0); // Actual final total from backend
+  const [paymentMethod, setPaymentMethod] = useState("CASH"); // Thêm trạng thái chọn hình thức thanh toán
   
   // Get service data from navigation state and add to selected services
   const { service, selectedServices: existingServices, couponCode: initialCouponCode, coupon: initialCoupon } = location.state || {};
@@ -388,6 +391,7 @@ const Booking = () => {
           variantId: item.variant.id,
           quantity: item.quantity,
         })),
+        paymentMethod: paymentMethod,
         // Optional: add notes if provided
         ...(finalBookingData.note && { notes: finalBookingData.note }),
         // Remove coupon from appointment creation - will apply after
@@ -458,6 +462,21 @@ const Booking = () => {
               couponError.response?.data?.message || couponError.message || "Lỗi không xác định"
             }`
           );
+        }
+      }
+
+      // Xử lý chuyển hướng VNPay
+      if (paymentMethod === "VNPAY") {
+        message.loading("Đang kết nối tới cổng thanh toán VNPay...", 3);
+        try {
+          const paymentRes = await axiosInstance.get(`/api/payment/create-url/${createdAppointment.id}`);
+          if (paymentRes.data && paymentRes.data.url) {
+            window.location.href = paymentRes.data.url;
+            return; // Ngắt luồng ở đây để nó không văng Box popup thành công nữa
+          }
+        } catch (paymentErr) {
+          console.error("Lỗi tạo link VNPay:", paymentErr);
+          message.error("Hệ thống quá tải, không thể gọi cổng thanh toán lúc này. Quý khách vui lòng thanh toán tại Spa.");
         }
       }
 
@@ -871,6 +890,33 @@ const Booking = () => {
                     </Text>
                   </Col>
                 </Row>
+                
+                <Divider style={{ margin: "16px 0" }} />
+                <div style={{ marginTop: 16 }}>
+                  <Text strong style={{ fontSize: "16px", display: "block", marginBottom: 8 }}>
+                    Phương thức thanh toán:
+                  </Text>
+                  <Radio.Group 
+                    value={paymentMethod} 
+                    onChange={(e) => setPaymentMethod(e.target.value)}
+                    style={{ width: "100%" }}
+                  >
+                    <Space direction="vertical" style={{ width: "100%" }}>
+                      <Radio value="CASH">
+                        <Space>
+                          <DollarOutlined style={{ color: "#52c41a" }} />
+                          <Text>Thanh toán tại Spa (Tiền mặt / Quẹt thẻ)</Text>
+                        </Space>
+                      </Radio>
+                      <Radio value="VNPAY">
+                        <Space>
+                          <CreditCardOutlined style={{ color: "#1890ff" }} />
+                          <Text>Thanh toán trực tuyến (VNPay / Thẻ ATM / QR Pay)</Text>
+                        </Space>
+                      </Radio>
+                    </Space>
+                  </Radio.Group>
+                </div>
               </div>
             </Space>
           </Col>

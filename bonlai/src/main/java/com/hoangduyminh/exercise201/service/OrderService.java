@@ -74,6 +74,16 @@ public interface OrderService {
     OrderDTO updateOrderStatus(String id, String statusCode);
 
     /**
+     * Cập nhật thông tin giao dịch thanh toán từ VNPay
+     *
+     * @param orderId       id đơn đặt lịch
+     * @param transactionId mã giao dịch VNPay
+     * @param paymentStatus trạng thái thanh toán (PAID, FAILED)
+     * @return đơn đặt lịch đã cập nhật
+     */
+    OrderDTO updatePaymentStatus(String orderId, String transactionId, String paymentStatus);
+
+    /**
      * Thêm dịch vụ vào đơn đặt lịch
      * 
      * @param orderId id đơn đặt lịch
