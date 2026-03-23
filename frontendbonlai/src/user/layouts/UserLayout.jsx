@@ -2,7 +2,7 @@ import React from "react";
 import { Layout, Row, Col } from "antd";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
-import UserSidebar from "../components/UserSidebar";
+import Sidebar from "../components/Sidebar";
 import ChatButton from "../../components/chat/ChatButton";
 
 const { Content } = Layout;
@@ -42,7 +42,7 @@ const UserLayout = ({ children }) => {
                 transition: "all 0.3s ease",
               }}
             >
-              <UserSidebar />
+              <Sidebar />
             </div>
           </Col>
           {/* Main content */}
