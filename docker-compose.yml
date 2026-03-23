@@ -84,7 +84,7 @@ services:
       # Persistent uploads
       - upload_data:/app/uploads
       # Uncomment if you have firebase-service-account.json file
-      # - ./bonlai/src/main/resources/firebase-service-account.json:/app/firebase-service-account.json:ro
+      - ./bonlai/src/main/resources/firebase-service-account.json:/app/firebase-service-account.json:ro
     networks:
       - spa-network
     healthcheck:
