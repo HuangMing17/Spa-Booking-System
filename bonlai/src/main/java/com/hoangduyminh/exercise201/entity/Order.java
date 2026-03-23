@@ -53,6 +53,15 @@ public class Order {
     @Column(name = "total_price", nullable = false)
     private BigDecimal totalPrice;
 
+    @Column(name = "payment_method")
+    private String paymentMethod = "CASH";
+
+    @Column(name = "payment_status")
+    private String paymentStatus = "UNPAID";
+
+    @Column(name = "transaction_id")
+    private String transactionId;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "updated_by")
     @JsonIgnore
