@@ -29,6 +29,7 @@ import About from "./user/pages/About";
 import Booking from "./user/pages/Booking";
 import Profile from "./user/pages/Profile";
 import MyBookings from "./user/pages/MyBookings";
+import PaymentResult from "./user/pages/PaymentResult";
 import CustomerLogin from "./auth/customer/pages/CustomerLogin";
 import CustomerRegister from "./auth/customer/pages/CustomerRegister";
 import ServiceDetailUser from "./user/components/ServiceDetailUser";
@@ -191,6 +192,16 @@ function App() {
                   <ProtectedRoute>
                     <BookingLayout>
                       <MyBookings />
+                    </BookingLayout>
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/booking/payment-result"
+                element={
+                  <ProtectedRoute>
+                    <BookingLayout>
+                      <PaymentResult />
                     </BookingLayout>
                   </ProtectedRoute>
                 }

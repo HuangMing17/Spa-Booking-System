@@ -216,6 +216,15 @@ const AppointmentDetail = () => {
                     ]
                   }
                 </Tag>
+                {/* Mác (Badge) Hiển thị trạng thái Thanh Toán VNPay (Theo Task 3.5) */}
+                {appointment.paymentMethod === 'VNPAY' && (
+                  <Tag 
+                    color={appointment.paymentStatus === 'PAID' ? 'success' : 'warning'} 
+                    style={{ marginTop: 8, marginLeft: 8 }}
+                  >
+                    {appointment.paymentStatus === 'PAID' ? '💳 Đã Thanh Toán (VNPay)' : '⏳ Chờ Thanh Toán (VNPay)'}
+                  </Tag>
+                )}
               </div>
             </Space>
           </Col>
