@@ -24,6 +24,11 @@ public class OrderDTO {
 
     private Double totalAmount = 0.0;
     private Double discountAmount = 0.0;
+    
+    // VNPay fields
+    private String paymentMethod = "CASH";
+    private String paymentStatus = "UNPAID";
+    private String transactionId;
     private Double finalAmount = 0.0;
     private UUID couponId;
     private String couponCode;

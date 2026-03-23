@@ -72,6 +72,11 @@ public class OrderServiceImpl implements OrderService {
         order.setOrderStatus(initialStatus);
         order.setAppointmentDate(orderDTO.getAppointmentDate());
         order.setTotalPrice(BigDecimal.ZERO);
+        
+        // Handle VNPay integration fields mapping during creation
+        if (orderDTO.getPaymentMethod() != null) {
+            order.setPaymentMethod(orderDTO.getPaymentMethod());
+        }
 
         // Lưu order trước để có ID
         Order savedOrder = orderRepository.save(order);
@@ -242,6 +247,30 @@ public class OrderServiceImpl implements OrderService {
         }
 
         return result;
+    }
+
+    @Override
+    @Transactional
+    public OrderDTO updatePaymentStatus(String orderId, String transactionId, String paymentStatus) {
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new ResourceNotFoundException("Đơn đặt lịch", "id", orderId));
+
+        order.setPaymentStatus(paymentStatus);
+        
+        // Nếu thanh toán VNPay gửi về Transaction ID thật, lưu vào để đối soát
+        if (transactionId != null && !transactionId.trim().isEmpty()) {
+            order.setTransactionId(transactionId);
+        }
+        
+        // Tích hợp Task 2.5: Đổi trạng thái toàn bộ hoá đơn thành CONFIRMED
+        if ("PAID".equals(paymentStatus)) {
+            OrderStatus confirmedStatus = orderStatusRepository.findByStatusName(OrderStatusConstant.CONFIRMED)
+                    .orElseThrow(() -> new IllegalStateException("Chưa cấu hình trạng thái CONFIRMED"));
+            order.setOrderStatus(confirmedStatus);
+        }
+
+        Order updatedOrder = orderRepository.save(order);
+        return toDTO(updatedOrder);
     }
 
     @Override
@@ -441,6 +470,11 @@ public class OrderServiceImpl implements OrderService {
         dto.setAppointmentDate(order.getAppointmentDate());
         dto.setCreatedAt(order.getCreated_at());
         dto.setTotalAmount(order.getTotalPrice().doubleValue());
+        
+        // Map VNPay fields
+        dto.setPaymentMethod(order.getPaymentMethod());
+        dto.setPaymentStatus(order.getPaymentStatus());
+        dto.setTransactionId(order.getTransactionId());
 
         // Tính toán các giá trị liên quan đến giảm giá
         if (order.getCoupon() != null) {
