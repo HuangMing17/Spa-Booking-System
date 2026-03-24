@@ -24,12 +24,6 @@ public class Cart extends BaseEntity {
     @Column(length = 1000)
     private String note;
 
-    @Column(name = "coupon_code", length = 50)
-    private String couponCode;
-
-    @Column(name = "coupon_discount")
-    private Double couponDiscount;
-
     @Column(nullable = false)
     private Double subtotal = 0.0;
 

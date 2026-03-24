@@ -1,0 +1,38 @@
+---
+description: Safety guard for promotion/coupon cleanup and deletion.
+alwaysApply: true
+---
+
+# Promotion Cleanup Safety Rule
+
+## Scope Lock
+- Only modify promotion/coupon-related code paths that are explicitly in the current task scope.
+- Never delete files, modules, endpoints, entities, or UI flows outside promotion/coupon scope.
+- If a candidate deletion touches shared utilities or non-coupon domains, stop and request confirmation.
+
+## Rule Recheck Before Delete (mandatory)
+- Re-read this rule before each delete/refactor-to-delete operation.
+- Confirm target is coupon/promotion-specific and listed in the current cleanup scope.
+- Confirm replacement path exists (or behavior is intentionally deprecated and approved).
+- Search references across backend + frontend and collect evidence that usage is zero or migrated.
+
+## Dependency Verification
+- Check API contract compatibility before deleting old coupon client/service paths.
+- Verify no remaining imports/usages in controllers, services, repositories, pages, and API wrappers.
+- Preserve business constraints unless the task explicitly changes them:
+  - duplicate code prevention
+  - valid start/end date checks
+  - usage limit checks
+  - used-coupon delete guard
+
+## Safe Deletion Process
+1. Prefer refactor/migration first, then delete.
+2. Delete only one logical coupon artifact at a time.
+3. After each delete, run search and targeted regression checks for coupon flows.
+4. If any uncertainty remains, keep code and mark for follow-up instead of deleting.
+
+## Current Business Direction (mandatory)
+- Remove `removeCoupon` interaction from active frontend flows.
+- If an order previously had coupon data, payment flow must still work normally after this cleanup.
+- Remove promotion page exposure from UI navigation/routes (no visible "Khuyen mai" page).
+- Before deleting any additional coupon artifact, recheck this rule and confirm the change does not break booking/payment.

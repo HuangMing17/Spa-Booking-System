@@ -13,7 +13,5 @@ public class CartDTO {
     private Double totalAmount;
     private Double discountAmount;
     private Double finalAmount;
-    private UUID couponId;
-    private String couponCode;
     private Boolean isActive;
 }
