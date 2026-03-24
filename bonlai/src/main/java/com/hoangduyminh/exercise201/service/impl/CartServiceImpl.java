@@ -1,7 +1,6 @@
 package com.hoangduyminh.exercise201.service.impl;
 
 import com.hoangduyminh.exercise201.dto.CartDTO;
-import com.hoangduyminh.exercise201.dto.CartItemDTO;
 import com.hoangduyminh.exercise201.dto.request.CartRequest;
 import com.hoangduyminh.exercise201.dto.request.CartItemRequest;
 import com.hoangduyminh.exercise201.dto.response.CartResponse;
@@ -32,7 +31,6 @@ public class CartServiceImpl implements CartService {
     private final CartItemRepository cartItemRepository;
     private final CustomerRepository customerRepository;
     private final ProductRepository productRepository;
-    private final CouponRepository couponRepository;
     private final VariantValueRepository variantValueRepository;
     private final ProductAttributeValueRepository productAttributeValueRepository;
 
@@ -40,14 +38,12 @@ public class CartServiceImpl implements CartService {
             CartItemRepository cartItemRepository,
             CustomerRepository customerRepository,
             ProductRepository productRepository,
-            CouponRepository couponRepository,
             VariantValueRepository variantValueRepository,
             ProductAttributeValueRepository productAttributeValueRepository) {
         this.cartRepository = cartRepository;
         this.cartItemRepository = cartItemRepository;
         this.customerRepository = customerRepository;
         this.productRepository = productRepository;
-        this.couponRepository = couponRepository;
         this.variantValueRepository = variantValueRepository;
         this.productAttributeValueRepository = productAttributeValueRepository;
     }
@@ -128,11 +124,6 @@ public class CartServiceImpl implements CartService {
             }
         }
 
-        // Apply coupon if any
-        if (request.getCouponCode() != null && !request.getCouponCode().isEmpty()) {
-            applyCoupon(savedCart.getId(), request.getCouponCode());
-        }
-
         return convertToResponse(savedCart);
     }
 
@@ -155,15 +146,6 @@ public class CartServiceImpl implements CartService {
                         itemRequest.getVariantValueId(),
                         itemRequest.getAttributeValueId(),
                         itemRequest.getAppointmentDate());
-            }
-        }
-
-        // Update coupon if changed
-        if (request.getCouponCode() != null && !request.getCouponCode().equals(existingCart.getCouponCode())) {
-            if (request.getCouponCode().isEmpty()) {
-                removeCoupon(id);
-            } else {
-                applyCoupon(id, request.getCouponCode());
             }
         }
 
@@ -311,36 +293,6 @@ public class CartServiceImpl implements CartService {
     }
 
     @Override
-    public CartResponse applyCoupon(UUID id, String couponCode) {
-        // Validate cart
-        Cart cart = cartRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Giỏ hàng", "id", id));
-
-        // Validate coupon
-        Coupon coupon = couponRepository.findByCode(couponCode)
-                .orElseThrow(() -> new BusinessException("Mã giảm giá không tồn tại"));
-
-        // Apply coupon
-        cart.setCouponCode(couponCode);
-        Cart updatedCart = cartRepository.save(cart);
-
-        return convertToResponse(updatedCart);
-    }
-
-    @Override
-    public CartResponse removeCoupon(UUID id) {
-        // Validate cart
-        Cart cart = cartRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Giỏ hàng", "id", id));
-
-        // Remove coupon
-        cart.setCouponCode(null);
-        Cart updatedCart = cartRepository.save(cart);
-
-        return convertToResponse(updatedCart);
-    }
-
-    @Override
     public CartResponse clearCart(UUID id) {
         // Validate cart
         Cart cart = cartRepository.findById(id)
@@ -349,8 +301,6 @@ public class CartServiceImpl implements CartService {
         // Remove all items
         cartItemRepository.deleteByCart_Id(id);
 
-        // Remove coupon
-        cart.setCouponCode(null);
         Cart updatedCart = cartRepository.save(cart);
 
         return convertToResponse(updatedCart);
@@ -368,7 +318,7 @@ public class CartServiceImpl implements CartService {
 
         // Convert basic info
         dto.setTotalAmount(0.0); // Calculate from items
-        dto.setDiscountAmount(0.0); // Calculate from coupon
+        dto.setDiscountAmount(0.0);
         dto.setFinalAmount(0.0); // Calculate total - discount
 
         return dto;
@@ -392,9 +342,6 @@ public class CartServiceImpl implements CartService {
             }
         }
 
-        // Set basic info
-        response.setCouponCode(cart.getCouponCode());
-
         // Get items
         List<CartItem> items = cartItemRepository.findByCart_Id(cart.getId());
         response.setItems(items.stream()
@@ -409,16 +356,6 @@ public class CartServiceImpl implements CartService {
                 })
                 .sum();
         response.setSubtotal(subtotal);
-
-        // Calculate discount if coupon exists
-        if (cart.getCouponCode() != null) {
-            Coupon coupon = couponRepository.findByCode(cart.getCouponCode()).orElse(null);
-            if (coupon != null) {
-                double discount = calculateDiscount(subtotal, coupon);
-                response.setDiscount(discount);
-                response.setCouponDiscount(discount);
-            }
-        }
 
         // Calculate final total
         response.setTotal(response.getSubtotal() - response.getDiscount());
@@ -481,14 +418,4 @@ public class CartServiceImpl implements CartService {
         return response;
     }
 
-    private double calculateDiscount(double subtotal, Coupon coupon) {
-        if (coupon == null)
-            return 0;
-
-        if ("PERCENTAGE".equals(coupon.getDiscountType())) {
-            return subtotal * (coupon.getDiscountValue().doubleValue() / 100);
-        } else {
-            return coupon.getDiscountValue().doubleValue();
-        }
-    }
 }

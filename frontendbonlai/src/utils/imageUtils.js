@@ -6,7 +6,7 @@ import { API_BASE_URL } from "./axios";
  * @returns {string} - Absolute URL
  */
 export const getImageUrl = (imageUrl) => {
-  if (!imageUrl) return "";
+  if (!imageUrl) return null;
 
   // Xử lý trường hợp URL có dấu ngoặc kép (từ JSON.stringify)
   let cleanUrl = imageUrl;

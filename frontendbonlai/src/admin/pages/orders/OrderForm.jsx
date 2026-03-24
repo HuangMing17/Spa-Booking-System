@@ -23,7 +23,6 @@ import {
   PlusOutlined,
   DeleteOutlined,
   SaveOutlined,
-  GiftOutlined,
   ShoppingCartOutlined,
 } from "@ant-design/icons";
 import { useNavigate, useParams } from "react-router-dom";
@@ -35,8 +34,6 @@ import {
   addOrderItem,
   updateOrderItem,
   removeOrderItem,
-  applyCoupon,
-  removeCoupon,
   calculateTotalAmount,
   calculateTotalDuration,
   canEditOrder,
@@ -54,8 +51,6 @@ const AppointmentForm = () => {
   const [customers, setCustomers] = useState([]);
   const [services, setServices] = useState([]);
   const [orderItems, setOrderItems] = useState([]);
-  const [couponCode, setCouponCode] = useState("");
-  const [couponDiscount, setCouponDiscount] = useState(0);
   const [serviceModalVisible, setServiceModalVisible] = useState(false);
   const [editingItem, setEditingItem] = useState(null);
   const [appointment, setAppointment] = useState(null);
@@ -94,8 +89,6 @@ const AppointmentForm = () => {
       const data = await getOrderById(id);
       setAppointment(data);
       setOrderItems(data.items || []);
-      setCouponDiscount(data.couponDiscount || 0);
-      setCouponCode(data.couponCode || "");
       form.setFieldsValue({
         customerId: data.customerId,
         appointmentDate: moment(data.appointmentDate),
@@ -175,39 +168,6 @@ const AppointmentForm = () => {
   const handleRemoveService = (index) => {
     const updatedItems = orderItems.filter((_, i) => i !== index);
     setOrderItems(updatedItems);
-  };
-
-  const handleApplyCoupon = async () => {
-    if (!couponCode.trim()) {
-      message.error("Vui lòng nhập mã giảm giá!");
-      return;
-    }
-
-    try {
-      if (isEditing) {
-        const result = await applyCoupon(id, couponCode);
-        setCouponDiscount(result.discount);
-        message.success("Áp dụng mã giảm giá thành công!");
-      } else {
-        // For new orders, you might need to validate coupon first
-        message.warning("Vui lòng lưu đơn hàng trước khi áp dụng mã giảm giá!");
-      }
-    } catch (error) {
-      message.error("Mã giảm giá không hợp lệ!");
-    }
-  };
-
-  const handleRemoveCoupon = async () => {
-    try {
-      if (isEditing) {
-        await removeCoupon(id);
-        setCouponDiscount(0);
-        setCouponCode("");
-        message.success("Hủy mã giảm giá thành công!");
-      }
-    } catch (error) {
-      message.error("Hủy mã giảm giá thất bại!");
-    }
   };
 
   const serviceColumns = [
@@ -297,7 +257,7 @@ const AppointmentForm = () => {
     },
   ];
 
-  const totalAmount = calculateTotalAmount(orderItems, couponDiscount);
+  const totalAmount = calculateTotalAmount(orderItems);
   const totalDuration = calculateTotalDuration(orderItems);
 
   return (
@@ -417,47 +377,6 @@ const AppointmentForm = () => {
               />
             </Card>
 
-            {/* Coupon Section */}
-            {isEditing && (
-              <Card title="Mã giảm giá" style={{ marginTop: 24 }}>
-                <Row gutter={16} align="middle">
-                  <Col span={12}>
-                    <Input
-                      placeholder="Nhập mã giảm giá"
-                      value={couponCode}
-                      onChange={(e) => setCouponCode(e.target.value)}
-                      disabled={!canEditOrder(appointment?.status)}
-                    />
-                  </Col>
-                  <Col span={6}>
-                    <Button
-                      type="primary"
-                      icon={<GiftOutlined />}
-                      onClick={handleApplyCoupon}
-                      disabled={!canEditOrder(appointment?.status)}
-                    >
-                      Áp dụng
-                    </Button>
-                  </Col>
-                  {couponDiscount > 0 && (
-                    <Col span={6}>
-                      <Button danger onClick={handleRemoveCoupon}>
-                        Hủy mã
-                      </Button>
-                    </Col>
-                  )}
-                </Row>
-                {couponDiscount > 0 && (
-                  <Tag color="green" style={{ marginTop: 8 }}>
-                    Giảm giá:{" "}
-                    {new Intl.NumberFormat("vi-VN", {
-                      style: "currency",
-                      currency: "VND",
-                    }).format(couponDiscount)}
-                  </Tag>
-                )}
-              </Card>
-            )}
           </Col>{" "}
           {/* Order Summary */}
           <Col span={8}>
@@ -483,18 +402,6 @@ const AppointmentForm = () => {
                     }).format(calculateTotalAmount(orderItems, 0))}
                   </Text>
                 </Row>
-                {couponDiscount > 0 && (
-                  <Row justify="space-between">
-                    <Text>Giảm giá:</Text>
-                    <Text style={{ color: "#52c41a" }}>
-                      -
-                      {new Intl.NumberFormat("vi-VN", {
-                        style: "currency",
-                        currency: "VND",
-                      }).format(couponDiscount)}
-                    </Text>
-                  </Row>
-                )}
                 <Divider style={{ margin: "12px 0" }} />
                 <Row justify="space-between">
                   <Text strong style={{ fontSize: 16 }}>

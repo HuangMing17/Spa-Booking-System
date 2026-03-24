@@ -220,7 +220,7 @@ const ServiceDetail = ({ service }) => {
                   >
                     <Card
                       size="small"
-                      bordered={false}
+                      variant="borderless"
                       style={{ 
                         background: "#f8f9fa",
                         borderRadius: '6px',

@@ -26,7 +26,6 @@ import {
   ClockCircleOutlined,
   UserOutlined,
   ShoppingCartOutlined,
-  GiftOutlined,
   ExclamationCircleOutlined,
 } from "@ant-design/icons";
 import { useNavigate, useParams } from "react-router-dom";
@@ -163,10 +162,7 @@ const AppointmentDetail = () => {
       },
     },
   ];
-  const totalAmount = calculateTotalAmount(
-    appointment.items || [],
-    appointment.couponDiscount || 0
-  );
+  const totalAmount = calculateTotalAmount(appointment.items || []);
   const totalDuration = calculateTotalDuration(appointment.items || []);
 
   const cardStyle = {
@@ -397,25 +393,6 @@ const AppointmentDetail = () => {
                   }).format(calculateTotalAmount(appointment.items || [], 0))}
                 </Text>
               </Row>
-              {appointment.couponDiscount > 0 && (
-                <>
-                  <Row justify="space-between" style={{ marginBottom: 8 }}>
-                    <Text>
-                      <GiftOutlined
-                        style={{ marginRight: 4, color: "#52c41a" }}
-                      />
-                      Mã giảm giá ({appointment.couponCode}):
-                    </Text>
-                    <Text style={{ color: "#52c41a" }}>
-                      -
-                      {new Intl.NumberFormat("vi-VN", {
-                        style: "currency",
-                        currency: "VND",
-                      }).format(appointment.couponDiscount)}
-                    </Text>
-                  </Row>
-                </>
-              )}
               <Divider style={{ margin: "12px 0" }} />
               <Row justify="space-between">
                 <Text strong style={{ fontSize: 16 }}>

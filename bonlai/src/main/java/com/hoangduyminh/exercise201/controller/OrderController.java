@@ -115,20 +115,6 @@ public class OrderController {
         return ResponseEntity.ok(orderService.getOrderItems(orderId));
     }
 
-    @PostMapping("/{orderId}/coupon/{couponCode}")
-    @PreAuthorize("hasAnyRole('CUSTOMER', 'STAFF')")
-    public ResponseEntity<OrderDTO> applyCoupon(
-            @PathVariable String orderId,
-            @PathVariable String couponCode) {
-        return ResponseEntity.ok(orderService.applyCoupon(orderId, couponCode));
-    }
-
-    @DeleteMapping("/{orderId}/coupon")
-    @PreAuthorize("hasAnyRole('CUSTOMER', 'STAFF')")
-    public ResponseEntity<OrderDTO> removeCoupon(@PathVariable String orderId) {
-        return ResponseEntity.ok(orderService.removeCoupon(orderId));
-    }
-
     /**
      * Lấy danh sách tất cả đơn hàng
      * 

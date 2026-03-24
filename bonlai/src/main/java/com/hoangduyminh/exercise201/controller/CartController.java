@@ -144,33 +144,6 @@ public class CartController {
     }
 
     /**
-     * Áp dụng mã giảm giá
-     * 
-     * @param id         id giỏ hàng
-     * @param couponCode mã giảm giá
-     * @return thông tin sau khi áp dụng
-     */
-    @PostMapping("/{id}/coupon")
-    public ResponseEntity<CartResponse> applyCoupon(
-            @PathVariable UUID id,
-            @RequestParam String couponCode) {
-        CartResponse response = cartService.applyCoupon(id, couponCode);
-        return ResponseEntity.ok(response);
-    }
-
-    /**
-     * Gỡ bỏ mã giảm giá
-     * 
-     * @param id id giỏ hàng
-     * @return thông tin sau khi gỡ bỏ
-     */
-    @DeleteMapping("/{id}/coupon")
-    public ResponseEntity<CartResponse> removeCoupon(@PathVariable UUID id) {
-        CartResponse response = cartService.removeCoupon(id);
-        return ResponseEntity.ok(response);
-    }
-
-    /**
      * Xóa toàn bộ sản phẩm trong giỏ
      * 
      * @param id id giỏ hàng
