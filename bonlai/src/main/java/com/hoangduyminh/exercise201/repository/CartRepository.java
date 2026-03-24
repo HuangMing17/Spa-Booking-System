@@ -27,12 +27,6 @@ public interface CartRepository extends JpaRepository<Cart, UUID> {
         boolean existsByCustomerId(UUID customerId);
 
         /**
-         * Lấy giỏ hàng theo mã giảm giá
-         */
-        @Query("SELECT c FROM Cart c WHERE c.couponCode = :couponCode")
-        List<Cart> findByCouponCode(String couponCode);
-
-        /**
          * Đếm số lượng giỏ hàng của khách
          */
         @Query("SELECT COUNT(c) FROM Cart c WHERE c.customerId = :customerId")

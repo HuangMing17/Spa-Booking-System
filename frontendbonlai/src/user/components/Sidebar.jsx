@@ -30,7 +30,6 @@ import {
   fetchServices,
   getServicesByCategory,
 } from "../../admin/pages/services/serviceAPI";
-import { getAllOrders } from "../../admin/pages/orders/orderAPI";
 
 const { Text, Title } = Typography;
 
@@ -121,17 +120,16 @@ const Sidebar = () => {
 
     try {
       // Fetch data song song
-      const [categoriesData, servicesData, ordersData] = await Promise.all([
+      const [categoriesData, servicesData] = await Promise.all([
         fetchCategoriesWithChildren(),
         fetchServices(),
-        getAllOrders().catch(() => []), // Không bắt buộc phải có orders
       ]);
 
       // Xử lý dữ liệu popular services
       if (Array.isArray(servicesData)) {
         const popularServicesData = calculatePopularServices(
           servicesData,
-          ordersData
+          []
         );
         setPopularServices(popularServicesData);
       }

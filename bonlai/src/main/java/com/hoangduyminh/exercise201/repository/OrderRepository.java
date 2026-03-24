@@ -35,15 +35,6 @@ public interface OrderRepository extends JpaRepository<Order, String> {
         List<Order> findByCustomer_first_nameContainingIgnoreCaseOrCustomer_last_nameContainingIgnoreCaseOrIdContainingIgnoreCase(
                         @Param("keyword") String keyword);
 
-        /**
-         * Tìm đơn theo mã giảm giá
-         */
-        List<Order> findByCoupon_Id(UUID couponId);
-
-        /**
-         * Tìm đơn theo mã coupon
-         */
-        List<Order> findByCoupon_Code(String couponCode);
 
         /**
          * Đếm số đơn theo trạng thái
@@ -55,10 +46,6 @@ public interface OrderRepository extends JpaRepository<Order, String> {
          */
         long countByCustomerId(UUID customerId);
 
-        /**
-         * Đếm số đơn sử dụng mã giảm giá
-         */
-        long countByCoupon_Id(UUID couponId);
 
         /**
          * Tìm đơn chưa hoàn thành của khách hàng
@@ -77,8 +64,6 @@ public interface OrderRepository extends JpaRepository<Order, String> {
          * Kiểm tra khách hàng có đơn chưa hoàn thành không
          */
         boolean existsByCustomerIdAndOrderStatus_StatusName(UUID customerId, String statusName);
-
-        boolean existsByCouponId(UUID couponId);
 
         /**
          * Tìm đơn theo ngày hẹn

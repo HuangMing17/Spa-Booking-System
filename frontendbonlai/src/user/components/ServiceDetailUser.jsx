@@ -130,7 +130,9 @@ const ServiceDetailUser = () => {
   if (loading) {
     return (
       <div style={{ textAlign: "center", padding: "50px" }}>
-        <Spin size="large" tip="Đang tải thông tin dịch vụ..." />
+        <Spin size="large">
+          <div style={{ marginTop: 16 }}>Đang tải thông tin dịch vụ...</div>
+        </Spin>
       </div>
     );
   }
@@ -299,7 +301,7 @@ const ServiceDetailUser = () => {
       <Row gutter={[24, 24]}>
         <Col xs={24} lg={14}>
           {/* Main Image and Gallery */}
-          <Card bordered={false} className="service-detail-card">
+          <Card variant="borderless" className="service-detail-card">
             <div style={{ position: "relative" }}>
               <Image
                 src={getImageUrl(mainImage)}
@@ -434,7 +436,7 @@ const ServiceDetailUser = () => {
 
           {/* Service Statistics */}
           <Card
-            bordered={false}
+            variant="borderless"
             className="service-detail-card"
             style={{ marginTop: 24 }}
           >
@@ -480,7 +482,7 @@ const ServiceDetailUser = () => {
 
           {/* Service Benefits */}
           <Card
-            bordered={false}
+            variant="borderless"
             className="service-detail-card"
             style={{ marginTop: 24 }}
             title="Ưu điểm nổi bật"
@@ -501,7 +503,7 @@ const ServiceDetailUser = () => {
 
           {/* Service Description */}
           <Card
-            bordered={false}
+            variant="borderless"
             className="service-detail-card"
             style={{ marginTop: 24 }}
             title="Mô tả dịch vụ"
@@ -536,7 +538,7 @@ const ServiceDetailUser = () => {
 
           {/* Reviews Section */}
           <Card
-            bordered={false}
+            variant="borderless"
             className="service-detail-card"
             style={{ marginTop: 24 }}
             title={
@@ -653,7 +655,7 @@ const ServiceDetailUser = () => {
         </Col>{" "}
         <Col xs={24} lg={10}>
           {/* Booking Card */}
-          <Card bordered={false} className="service-detail-card">
+          <Card variant="borderless" className="service-detail-card">
             <Title level={3}>{service.name}</Title>
             <Space size={[0, 8]} wrap style={{ marginBottom: 16 }}>
               {service.categories?.map((cat) => (
@@ -749,22 +751,27 @@ const ServiceDetailUser = () => {
               title="Quy trình đặt lịch"
               style={{ marginBottom: 24 }}
             >
-              <Timeline size="small">
-                <Timeline.Item
-                  dot={<CheckCircleOutlined style={{ color: "#52c41a" }} />}
-                >
-                  Chọn gói dịch vụ
-                </Timeline.Item>
-                <Timeline.Item dot={<CalendarOutlined />}>
-                  Chọn ngày giờ phù hợp
-                </Timeline.Item>
-                <Timeline.Item dot={<CustomerServiceOutlined />}>
-                  Xác nhận thông tin
-                </Timeline.Item>
-                <Timeline.Item dot={<CheckCircleOutlined />}>
-                  Hoàn thành đặt lịch
-                </Timeline.Item>
-              </Timeline>
+              <Timeline 
+                size="small" 
+                items={[
+                  {
+                    dot: <CheckCircleOutlined style={{ color: "#52c41a" }} />,
+                    children: "Chọn gói dịch vụ"
+                  },
+                  {
+                    dot: <CalendarOutlined />,
+                    children: "Chọn ngày giờ phù hợp"
+                  },
+                  {
+                    dot: <CustomerServiceOutlined />,
+                    children: "Xác nhận thông tin"
+                  },
+                  {
+                    dot: <CheckCircleOutlined />,
+                    children: "Hoàn thành đặt lịch"
+                  }
+                ]}
+              />
             </Card>{" "}
             <Space direction="vertical" style={{ width: "100%" }} size="middle">
               {!isLoggedIn && (

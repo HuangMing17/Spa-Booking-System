@@ -7,7 +7,6 @@ import {
   ShoppingOutlined,
   SettingOutlined,
   TeamOutlined,
-  GiftOutlined,
   FileTextOutlined,
   AppstoreOutlined,
 } from "@ant-design/icons";
@@ -66,19 +65,6 @@ const AdminSidebar = ({ collapsed }) => {
       label: "Khách hàng",
       onClick: () => navigate("/admin/customers"),
     },
-       {
-      key: "coupons",
-      icon: <GiftOutlined />,
-      label: "Mã giảm giá",
-      children: [
-        {
-          key: "coupons-list",
-          label: "Tất cả mã giảm giá",
-          onClick: () => navigate("/admin/coupons"),
-        },
-       
-      ],
-    },
     {
       key: "reports",
       icon: <FileTextOutlined />,
@@ -120,24 +106,6 @@ const AdminSidebar = ({ collapsed }) => {
     }    // For customers routes
     if (mainPath === "customers") {
       return "customers";
-    }
-
-    // For coupons routes
-    if (mainPath === "coupons") {
-      // For create page
-      if (pathParts[3] === "create") {
-        return "coupons-create";
-      }
-      // Check URL params for status filter
-      const urlParams = new URLSearchParams(location.search);
-      const status = urlParams.get('status');
-      if (status === 'active') {
-        return "coupons-active";
-      } else if (status === 'expiring') {
-        return "coupons-expiring";
-      }
-      // For list, edit, view coupon pages
-      return "coupons-list";
     }
 
     // For orders/appointments routes

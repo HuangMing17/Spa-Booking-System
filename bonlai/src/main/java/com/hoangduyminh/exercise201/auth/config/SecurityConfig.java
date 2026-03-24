@@ -78,11 +78,6 @@ public class SecurityConfig {
                                 "/api/products/category/*",
                                 "/api/products/tag/*")
                         .permitAll()
-                        // Public GET endpoints for coupons
-                        .requestMatchers(HttpMethod.GET,
-                                "/api/coupons",
-                                "/api/coupons/*")
-                        .permitAll()
                         // Public GET endpoints for orders
                         // Public GET access to uploaded files
                         .requestMatchers(HttpMethod.GET, "/uploads/**")

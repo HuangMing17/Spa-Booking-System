@@ -33,7 +33,6 @@ import PaymentResult from "./user/pages/PaymentResult";
 import CustomerLogin from "./auth/customer/pages/CustomerLogin";
 import CustomerRegister from "./auth/customer/pages/CustomerRegister";
 import ServiceDetailUser from "./user/components/ServiceDetailUser";
-import CouponsView from "./user/pages/CouponsView";
 
 // Admin Pages
 import AdminLogin from "./auth/admin/pages/AdminLogin";
@@ -49,10 +48,6 @@ import {
   CustomerForm,
   CustomerDetail,
 } from "./admin/pages/customers";
-import {
-  CouponList,
-  CouponForm,
-} from "./admin/pages/coupons";
 import {
   OrderList,
   OrderForm,
@@ -146,10 +141,7 @@ function App() {
                         <Route
                           path="appointments/:id"
                           element={<AppointmentDetail />}
-                        />                        <Route path="dat-lich" element={<AppointmentList />} />                        {/* Coupon Routes */}
-                        <Route path="coupons" element={<CouponList />} />
-                        <Route path="coupons/create" element={<CouponForm />} />
-                        <Route path="coupons/:id/edit" element={<CouponForm />} />
+                        />                        <Route path="dat-lich" element={<AppointmentList />} />
                         {/* Report Routes */}
                         <Route path="reports/revenue" element={<RevenueReport />} />
                         <Route path="reports/services" element={<ServicesReport />} />
@@ -218,7 +210,6 @@ function App() {
                         path="dich-vu/:id"
                         element={<ServiceDetailUser />}
                       />
-                      <Route path="khuyen-mai" element={<CouponsView />} />
                       <Route path="lien-he" element={<Contact />} />
                       <Route path="gioi-thieu" element={<About />} />
                       {/* Protected Routes */}

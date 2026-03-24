@@ -16,8 +16,6 @@ public class CartResponse {
     private String customerEmail;
 
     private String note;
-    private String couponCode;
-    private Double couponDiscount;
 
     private Double subtotal; // Tổng tiền chưa giảm giá
     private Double discount; // Tổng tiền giảm giá

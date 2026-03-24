@@ -36,7 +36,6 @@ import {
   EnvironmentOutlined,
   StarOutlined,
   ShoppingCartOutlined,
-  GiftOutlined,
 } from "@ant-design/icons";
 import { useCustomerAuth } from "../../auth/customer/context/CustomerAuthContext";
 
@@ -100,12 +99,6 @@ const Header = () => {
       label: "Dịch vụ",
       link: "/dich-vu",
       icon: <StarOutlined />,
-    },
-    {
-      key: "promotions",
-      label: "Khuyến mãi",
-      link: "/khuyen-mai",
-      icon: <GiftOutlined />,
     },
     {
       key: "about",

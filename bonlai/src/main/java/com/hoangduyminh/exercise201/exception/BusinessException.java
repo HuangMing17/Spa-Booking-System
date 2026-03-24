@@ -35,12 +35,6 @@ public class BusinessException extends RuntimeException {
         }
     }
 
-    public static class InvalidCoupon extends BusinessException {
-        public InvalidCoupon(String message) {
-            super("INVALID_COUPON", message);
-        }
-    }
-
     public static class TimeSlotNotAvailable extends BusinessException {
         public TimeSlotNotAvailable(String message) {
             super("TIME_SLOT_NOT_AVAILABLE", message);
