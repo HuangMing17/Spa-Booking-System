@@ -16,7 +16,6 @@ public class CartRequest {
     private UUID customerId;
 
     private String note;
-    private String couponCode;
 
     @Valid
     private List<CartItemRequest> items;

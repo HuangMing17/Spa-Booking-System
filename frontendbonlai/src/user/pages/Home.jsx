@@ -53,10 +53,7 @@ import {
   getServicesByCategory,
 } from "../../admin/pages/services/serviceAPI";
 import { categoryAPI } from "../../admin/pages/categories/categoryAPI";
-import {
-  getAllOrders,
-  APPOINTMENT_STATUS,
-} from "../../admin/pages/orders/orderAPI";
+import { APPOINTMENT_STATUS } from "../../admin/pages/orders/orderAPI";
 import { getCustomers } from "../../admin/pages/customers/customerAPI";
 import { getImageUrl, getPlaceholderImage } from "../../utils/imageUtils";
 
@@ -95,7 +92,7 @@ const Home = ({ onMount }) => {
 
       // Load basic data first
       console.log("Loading basic data...");
-      const [servicesRes, categoriesRes, appointmentsRes, customersRes] =
+      const [servicesRes, categoriesRes, customersRes] =
         await Promise.all([
           fetchServices().catch((err) => {
             console.error("Error fetching services:", err);
@@ -103,10 +100,6 @@ const Home = ({ onMount }) => {
           }),
           categoryAPI.getAllCategories().catch((err) => {
             console.error("Error fetching categories:", err);
-            return [];
-          }),
-          getAllOrders().catch((err) => {
-            console.error("Error fetching appointments:", err);
             return [];
           }),
           getCustomers().catch((err) => {
@@ -118,7 +111,6 @@ const Home = ({ onMount }) => {
       console.log("API Responses:", {
         servicesRes,
         categoriesRes,
-        appointmentsRes,
         customersRes,
       });
 
@@ -176,9 +168,7 @@ const Home = ({ onMount }) => {
       }
 
       // Process appointments data
-      const appointmentsData = Array.isArray(appointmentsRes)
-        ? appointmentsRes
-        : [];
+      const appointmentsData = [];
 
       // Process customers data
       const customersData = Array.isArray(customersRes) ? customersRes : [];

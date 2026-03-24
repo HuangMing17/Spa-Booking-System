@@ -30,8 +30,6 @@ public class OrderDTO {
     private String paymentStatus = "UNPAID";
     private String transactionId;
     private Double finalAmount = 0.0;
-    private UUID couponId;
-    private String couponCode;
     private String customerName;
     private String customerPhone;
     private String customerEmail;

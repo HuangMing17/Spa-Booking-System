@@ -3,6 +3,7 @@ package com.hoangduyminh.exercise201.auth.service;
 import com.hoangduyminh.exercise201.entity.Customer;
 import com.hoangduyminh.exercise201.entity.AuthProvider;
 import com.hoangduyminh.exercise201.repository.CustomerRepository;
+import com.hoangduyminh.exercise201.exception.FirebaseUnavailableException;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseToken;
 import lombok.extern.slf4j.Slf4j;
@@ -55,7 +56,7 @@ public class FirebaseAuthService {
         // Kiểm tra xem Firebase có available không
         if (firebaseAuth == null) {
             log.error("Firebase authentication attempted but FirebaseAuth is not available");
-            throw new UnsupportedOperationException("Firebase authentication is not available. Please configure Firebase Admin SDK.");
+            throw new FirebaseUnavailableException("Firebase authentication is not available. Please configure Firebase Admin SDK.");
         }
         
         try {
@@ -92,7 +93,8 @@ public class FirebaseAuthService {
 
         } catch (Exception e) {
             log.error("Error authenticating Firebase token: {}", e.getMessage());
-            throw new RuntimeException("Firebase authentication failed", e);
+            if (e instanceof FirebaseUnavailableException) throw (FirebaseUnavailableException) e;
+            throw new RuntimeException("Firebase authentication failed: " + e.getMessage(), e);
         }
     }
 
