@@ -37,21 +37,16 @@ import {
   SafetyOutlined,
   LoadingOutlined,
   LockOutlined,
-  GiftOutlined,
-  TagOutlined,
-  PercentageOutlined,
-  DeleteOutlined,
 } from "@ant-design/icons";
 import { useLocation, useNavigate } from "react-router-dom";
 import dayjs from "dayjs";
 import locale from "antd/es/date-picker/locale/vi_VN";
 import { getImageUrl, getPlaceholderImage } from "../../utils/imageUtils";
-import { createAppointment, applyCoupon as applyOrderCoupon } from "../../admin/pages/orders/orderAPI";
+import { createAppointment } from "../../admin/pages/orders/orderAPI";
 import {
   searchCustomers,
   createCustomer,
 } from "../../admin/pages/customers/customerAPI";
-import { validateCoupon } from "../../admin/pages/coupons/couponAPI";
 import { useCustomerAuth } from "../../auth/customer/context/CustomerAuthContext";
 import axiosInstance from "../../utils/axios";
 
@@ -68,17 +63,10 @@ const Booking = () => {
   const [confirmModalVisible, setConfirmModalVisible] = useState(false);  const [successModalVisible, setSuccessModalVisible] = useState(false);
   const [appointmentResult, setAppointmentResult] = useState(null);
   const [selectedServices, setSelectedServices] = useState([]);
-  // Coupon states
-  const [couponCode, setCouponCode] = useState("");
-  const [appliedCoupon, setAppliedCoupon] = useState(null);
-  const [couponLoading, setCouponLoading] = useState(false);
-  const [couponDiscount, setCouponDiscount] = useState(0);
-  const [backendDiscount, setBackendDiscount] = useState(0); // Actual discount from backend
-  const [backendFinalTotal, setBackendFinalTotal] = useState(0); // Actual final total from backend
   const [paymentMethod, setPaymentMethod] = useState("CASH"); // Thêm trạng thái chọn hình thức thanh toán
   
   // Get service data from navigation state and add to selected services
-  const { service, selectedServices: existingServices, couponCode: initialCouponCode, coupon: initialCoupon } = location.state || {};
+  const { service, selectedServices: existingServices } = location.state || {};
   const selectedVariant = service?.selectedVariant;
 
   // Check if user is logged in
@@ -111,33 +99,6 @@ const Booking = () => {
       ]);
     }
   }, [service, selectedVariant, existingServices]);
-  // Initialize coupon if provided from navigation
-  useEffect(() => {
-    if (initialCouponCode) {
-      setCouponCode(initialCouponCode);
-      if (initialCoupon) {
-        setAppliedCoupon(initialCoupon);
-        calculateCouponDiscount(initialCoupon);
-      }
-    }
-  }, [initialCouponCode, initialCoupon]);
-
-  // Recalculate coupon discount when total changes
-  useEffect(() => {
-    if (appliedCoupon) {
-      calculateCouponDiscount(appliedCoupon);
-    }
-  }, [selectedServices, appliedCoupon]);
-
-  // Debug effect to track coupon state changes
-  useEffect(() => {
-    console.log("Coupon state changed:", {
-      appliedCoupon: appliedCoupon?.code,
-      couponDiscount,
-      backendDiscount,
-      showDiscountSection: appliedCoupon && couponDiscount > 0
-    });
-  }, [appliedCoupon, couponDiscount, backendDiscount]);
 
   // Initialize booking data with user information
   useEffect(() => {
@@ -172,97 +133,8 @@ const Booking = () => {
     }, 0);
   };
 
-  // Calculate coupon discount
-  const calculateCouponDiscount = (coupon) => {
-    if (!coupon) return 0;
-    
-    const subtotal = calculateTotal();
-    let discount = 0;
-
-    console.log("Calculating discount for:", {
-      coupon,
-      subtotal,
-      discountType: coupon.discountType,
-      discountValue: coupon.discountValue
-    });
-
-    if (coupon.discountType === "PERCENTAGE") {
-      discount = (subtotal * coupon.discountValue) / 100;
-      
-      // Check different possible field names for max discount
-      const maxDiscount = coupon.maxDiscountAmount || coupon.maxDiscount || 0;
-      if (maxDiscount > 0) {
-        discount = Math.min(discount, maxDiscount);
-      }
-      
-      console.log("Percentage discount calculated:", {
-        percentage: coupon.discountValue,
-        calculatedDiscount: discount,
-        maxDiscount: maxDiscount
-      });
-    } else if (coupon.discountType === "FIXED") {
-      discount = coupon.discountValue;
-      console.log("Fixed discount:", discount);
-    }
-
-    const finalDiscount = Math.min(discount, subtotal);
-    console.log("Final discount amount:", finalDiscount);
-    
-    setCouponDiscount(finalDiscount);
-    return finalDiscount;
-  };
-
-  // Apply coupon
-  const handleApplyCoupon = async () => {
-    if (!couponCode.trim()) {
-      message.warning("Vui lòng nhập mã giảm giá");
-      return;
-    }
-
-    setCouponLoading(true);
-    try {
-      const subtotal = calculateTotal();
-      const couponData = await validateCoupon(couponCode, subtotal);
-      
-      // API trả về trực tiếp coupon object nếu valid
-      if (couponData && couponData.id) {
-        console.log("Coupon data received:", couponData);
-        
-        setAppliedCoupon(couponData);
-        const calculatedDiscount = calculateCouponDiscount(couponData);
-        
-        console.log("Calculated discount:", calculatedDiscount);
-        console.log("Current subtotal:", calculateTotal());
-        console.log("Coupon discount state:", couponDiscount);
-        
-        message.success(`Áp dụng mã giảm giá thành công! Tiết kiệm ${formatPrice(calculatedDiscount)}`);
-      } else {
-        message.error("Mã giảm giá không hợp lệ");
-      }
-    } catch (error) {
-      console.error("Error applying coupon:", error);
-      
-      // Check if error has response with message
-      const errorMessage = error.response?.data?.message || error.message || "Không thể áp dụng mã giảm giá. Vui lòng thử lại!";
-      message.error(errorMessage);
-    } finally {
-      setCouponLoading(false);
-    }
-  };
-
-  // Remove coupon
-  const handleRemoveCoupon = () => {
-    setAppliedCoupon(null);
-    setCouponCode("");
-    setCouponDiscount(0);
-    setBackendDiscount(0);
-    setBackendFinalTotal(0);
-    message.success("Đã gỡ bỏ mã giảm giá");
-  };
-
-  // Calculate final total after discount
   const getFinalTotal = () => {
-    return Math.max(0, calculateTotal() - couponDiscount);
+    return calculateTotal();
   };
 
   // Add service to booking
@@ -394,7 +266,6 @@ const Booking = () => {
         paymentMethod: paymentMethod,
         // Optional: add notes if provided
         ...(finalBookingData.note && { notes: finalBookingData.note }),
-        // Remove coupon from appointment creation - will apply after
       };
 
       console.log("Creating appointment with data:", appointmentData);
@@ -403,67 +274,7 @@ const Booking = () => {
       const createdAppointment = await createAppointment(appointmentData);
       console.log("Created appointment:", createdAppointment);
       
-      let finalAppointmentData = createdAppointment;
-      let actualCouponDiscount = 0;
-      let actualFinalTotal = calculateTotal();
-      
-      // If coupon was applied, apply it to the created order using ORDER API
-      if (appliedCoupon && createdAppointment?.id) {
-        try {
-          console.log("Applying coupon to order:", {
-            orderId: createdAppointment.id,
-            couponCode: appliedCoupon.code,
-            customerId: user.id
-          });
-
-          const couponResult = await applyOrderCoupon(createdAppointment.id, appliedCoupon.code);
-          console.log("Coupon applied successfully:", couponResult);
-          
-          // Update appointment data with coupon information from backend
-          if (couponResult) {
-            finalAppointmentData = couponResult;
-            
-            // Get actual discount and final total from backend response
-            if (couponResult.discountAmount !== undefined) {
-              actualCouponDiscount = couponResult.discountAmount;
-            }
-            if (couponResult.finalAmount !== undefined) {
-              actualFinalTotal = couponResult.finalAmount;
-            }
-            
-            // Debug logs
-            console.log("Backend coupon result:", {
-              discountAmount: couponResult.discountAmount,
-              finalAmount: couponResult.finalAmount,
-              totalAmount: couponResult.totalAmount
-            });
-            
-            // Update local state to match backend
-            setCouponDiscount(actualCouponDiscount);
-            setBackendDiscount(actualCouponDiscount);
-            setBackendFinalTotal(actualFinalTotal);
-          }
-          
-          message.success(`Mã giảm giá ${appliedCoupon.code} đã được áp dụng! Tiết kiệm ${formatPrice(actualCouponDiscount)}`);
-        } catch (couponError) {
-          console.error("Error applying coupon to order:", couponError);
-          console.error("Coupon error details:", couponError.response?.data || couponError.message);
-          
-          // Reset coupon state if application failed
-          setAppliedCoupon(null);
-          setCouponCode("");
-          setCouponDiscount(0);
-          setBackendDiscount(0);
-          setBackendFinalTotal(0);
-          
-          // Show warning but don't fail the booking
-          message.warning(
-            `Đặt lịch thành công nhưng không thể áp dụng mã giảm giá: ${
-              couponError.response?.data?.message || couponError.message || "Lỗi không xác định"
-            }`
-          );
-        }
-      }
+      const finalAppointmentData = createdAppointment;
 
       // Xử lý chuyển hướng VNPay
       if (paymentMethod === "VNPAY") {
@@ -489,10 +300,8 @@ const Booking = () => {
         appointment: finalAppointmentData,
         dateTime: appointmentDateTime,
         services: selectedServices,
-        appliedCoupon: appliedCoupon,
-        couponDiscount: actualCouponDiscount,
         originalTotal: calculateTotal(),
-        finalTotal: actualFinalTotal,
+        finalTotal: calculateTotal(),
       });
       setSuccessModalVisible(true);
     } catch (error) {
@@ -775,80 +584,6 @@ const Booking = () => {
                 </Card>
               ))}              <Divider style={{ margin: "8px 0" }} />
               
-              {/* Coupon Section */}
-              <Card size="small" style={{ background: "#f6ffed", border: "1px solid #b7eb8f" }}>
-                <Space direction="vertical" size="middle" style={{ width: "100%" }}>
-                  <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-                    <Text strong style={{ color: "#52c41a" }}>
-                      <GiftOutlined /> Mã giảm giá
-                    </Text>
-                    {!appliedCoupon && (
-                      <Button 
-                        type="link" 
-                        size="small"
-                        onClick={() => navigate("/khuyen-mai")}
-                        style={{ padding: 0, height: "auto" }}
-                      >
-                        Xem tất cả mã giảm giá
-                      </Button>
-                    )}
-                  </div>
-                  
-                  {!appliedCoupon ? (
-                    <Row gutter={8}>
-                      <Col flex="1">
-                        <Input
-                          placeholder="Nhập mã giảm giá"
-                          value={couponCode}
-                          onChange={(e) => setCouponCode(e.target.value.toUpperCase())}
-                          prefix={<TagOutlined />}
-                          style={{ textTransform: "uppercase" }}
-                        />
-                      </Col>
-                      <Col>
-                        <Button 
-                          type="primary" 
-                          onClick={handleApplyCoupon}
-                          loading={couponLoading}
-                          disabled={!couponCode.trim()}
-                        >
-                          Áp dụng
-                        </Button>
-                      </Col>
-                    </Row>
-                  ) : (
-                    <div>
-                      <Row align="middle" style={{ marginBottom: 8 }}>
-                        <Col flex="1">
-                          <Space>
-                            <Tag color="green" style={{ margin: 0 }}>
-                              <GiftOutlined /> {appliedCoupon.code}
-                            </Tag>
-                            <Text style={{ color: "#52c41a", fontWeight: "500" }}>
-                              {appliedCoupon.name}
-                            </Text>
-                          </Space>
-                        </Col>
-                        <Col>
-                          <Button 
-                            type="text" 
-                            size="small" 
-                            danger
-                            icon={<DeleteOutlined />}
-                            onClick={handleRemoveCoupon}
-                          >
-                            Gỡ bỏ
-                          </Button>
-                        </Col>
-                      </Row>
-                      <Text type="secondary" style={{ fontSize: "12px" }}>
-                        {appliedCoupon.description}
-                      </Text>
-                    </div>
-                  )}
-                </Space>
-              </Card>
-              
               {/* Pricing Summary */}
               <div style={{ background: "#fafafa", padding: "12px", borderRadius: "6px" }}>
                 <Row style={{ marginBottom: 4 }}>
@@ -859,23 +594,6 @@ const Booking = () => {
                     <Text>{formatPrice(calculateTotal())}</Text>
                   </Col>
                 </Row>
-                
-                {appliedCoupon && couponDiscount > 0 && (
-                  <Row style={{ marginBottom: 4 }}>
-                    <Col span={12}>
-                      <Text style={{ color: "#52c41a" }}>
-                        Giảm giá ({appliedCoupon.discountType === "PERCENTAGE" 
-                          ? `${appliedCoupon.discountValue}%` 
-                          : formatPrice(appliedCoupon.discountValue)}):
-                      </Text>
-                    </Col>
-                    <Col span={12} style={{ textAlign: "right" }}>
-                      <Text style={{ color: "#52c41a" }}>
-                        -{formatPrice(couponDiscount)}
-                      </Text>
-                    </Col>
-                  </Row>
-                )}
                 
                 <Divider style={{ margin: "8px 0" }} />
                 <Row>
@@ -1174,39 +892,6 @@ const Booking = () => {
                 ))}
               </ul>
             </div>
-            
-            {/* Show coupon information if applied */}
-            {appointmentResult.appliedCoupon && (
-              <div style={{ background: "#f6ffed", padding: "12px", borderRadius: "6px", margin: "12px 0" }}>
-                <Text strong style={{ color: "#52c41a" }}>
-                  <GiftOutlined /> Mã giảm giá đã áp dụng:
-                </Text>
-                <div style={{ marginTop: 4 }}>
-                  <Tag color="green">{appointmentResult.appliedCoupon.code}</Tag>
-                  <Text>{appointmentResult.appliedCoupon.name}</Text>
-                </div>
-                <div style={{ marginTop: 8, fontSize: "12px" }}>
-                  <Row>
-                    <Col span={12}>Tổng tiền gốc:</Col>
-                    <Col span={12} style={{ textAlign: "right" }}>
-                      {formatPrice(appointmentResult.originalTotal)}
-                    </Col>
-                  </Row>
-                  <Row>
-                    <Col span={12} style={{ color: "#52c41a" }}>Giảm giá:</Col>
-                    <Col span={12} style={{ textAlign: "right", color: "#52c41a" }}>
-                      -{formatPrice(appointmentResult.couponDiscount)}
-                    </Col>
-                  </Row>
-                  <Row style={{ fontWeight: "bold" }}>
-                    <Col span={12}>Thành tiền:</Col>
-                    <Col span={12} style={{ textAlign: "right" }}>
-                      {formatPrice(appointmentResult.finalTotal)}
-                    </Col>
-                  </Row>
-                </div>
-              </div>
-            )}
             
             <p>Chúng tôi sẽ liên hệ với bạn để xác nhận lịch hẹn.</p>
           </div>

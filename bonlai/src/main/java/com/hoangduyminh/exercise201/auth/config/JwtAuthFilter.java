@@ -54,12 +54,6 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             "/api/products/category/*",
             "/api/products/tag/*");
 
-    // Define public coupon GET paths
-    private final List<String> publicCouponPaths = Arrays.asList(
-            "/api/coupons",
-            "/api/coupons/search",
-            "/api/coupons/*");
-
     // Define public order GET paths
 
     public JwtAuthFilter(
@@ -88,12 +82,6 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             }
             // Skip authentication for public product GET paths
             for (String pattern : publicProductPaths) {
-                if (pathMatcher.match(pattern, path)) {
-                    return true;
-                }
-            }
-            // Skip authentication for public coupon GET paths
-            for (String pattern : publicCouponPaths) {
                 if (pathMatcher.match(pattern, path)) {
                     return true;
                 }

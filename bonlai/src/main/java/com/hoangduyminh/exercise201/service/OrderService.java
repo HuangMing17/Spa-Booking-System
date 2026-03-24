@@ -117,23 +117,6 @@ public interface OrderService {
     List<OrderItemDTO> getOrderItems(String orderId);
 
     /**
-     * Áp dụng mã giảm giá cho đơn
-     * 
-     * @param orderId    id đơn đặt lịch
-     * @param couponCode mã giảm giá
-     * @return đơn đặt lịch sau khi áp dụng giảm giá
-     */
-    OrderDTO applyCoupon(String orderId, String couponCode);
-
-    /**
-     * Hủy áp dụng mã giảm giá
-     * 
-     * @param orderId id đơn đặt lịch
-     * @return đơn đặt lịch sau khi hủy giảm giá
-     */
-    OrderDTO removeCoupon(String orderId);
-
-    /**
      * Lấy danh sách đơn theo ngày hẹn
      */
     List<OrderDTO> getOrdersByAppointmentDate(Date appointmentDate);

@@ -93,23 +93,6 @@ public interface CartService {
     CartResponse removeItem(UUID id, UUID itemId);
 
     /**
-     * Áp dụng mã giảm giá
-     * 
-     * @param id         id giỏ hàng
-     * @param couponCode mã giảm giá
-     * @return thông tin sau khi áp dụng
-     */
-    CartResponse applyCoupon(UUID id, String couponCode);
-
-    /**
-     * Gỡ bỏ mã giảm giá
-     * 
-     * @param id id giỏ hàng
-     * @return thông tin sau khi gỡ bỏ
-     */
-    CartResponse removeCoupon(UUID id);
-
-    /**
      * Xóa toàn bộ sản phẩm trong giỏ
      * 
      * @param id id giỏ hàng

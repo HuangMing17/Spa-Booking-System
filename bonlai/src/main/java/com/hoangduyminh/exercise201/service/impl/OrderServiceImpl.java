@@ -30,7 +30,6 @@ public class OrderServiceImpl implements OrderService {
     private final OrderStatusRepository orderStatusRepository;
     private final CustomerRepository customerRepository;
     private final ProductRepository productRepository;
-    private final CouponRepository couponRepository;
     private final GalleryRepository galleryRepository;
     private final VariantOptionRepository variantOptionRepository;
     private final EmailService emailService;
@@ -40,7 +39,6 @@ public class OrderServiceImpl implements OrderService {
             OrderStatusRepository orderStatusRepository,
             CustomerRepository customerRepository,
             ProductRepository productRepository,
-            CouponRepository couponRepository,
             GalleryRepository galleryRepository,
             VariantOptionRepository variantOptionRepository,
             EmailService emailService) {
@@ -49,7 +47,6 @@ public class OrderServiceImpl implements OrderService {
         this.orderStatusRepository = orderStatusRepository;
         this.customerRepository = customerRepository;
         this.productRepository = productRepository;
-        this.couponRepository = couponRepository;
         this.galleryRepository = galleryRepository;
         this.variantOptionRepository = variantOptionRepository;
         this.emailService = emailService;
@@ -107,8 +104,8 @@ public class OrderServiceImpl implements OrderService {
                 item.setId(UUID.randomUUID());
                 item.setOrder(savedOrder);
                 item.setProduct(product);
-                item.setQuantity(itemDTO.getQuantity());
-                item.setPrice(BigDecimal.valueOf(itemDTO.getUnitPrice()));
+                item.setQuantity(itemDTO.getQuantity() != null ? itemDTO.getQuantity() : 1);
+                item.setPrice(BigDecimal.valueOf(itemDTO.getUnitPrice() != null ? itemDTO.getUnitPrice() : 0.0));
                 item.setVariantId(itemDTO.getVariantId());
                 item.setVariantName(itemDTO.getVariantName());
                 item.setDuration(itemDTO.getDuration());
@@ -357,6 +354,7 @@ public class OrderServiceImpl implements OrderService {
     private void calculateAndUpdateTotalPrice(Order order) {
         List<OrderItem> items = orderItemRepository.findByOrderId(order.getId());
         BigDecimal totalPrice = items.stream()
+                .filter(item -> item.getPrice() != null && item.getQuantity() != null)
                 .map(item -> item.getPrice().multiply(new BigDecimal(item.getQuantity())))
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
 
@@ -370,55 +368,6 @@ public class OrderServiceImpl implements OrderService {
                 .stream()
                 .map(this::toItemDTO)
                 .collect(Collectors.toList());
-    }
-
-    @Override
-    @Transactional
-    public OrderDTO applyCoupon(String orderId, String couponCode) {
-        Order order = orderRepository.findById(orderId)
-                .orElseThrow(() -> new ResourceNotFoundException("Đơn đặt lịch", "id", orderId));
-
-        OrderUtils.validateOrderUpdatable(order.getOrderStatus().toString());
-
-        Coupon coupon = couponRepository.findByCode(couponCode)
-                .orElseThrow(() -> new BusinessException.InvalidCoupon("Mã giảm giá không tồn tại"));
-
-        // Validate coupon trước khi áp dụng
-        validateCouponForOrder(coupon, order);
-
-        // Tăng số lần sử dụng coupon
-        if (coupon.getTimesUsed() == null) {
-            coupon.setTimesUsed(BigDecimal.ONE);
-        } else {
-            coupon.setTimesUsed(coupon.getTimesUsed().add(BigDecimal.ONE));
-        }
-        couponRepository.save(coupon);
-
-        order.setCoupon(coupon);
-        Order updatedOrder = orderRepository.save(order);
-        
-        log.info("Đã áp dụng mã giảm giá {} cho đơn hàng {} (lần sử dụng: {})",
-                 couponCode, orderId, coupon.getTimesUsed());
-        return toDTO(updatedOrder);
-    }
-
-    @Override
-    @Transactional
-    public OrderDTO removeCoupon(String orderId) {
-        Order order = orderRepository.findById(orderId)
-                .orElseThrow(() -> new ResourceNotFoundException("Đơn đặt lịch", "id", orderId));
-
-        OrderUtils.validateOrderUpdatable(order.getOrderStatus().toString());
-
-        Coupon removedCoupon = order.getCoupon();
-        order.setCoupon(null);
-        Order updatedOrder = orderRepository.save(order);
-        
-        if (removedCoupon != null) {
-            log.info("Đã xóa mã giảm giá {} khỏi đơn hàng {}", removedCoupon.getCode(), orderId);
-        }
-        
-        return toDTO(updatedOrder);
     }
 
     @Override
@@ -462,31 +411,18 @@ public class OrderServiceImpl implements OrderService {
             dto.setStatusCode(order.getOrderStatus().getStatusName());
         }
 
-        if (order.getCoupon() != null) {
-            dto.setCouponId(order.getCoupon().getId());
-            dto.setCouponCode(order.getCoupon().getCode());
-        }
 
         dto.setAppointmentDate(order.getAppointmentDate());
         dto.setCreatedAt(order.getCreated_at());
-        dto.setTotalAmount(order.getTotalPrice().doubleValue());
+        dto.setTotalAmount(order.getTotalPrice() != null ? order.getTotalPrice().doubleValue() : 0.0);
         
         // Map VNPay fields
         dto.setPaymentMethod(order.getPaymentMethod());
         dto.setPaymentStatus(order.getPaymentStatus());
         dto.setTransactionId(order.getTransactionId());
 
-        // Tính toán các giá trị liên quan đến giảm giá
-        if (order.getCoupon() != null) {
-            double discountAmount = calculateDiscountAmount(dto.getTotalAmount(), order.getCoupon());
-            dto.setDiscountAmount(discountAmount);
-            dto.setCouponId(order.getCoupon().getId());
-            dto.setCouponCode(order.getCoupon().getCode());
-            dto.setFinalAmount(dto.getTotalAmount() - discountAmount);
-        } else {
-            dto.setDiscountAmount(0.0);
-            dto.setFinalAmount(dto.getTotalAmount());
-        }
+        dto.setDiscountAmount(0.0);
+        dto.setFinalAmount(dto.getTotalAmount());
 
         // Lấy danh sách order items
         List<OrderItem> items = orderItemRepository.findByOrderId(order.getId());
@@ -524,94 +460,4 @@ public class OrderServiceImpl implements OrderService {
         return dto;
     }
 
-    /**
-     * Validate coupon có thể áp dụng cho đơn hàng hay không
-     *
-     * @param coupon Mã giảm giá
-     * @param order Đơn hàng
-     * @throws BusinessException nếu coupon không hợp lệ
-     */
-    private void validateCouponForOrder(Coupon coupon, Order order) {
-        Date now = new Date();
-        
-        // Kiểm tra thời gian hiệu lực
-        if (coupon.getCouponStartDate() != null && now.before(coupon.getCouponStartDate())) {
-            throw new BusinessException("Mã giảm giá chưa có hiệu lực");
-        }
-        
-        if (coupon.getCouponEndDate() != null && now.after(coupon.getCouponEndDate())) {
-            throw new BusinessException("Mã giảm giá đã hết hạn");
-        }
-        
-        // Kiểm tra số tiền đơn hàng tối thiểu
-        if (coupon.getOrderAmountLimit() != null &&
-            order.getTotalPrice().doubleValue() < coupon.getOrderAmountLimit().doubleValue()) {
-            throw new BusinessException(String.format(
-                "Đơn hàng phải có giá trị tối thiểu %,.0f VND để áp dụng mã giảm giá này",
-                coupon.getOrderAmountLimit().doubleValue()));
-        }
-        
-        // Kiểm tra số lần sử dụng
-        if (coupon.getMaxUsage() != null &&
-            coupon.getTimesUsed() != null &&
-            coupon.getTimesUsed().compareTo(coupon.getMaxUsage()) >= 0) {
-            throw new BusinessException("Mã giảm giá đã hết lượt sử dụng");
-        }
-        
-        // Kiểm tra khách hàng đã sử dụng mã này chưa (nếu có giới hạn)
-        if (order.getCustomer() != null &&
-            couponRepository.hasCustomerUsedCoupon(order.getCustomer().getId(), coupon.getCode())) {
-            throw new BusinessException("Bạn đã sử dụng mã giảm giá này rồi");
-        }
-    }
-
-    /**
-     * Tính toán số tiền giảm giá dựa trên coupon (chỉ hỗ trợ giảm giá theo phần trăm)
-     *
-     * @param totalAmount Tổng tiền đơn hàng
-     * @param coupon Mã giảm giá
-     * @return Số tiền được giảm
-     */
-    private double calculateDiscountAmount(double totalAmount, Coupon coupon) {
-        if (coupon == null || coupon.getDiscountValue() == null) {
-            return 0.0;
-        }
-
-        // Kiểm tra coupon có hết hạn không
-        Date now = new Date();
-        if (coupon.getCouponEndDate() != null && now.after(coupon.getCouponEndDate())) {
-            log.warn("Coupon {} đã hết hạn", coupon.getCode());
-            return 0.0;
-        }
-
-        if (coupon.getCouponStartDate() != null && now.before(coupon.getCouponStartDate())) {
-            log.warn("Coupon {} chưa có hiệu lực", coupon.getCode());
-            return 0.0;
-        }
-
-        // Kiểm tra số tiền đơn hàng tối thiểu
-        if (coupon.getOrderAmountLimit() != null &&
-            totalAmount < coupon.getOrderAmountLimit().doubleValue()) {
-            log.warn("Đơn hàng chưa đạt số tiền tối thiểu {} để áp dụng coupon {}",
-                     coupon.getOrderAmountLimit(), coupon.getCode());
-            return 0.0;
-        }
-
-        // Tính toán giảm giá theo phần trăm
-        double discountPercentage = coupon.getDiscountValue().doubleValue();
-        
-        // Đảm bảo phần trăm giảm giá hợp lệ (0-100%)
-        if (discountPercentage < 0) {
-            discountPercentage = 0;
-        } else if (discountPercentage > 100) {
-            discountPercentage = 100;
-        }
-
-        double discountAmount = totalAmount * (discountPercentage / 100.0);
-        
-        log.debug("Áp dụng coupon {} với giảm giá {}% trên tổng tiền {}, số tiền giảm: {}",
-                  coupon.getCode(), discountPercentage, totalAmount, discountAmount);
-
-        return discountAmount;
-    }
 }

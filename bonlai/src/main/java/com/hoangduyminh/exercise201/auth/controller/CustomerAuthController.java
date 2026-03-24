@@ -8,6 +8,7 @@ import com.hoangduyminh.exercise201.auth.service.FirebaseAuthService;
 import com.hoangduyminh.exercise201.auth.service.JwtService;
 import com.hoangduyminh.exercise201.entity.Customer;
 import com.hoangduyminh.exercise201.repository.CustomerRepository;
+import com.hoangduyminh.exercise201.exception.ResourceNotFoundException;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -125,39 +126,33 @@ public class CustomerAuthController {
         @PostMapping("/firebase-login")
         @PreAuthorize("permitAll()")
         public ResponseEntity<CustomerAuthResponse> firebaseLogin(@Valid @RequestBody FirebaseAuthRequest request) {
-                try {
-                        log.info("Processing Firebase authentication");
+                log.info("Processing Firebase authentication");
 
-                        // Xác thực Firebase token và nhận JWT token
-                        String jwtToken = firebaseAuthService.authenticateFirebaseToken(request.getFirebaseToken());
+                // Xác thực Firebase token và nhận JWT token
+                String jwtToken = firebaseAuthService.authenticateFirebaseToken(request.getFirebaseToken());
 
-                        // Lấy thông tin customer từ JWT token
-                        String email = jwtService.extractUsername(jwtToken);
-                        Customer customer = customerRepository.findByEmail(email)
-                                        .orElseThrow(() -> new RuntimeException("Customer not found"));
+                // Lấy thông tin customer từ JWT token
+                String email = jwtService.extractUsername(jwtToken);
+                Customer customer = customerRepository.findByEmail(email)
+                                .orElseThrow(() -> new ResourceNotFoundException("Customer", "email", email));
 
-                        // Tạo response giống như login thông thường
-                        var response = new CustomerAuthResponse();
-                        response.setToken(jwtToken);
-                        response.setTokenType("Bearer");
-                        response.setExpiresIn(24 * 60 * 60 * 1000L); // 24 hours
-                        response.setUserType("CUSTOMER");
+                // Tạo response giống như login thông thường
+                var response = new CustomerAuthResponse();
+                response.setToken(jwtToken);
+                response.setTokenType("Bearer");
+                response.setExpiresIn(24 * 60 * 60 * 1000L); // 24 hours
+                response.setUserType("CUSTOMER");
 
-                        var userInfo = new CustomerAuthResponse.CustomerInfo();
-                        userInfo.setId(customer.getId());
-                        userInfo.setFullName(customer.getFirst_name() + " " + customer.getLast_name());
-                        userInfo.setEmail(customer.getEmail());
-                        userInfo.setPhone(customer.getPhone());
-                        userInfo.setActive(customer.getActive());
-                        response.setUser(userInfo);
+                var userInfo = new CustomerAuthResponse.CustomerInfo();
+                userInfo.setId(customer.getId());
+                userInfo.setFullName(customer.getFirst_name() + " " + customer.getLast_name());
+                userInfo.setEmail(customer.getEmail());
+                userInfo.setPhone(customer.getPhone());
+                userInfo.setActive(customer.getActive());
+                response.setUser(userInfo);
 
-                        log.info("Firebase authentication successful for user: {}", email);
-                        return ResponseEntity.ok(response);
-
-                } catch (Exception e) {
-                        log.error("Firebase authentication failed: {}", e.getMessage());
-                        throw new RuntimeException("Firebase authentication failed: " + e.getMessage());
-                }
+                log.info("Firebase authentication successful for user: {}", email);
+                return ResponseEntity.ok(response);
         }
 
         /**

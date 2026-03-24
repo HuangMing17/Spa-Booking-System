@@ -32,14 +32,12 @@ public class ProductServiceImpl implements ProductService {
     private final TagRepository tagRepository;
     private final ProductCategoryRepository productCategoryRepository;
     private final CategoryRepository categoryRepository;
-    private final VariantValueRepository variantValueRepository;
     private final VariantRepository variantRepository;
     private final AttributeRepository attributeRepository;
     private final ProductAttributeRepository productAttributeRepository;
     private final VariantOptionRepository variantOptionRepository;
     private final AttributeValueRepository attributeValueRepository;
     private final ProductAttributeValueRepository productAttributeValueRepository;
-    private final ProductCouponRepository productCouponRepository;
     private final ProductShippingInfoRepository productShippingInfoRepository;
 
     public ProductServiceImpl(ProductRepository productRepository,
@@ -48,14 +46,12 @@ public class ProductServiceImpl implements ProductService {
             TagRepository tagRepository,
             ProductCategoryRepository productCategoryRepository,
             CategoryRepository categoryRepository,
-            VariantValueRepository variantValueRepository,
             VariantRepository variantRepository,
             AttributeRepository attributeRepository,
             ProductAttributeRepository productAttributeRepository,
             VariantOptionRepository variantOptionRepository,
             AttributeValueRepository attributeValueRepository,
             ProductAttributeValueRepository productAttributeValueRepository,
-            ProductCouponRepository productCouponRepository,
             ProductShippingInfoRepository productShippingInfoRepository) {
         this.productRepository = productRepository;
         this.galleryRepository = galleryRepository;
@@ -63,14 +59,12 @@ public class ProductServiceImpl implements ProductService {
         this.tagRepository = tagRepository;
         this.productCategoryRepository = productCategoryRepository;
         this.categoryRepository = categoryRepository;
-        this.variantValueRepository = variantValueRepository;
         this.variantRepository = variantRepository;
         this.attributeRepository = attributeRepository;
         this.productAttributeRepository = productAttributeRepository;
         this.variantOptionRepository = variantOptionRepository;
         this.attributeValueRepository = attributeValueRepository;
         this.productAttributeValueRepository = productAttributeValueRepository;
-        this.productCouponRepository = productCouponRepository;
         this.productShippingInfoRepository = productShippingInfoRepository;
     }
 
@@ -235,26 +229,23 @@ public class ProductServiceImpl implements ProductService {
         // 3. Xóa các liên kết với Tag
         productTagRepository.deleteByProduct_Id(product.getId());
 
-        // 4. Xóa các liên kết với Coupon
-        productCouponRepository.deleteByProduct(product);
-
-        // 5. Xóa các variant và variant options
+        // 4. Xóa các variant và variant options
         variantRepository.deleteByProduct(product);
         variantOptionRepository.deleteByProduct(product);
 
-        // 6. Xóa các product attributes và values
+        // 5. Xóa các product attributes và values
         List<ProductAttribute> productAttributes = productAttributeRepository.findByProduct(product);
         for (ProductAttribute pa : productAttributes) {
             productAttributeValueRepository.deleteByProductAttribute(pa);
         }
         productAttributeRepository.deleteByProduct(product);
 
-        // 7. Xóa shipping info nếu có
+        // 6. Xóa shipping info nếu có
         if (product.getShippingInfo() != null) {
             productShippingInfoRepository.delete(product.getShippingInfo());
         }
 
-        // 8. Cuối cùng xóa product
+        // 7. Cuối cùng xóa product
         productRepository.delete(product);
     }
 

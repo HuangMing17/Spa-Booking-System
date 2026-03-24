@@ -227,34 +227,6 @@ export const getOrderItems = async (orderId) => {
   }
 };
 
-// 10. Quản lý mã giảm giá
-
-// Áp dụng mã giảm giá
-export const applyCoupon = async (orderId, couponCode) => {
-  try {
-    const response = await axiosInstance.post(
-      `/api/orders/${orderId}/coupon/${couponCode}`
-    );
-    return response; // axios interceptor already returns response.data
-  } catch (error) {
-    console.error("Error applying coupon:", error);
-    throw error;
-  }
-};
-
-// Hủy mã giảm giá
-export const removeCoupon = async (orderId) => {
-  try {
-    const response = await axiosInstance.delete(
-      `/api/orders/${orderId}/coupon`
-    );
-    return response; // axios interceptor already returns response.data
-  } catch (error) {
-    console.error("Error removing coupon:", error);
-    throw error;
-  }
-};
-
 // Utility functions
 
 // Kiểm tra xem đơn hàng có thể chỉnh sửa không
@@ -279,7 +251,7 @@ export const calculateTotalDuration = (items) => {
 };
 
 // Tính tổng tiền của đơn hàng
-export const calculateTotalAmount = (items, couponDiscount = 0) => {
+export const calculateTotalAmount = (items, discount = 0) => {
   const subtotal = items.reduce((total, item) => {
     // Use totalPrice from API response, or calculate from unitPrice * quantity, fallback to old price field
     const itemTotal =
@@ -287,5 +259,5 @@ export const calculateTotalAmount = (items, couponDiscount = 0) => {
       (item.unitPrice || item.price || 0) * (item.quantity || 1);
     return total + itemTotal;
   }, 0);
-  return Math.max(0, subtotal - couponDiscount);
+  return Math.max(0, subtotal - discount);
 };
