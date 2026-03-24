@@ -137,13 +137,27 @@ const ServiceCard = ({ service, onFavoriteToggle }) => {
       >
         <Meta
           title={
-            <div>
-              <Text strong style={{ fontSize: 16 }}>
+            <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between' }}>
+              <Paragraph 
+                strong 
+                style={{ 
+                  fontSize: 16, 
+                  marginBottom: 0, 
+                  flex: 1, 
+                  marginRight: 8,
+                  display: '-webkit-box',
+                  WebkitLineClamp: 2,
+                  WebkitBoxOrient: 'vertical',
+                  overflow: 'hidden',
+                  whiteSpace: 'normal',
+                  lineHeight: '1.4'
+                }}
+              >
                 {service.name}
-              </Text>
+              </Paragraph>
               {isPopular && (
                 <Tooltip title="Dịch vụ phổ biến">
-                  <FireOutlined style={{ color: "#fa8c16", marginLeft: 8 }} />
+                  <FireOutlined style={{ color: "#FF99AC", marginTop: 4, flexShrink: 0 }} />
                 </Tooltip>
               )}
             </div>
@@ -153,7 +167,7 @@ const ServiceCard = ({ service, onFavoriteToggle }) => {
               {/* Categories */}
               <Space size={[0, 4]} wrap>
                 {service.categories?.slice(0, 2).map((cat) => (
-                  <Tag color="blue" size="small" key={cat.id}>
+                  <Tag color="magenta" size="small" key={cat.id}>
                     {cat.name}
                   </Tag>
                 ))}
