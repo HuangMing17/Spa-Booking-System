@@ -9,6 +9,7 @@ import {
   TeamOutlined,
   FileTextOutlined,
   AppstoreOutlined,
+  CommentOutlined,
 } from "@ant-design/icons";
 
 const { Sider } = Layout;
@@ -83,6 +84,12 @@ const AdminSidebar = ({ collapsed }) => {
       ],
     },
     {
+      key: "chat",
+      icon: <CommentOutlined />,
+      label: "Hỗ trợ khách hàng",
+      onClick: () => navigate("/admin/chat"),
+    },
+    {
       key: "settings",
       icon: <SettingOutlined />,
       label: "Cài đặt",
@@ -123,6 +130,11 @@ const AdminSidebar = ({ collapsed }) => {
       return "appointments-list";
     }
 
+    // For chat
+    if (mainPath === "chat") {
+      return "chat";
+    }
+    
     return mainPath;
   };
 

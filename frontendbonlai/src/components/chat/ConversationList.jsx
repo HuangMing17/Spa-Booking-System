@@ -31,7 +31,14 @@ const ConversationList = () => {
 
   const handleStartNewChat = async () => {
     if (user) {
-      await startConversation(user.id, 'SUPPORT', 'Cần hỗ trợ');
+      try {
+        const conv = await startConversation(user.id, 'SUPPORT', 'Cần hỗ trợ');
+        if (conv) {
+          await selectConversation(conv);
+        }
+      } catch (err) {
+        console.error('Failed to start or select conversation:', err);
+      }
     }
   };
 
@@ -56,7 +63,11 @@ const ConversationList = () => {
   return (
     <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
       {/* Connection Status */}
-      {!isConnected && (
+      {!user ? (
+        <Box sx={{ bgcolor: 'info.light', p: 2, textAlign: 'center' }}>
+          <Typography variant="body2">Vui lòng đăng nhập để sử dụng chức năng chat hỗ trợ.</Typography>
+        </Box>
+      ) : !isConnected && (
         <Box sx={{ bgcolor: 'warning.light', p: 1, textAlign: 'center' }}>
           <Typography variant="caption">Đang kết nối...</Typography>
         </Box>
@@ -91,7 +102,7 @@ const ConversationList = () => {
         </Box>
       ) : (
         <List sx={{ flex: 1, overflow: 'auto', p: 0 }}>
-          {conversations.map(conv => (
+          {conversations.filter(conv => conv != null).map(conv => (
             <ListItemButton 
               key={conv.id} 
               onClick={() => selectConversation(conv)}
@@ -106,11 +117,11 @@ const ConversationList = () => {
               <ListItemText
                 primary={
                   <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <Typography variant="subtitle2" sx={{ fontWeight: conv.unreadCount > 0 ? 'bold' : 'normal' }}>
-                      {conv.subject || 'Chat Hỗ Trợ'}
+                    <Typography variant="subtitle2" sx={{ fontWeight: (conv?.unreadCount ?? 0) > 0 ? 'bold' : 'normal' }}>
+                      {conv?.subject || 'Chat Hỗ Trợ'}
                     </Typography>
                     <Typography variant="caption" color="text.secondary">
-                      {formatTime(conv.lastMessageAt || conv.createdAt)}
+                      {formatTime(conv?.lastMessageAt || conv?.createdAt)}
                     </Typography>
                   </Box>
                 }
@@ -124,12 +135,12 @@ const ConversationList = () => {
                         textOverflow: 'ellipsis',
                         whiteSpace: 'nowrap',
                         flex: 1,
-                        fontWeight: conv.unreadCount > 0 ? 500 : 400
+                        fontWeight: (conv?.unreadCount ?? 0) > 0 ? 500 : 400
                       }}
                     >
-                      {conv.lastMessageContent || 'Chưa có tin nhắn'}
+                      {conv?.lastMessageContent || 'Chưa có tin nhắn'}
                     </Typography>
-                    {conv.unreadCount > 0 && (
+                    {(conv?.unreadCount ?? 0) > 0 && (
                       <Badge 
                         badgeContent={conv.unreadCount} 
                         color="error"

@@ -26,6 +26,8 @@ public class ChatService {
     private final ChatMessageRepository messageRepository;
     private final ChatQuickReplyRepository quickReplyRepository;
     private final ChatTypingIndicatorRepository typingIndicatorRepository;
+    private final CustomerRepository customerRepository;
+    private final StaffAccountRepository staffAccountRepository;
     private final SimpMessagingTemplate messagingTemplate;
 
     /**
@@ -38,7 +40,7 @@ public class ChatService {
                 .findByCustomerIdAndStatus(request.getCustomerId(), ChatConversation.ConversationStatus.ACTIVE);
         
         if (existingConversation.isPresent()) {
-            return ChatConversationResponse.fromEntity(existingConversation.get());
+            return enrichConversationResponse(ChatConversationResponse.fromEntity(existingConversation.get()));
         }
 
         // Create new conversation
@@ -53,7 +55,7 @@ public class ChatService {
         conversation = conversationRepository.save(conversation);
         
         log.info("Created new conversation: {}", conversation.getId());
-        return ChatConversationResponse.fromEntity(conversation);
+        return enrichConversationResponse(ChatConversationResponse.fromEntity(conversation));
     }
 
     /**
@@ -63,6 +65,7 @@ public class ChatService {
         return conversationRepository.findByCustomerIdOrderByLastMessageAtDesc(customerId)
                 .stream()
                 .map(ChatConversationResponse::fromEntity)
+                .map(this::enrichConversationResponse)
                 .collect(Collectors.toList());
     }
 
@@ -73,6 +76,7 @@ public class ChatService {
         return conversationRepository.findByAssignedStaffIdOrderByLastMessageAtDesc(staffId)
                 .stream()
                 .map(ChatConversationResponse::fromEntity)
+                .map(this::enrichConversationResponse)
                 .collect(Collectors.toList());
     }
 
@@ -83,6 +87,7 @@ public class ChatService {
         return conversationRepository.findUnassignedActiveConversations()
                 .stream()
                 .map(ChatConversationResponse::fromEntity)
+                .map(this::enrichConversationResponse)
                 .collect(Collectors.toList());
     }
 
@@ -98,7 +103,7 @@ public class ChatService {
         conversation = conversationRepository.save(conversation);
         
         log.info("Assigned conversation {} to staff {}", conversationId, staffId);
-        return ChatConversationResponse.fromEntity(conversation);
+        return enrichConversationResponse(ChatConversationResponse.fromEntity(conversation));
     }
 
     /**
@@ -118,11 +123,12 @@ public class ChatService {
                 .attachmentType(request.getAttachmentType())
                 .build();
 
-        message = messageRepository.save(message);
+        message = messageRepository.saveAndFlush(message);
 
-        // Update conversation's last message timestamp
+        // Update conversation's last message timestamp and content
         conversationRepository.findById(request.getConversationId()).ifPresent(conv -> {
             conv.setLastMessageAt(LocalDateTime.now());
+            conv.setLastMessageContent(request.getContent());
             conversationRepository.save(conv);
         });
 
@@ -135,6 +141,11 @@ public class ChatService {
         );
 
         ChatMessageResponse response = ChatMessageResponse.fromEntity(message);
+        
+        // Ensure timestamp is present in response to avoid 01/01 07:00 in frontend
+        if (response.getCreatedAt() == null) {
+            response.setCreatedAt(LocalDateTime.now());
+        }
 
         // Broadcast message via WebSocket
         messagingTemplate.convertAndSend(
@@ -248,7 +259,7 @@ public class ChatService {
         conversation = conversationRepository.save(conversation);
         
         log.info("Closed conversation {} by user {}", conversationId, closedBy);
-        return ChatConversationResponse.fromEntity(conversation);
+        return enrichConversationResponse(ChatConversationResponse.fromEntity(conversation));
     }
 
     /**
@@ -274,5 +285,40 @@ public class ChatService {
      */
     private ChatParticipant.ParticipantType mapSenderTypeToParticipantType(ChatMessage.SenderType senderType) {
         return ChatParticipant.ParticipantType.valueOf(senderType.name());
+    }
+
+    /**
+     * Enrich conversation response with customer and staff names
+     */
+    private ChatConversationResponse enrichConversationResponse(ChatConversationResponse response) {
+        if (response.getCustomerId() != null) {
+            customerRepository.findById(response.getCustomerId()).ifPresent(customer -> {
+                String first = customer.getFirst_name();
+                String last = customer.getLast_name();
+                String fullName = "";
+                if (first != null) fullName += first;
+                if (last != null) {
+                    if (!fullName.isEmpty()) fullName += " ";
+                    fullName += last;
+                }
+                response.setCustomerName(fullName.trim().isEmpty() ? customer.getUser_name() : fullName.trim());
+            });
+        }
+        
+        if (response.getAssignedStaffId() != null) {
+            staffAccountRepository.findById(response.getAssignedStaffId()).ifPresent(staff -> {
+                String first = staff.getFirst_name();
+                String last = staff.getLast_name();
+                String fullName = "";
+                if (first != null) fullName += first;
+                if (last != null) {
+                    if (!fullName.isEmpty()) fullName += " ";
+                    fullName += last;
+                }
+                response.setAssignedStaffName(fullName.trim().isEmpty() ? staff.getUserName() : fullName.trim());
+            });
+        }
+        
+        return response;
     }
 }

@@ -2,20 +2,14 @@ import React, { useState } from 'react';
 import { Box, TextField, IconButton, Paper } from '@mui/material';
 import SendIcon from '@mui/icons-material/Send';
 import { useChat } from '../../context/chat/ChatContext';
-import { useCustomerAuth } from '../../auth/customer/context/CustomerAuthContext';
 
 const MessageInput = () => {
   const [text, setText] = useState('');
-  const { user } = useCustomerAuth();
-  const { sendMessage, sendTypingIndicator, isConnected } = useChat();
+  const { sendMessage, sendTypingIndicator, isConnected, currentUser } = useChat();
 
   const handleSend = () => {
-    if (text.trim() && user && isConnected) {
+    if (text.trim() && currentUser && isConnected) {
       const success = sendMessage({
-        senderId: user.id,
-        senderType: 'CUSTOMER',
-        senderName: user.fullName || user.email,
-        messageType: 'TEXT',
         content: text.trim()
       });
       
