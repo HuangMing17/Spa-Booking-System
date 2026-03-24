@@ -60,6 +60,7 @@ import {
   RevenueReport,
   ServicesReport,
 } from "./admin/pages/reports";
+import AdminChat from "./admin/pages/chat/AdminChat";
 
 // Theme
 import { theme } from "./theme/themeConfig";
@@ -145,6 +146,7 @@ function App() {
                         {/* Report Routes */}
                         <Route path="reports/revenue" element={<RevenueReport />} />
                         <Route path="reports/services" element={<ServicesReport />} />
+                        <Route path="chat" element={<AdminChat />} />
                         <Route
                           path="bao-cao"
                           element={<div>Báo cáo thống kê</div>}

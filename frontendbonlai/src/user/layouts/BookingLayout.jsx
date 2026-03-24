@@ -13,7 +13,7 @@ const BookingLayout = ({ children, isHomePage = false }) => {
         background: isHomePage ? "#FFF" : "#FFF0F5",
         display: "flex",
         flexDirection: "column",
-        paddingTop: isHomePage ? "0" : "120px", // No padding for home page
+        paddingTop: "120px", // Đảm bảo không bị che bởi fixed header
       }}
     >
       <Header />

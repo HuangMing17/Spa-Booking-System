@@ -1,0 +1,23 @@
+.admin-chat-layout .ant-layout-sider {
+  background: #fff;
+}
+
+.conversation-item {
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.conversation-item:hover {
+  background: #fafafa;
+}
+
+.conversation-item.active {
+  background: #e6f7ff;
+}
+
+.admin-chat-layout .ant-list-item-meta-title {
+  margin-bottom: 4px;
+}
+
+.admin-chat-layout .ant-list-item-meta-description {
+  font-size: 13px;
+}

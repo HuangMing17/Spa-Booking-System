@@ -60,6 +60,7 @@ public class SecurityConfig {
                                 "/auth/firebase/health",
                                 "/api/test/**",
                                 "/api/payment/vnpay-ipn", // Cho phép Máy chủ VNPay gọi tự do
+                                "/ws/chat/**", // Cho phép kết nối WebSocket chat
                                 "/error")
                         .permitAll()
                         // Public GET endpoints for categories

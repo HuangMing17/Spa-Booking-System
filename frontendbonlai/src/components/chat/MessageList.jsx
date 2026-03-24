@@ -5,7 +5,9 @@ import { vi } from 'date-fns/locale';
 
 const MessageList = ({ messages }) => {
   const formatMessageTime = (dateString) => {
+    if (!dateString) return '';
     const date = new Date(dateString);
+    if (isNaN(date.getTime())) return '';
     
     if (isToday(date)) {
       return format(date, 'HH:mm', { locale: vi });
@@ -23,27 +25,28 @@ const MessageList = ({ messages }) => {
 
   return (
     <Box>
-      {messages.map((message, index) => {
+      {(messages || []).map((message, index) => {
         const isCustomer = message.senderType === 'CUSTOMER';
-        const showAvatar = !isCustomer;
+        const showAvatar = true; // Show avatar for everyone now
         
         return (
           <Box
             key={message.id}
             sx={{
               display: 'flex',
-              justifyContent: isCustomer ? 'flex-end' : 'flex-start',
+              flexDirection: isCustomer ? 'row-reverse' : 'row', // Reverse for customer
+              justifyContent: 'flex-start',
               mb: 2,
               gap: 1
             }}
           >
-            {/* Avatar for staff/admin */}
+            {/* Avatar for all */}
             {showAvatar && (
               <Avatar 
                 sx={{ 
                   width: 32, 
                   height: 32, 
-                  bgcolor: 'primary.main',
+                  bgcolor: isCustomer ? 'secondary.main' : 'primary.main', // Different color for customer
                   fontSize: '0.875rem'
                 }}
               >
@@ -51,22 +54,20 @@ const MessageList = ({ messages }) => {
               </Avatar>
             )}
             
-            <Box sx={{ maxWidth: '70%' }}>
-              {/* Sender name for staff/admin */}
-              {!isCustomer && (
-                <Typography 
-                  variant="caption" 
-                  sx={{ 
-                    fontWeight: 'bold', 
-                    display: 'block',
-                    mb: 0.5,
-                    ml: 0.5,
-                    color: 'primary.main'
-                  }}
-                >
-                  {message.senderName}
-                </Typography>
-              )}
+            <Box sx={{ maxWidth: '70%', display: 'flex', flexDirection: 'column', alignItems: isCustomer ? 'flex-end' : 'flex-start' }}>
+              {/* Sender name for all */}
+              <Typography 
+                variant="caption" 
+                sx={{ 
+                  fontWeight: 'bold', 
+                  display: 'block',
+                  mb: 0.5,
+                  mx: 0.5,
+                  color: isCustomer ? 'secondary.main' : 'primary.main'
+                }}
+              >
+                {message.senderName || (isCustomer ? 'Khách hàng' : 'Nhân viên')}
+              </Typography>
               
               <Paper
                 sx={{
