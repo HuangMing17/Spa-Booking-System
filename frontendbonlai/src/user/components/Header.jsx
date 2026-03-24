@@ -255,15 +255,16 @@ const Header = () => {
           <Space align="center">
             <div
               style={{
-                fontSize: "22px",
+                fontSize: "28px",
                 fontWeight: "bold",
+                fontFamily: '"Great Vibes", cursive',
                 background: "linear-gradient(135deg, #FF99AC, #FFB6C1)",
                 WebkitBackgroundClip: "text",
                 WebkitTextFillColor: "transparent",
                 backgroundClip: "text",
               }}
             >
-              BON LAI
+              God Spa Central
             </div>
           </Space>
           <Button
@@ -647,8 +648,9 @@ const Header = () => {
                   <div>
                     <div
                       style={{
-                        fontSize: "24px",
+                        fontSize: "34px",
                         fontWeight: "700",
+                        fontFamily: '"Great Vibes", cursive',
                         background: "linear-gradient(135deg, #FF99AC, #FFB6C1)",
                         WebkitBackgroundClip: "text",
                         WebkitTextFillColor: "transparent",
@@ -656,18 +658,7 @@ const Header = () => {
                         lineHeight: "1.2",
                       }}
                     >
-                      Beauty SPA
-                    </div>
-                    <div
-                      style={{
-                        fontSize: "10px",
-                        color: "#999",
-                        textTransform: "uppercase",
-                        letterSpacing: "1px",
-                        fontWeight: "500",
-                      }}
-                    >
-                      Luxury & Relax
+                      God Spa Central
                     </div>
                   </div>
                 </div>

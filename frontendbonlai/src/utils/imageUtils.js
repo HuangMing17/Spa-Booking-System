@@ -56,5 +56,5 @@ export const isValidImageUrl = (imageUrl) => {
  * @returns {string} - Placeholder URL
  */
 export const getPlaceholderImage = (width = 300, height = 300) => {
-  return `https://via.placeholder.com/${width}x${height}?text=No+Image`;
+  return `https://placehold.co/${width}x${height}/f5f5f5/999999.png?text=No+Image`;
 };

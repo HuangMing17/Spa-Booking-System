@@ -439,7 +439,7 @@ const Services = () => {
                   <img
                     alt={service.name}
                     src={
-                      service.thumbnail || "https://via.placeholder.com/400x300"
+                      service.thumbnail || "https://placehold.co/400x300/f5f5f5/999999.png?text=No+Image"
                     }
                     style={{ height: 200, objectFit: "cover" }}
                     onClick={() => handleViewDetail(service)}
