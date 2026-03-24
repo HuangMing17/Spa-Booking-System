@@ -44,6 +44,13 @@ public class ChatConversation {
     @Column(name = "last_message_at")
     private LocalDateTime lastMessageAt;
     
+    @Column(name = "last_message_content", length = 500)
+    private String lastMessageContent;
+    
+    @Column(name = "unread_count")
+    @Builder.Default
+    private Integer unreadCount = 0;
+    
     @Column(name = "closed_by", columnDefinition = "BINARY(16)")
     private UUID closedBy;
     
@@ -74,5 +81,22 @@ public class ChatConversation {
         ACTIVE,
         CLOSED,
         ARCHIVED
+    }
+
+    // Manual getters and setters to ensure compilation if Lombok fails
+    public String getLastMessageContent() {
+        return lastMessageContent;
+    }
+
+    public void setLastMessageContent(String lastMessageContent) {
+        this.lastMessageContent = lastMessageContent;
+    }
+
+    public Integer getUnreadCount() {
+        return unreadCount;
+    }
+
+    public void setUnreadCount(Integer unreadCount) {
+        this.unreadCount = unreadCount;
     }
 }

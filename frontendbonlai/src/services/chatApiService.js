@@ -5,6 +5,8 @@ const CHAT_API_BASE = '/api/chat';
 /**
  * Chat REST API Service
  * Handles all HTTP requests for chat functionality
+ * NOTE: axiosInstance interceptor already returns response.data,
+ * so methods here return the response directly (no extra .data)
  */
 class ChatApiService {
   
@@ -14,7 +16,7 @@ class ChatApiService {
   async createConversation(data) {
     try {
       const response = await axiosInstance.post(`${CHAT_API_BASE}/conversations`, data);
-      return response.data;
+      return response; // interceptor already unwraps response.data
     } catch (error) {
       console.error('Error creating conversation:', error);
       throw error;
@@ -27,7 +29,7 @@ class ChatApiService {
   async getCustomerConversations(customerId) {
     try {
       const response = await axiosInstance.get(`${CHAT_API_BASE}/conversations/customer/${customerId}`);
-      return response.data;
+      return response; // interceptor already unwraps response.data
     } catch (error) {
       console.error('Error fetching customer conversations:', error);
       throw error;
@@ -40,7 +42,7 @@ class ChatApiService {
   async getStaffConversations(staffId) {
     try {
       const response = await axiosInstance.get(`${CHAT_API_BASE}/conversations/staff/${staffId}`);
-      return response.data;
+      return response; // interceptor already unwraps response.data
     } catch (error) {
       console.error('Error fetching staff conversations:', error);
       throw error;
@@ -53,7 +55,7 @@ class ChatApiService {
   async getUnassignedConversations() {
     try {
       const response = await axiosInstance.get(`${CHAT_API_BASE}/conversations/unassigned`);
-      return response.data;
+      return response; // interceptor already unwraps response.data
     } catch (error) {
       console.error('Error fetching unassigned conversations:', error);
       throw error;
@@ -68,7 +70,7 @@ class ChatApiService {
       const response = await axiosInstance.put(
         `${CHAT_API_BASE}/conversations/${conversationId}/assign/${staffId}`
       );
-      return response.data;
+      return response; // interceptor already unwraps response.data
     } catch (error) {
       console.error('Error assigning conversation:', error);
       throw error;
@@ -85,7 +87,7 @@ class ChatApiService {
         null,
         { params: { closedBy } }
       );
-      return response.data;
+      return response; // interceptor already unwraps response.data
     } catch (error) {
       console.error('Error closing conversation:', error);
       throw error;
@@ -101,7 +103,7 @@ class ChatApiService {
         `${CHAT_API_BASE}/conversations/${conversationId}/messages`,
         { params: { page, size } }
       );
-      return response.data;
+      return response; // interceptor already unwraps response.data
     } catch (error) {
       console.error('Error fetching messages:', error);
       throw error;
@@ -116,7 +118,7 @@ class ChatApiService {
       const response = await axiosInstance.get(
         `${CHAT_API_BASE}/conversations/${conversationId}/messages/all`
       );
-      return response.data;
+      return response; // interceptor already unwraps response.data
     } catch (error) {
       console.error('Error fetching all messages:', error);
       throw error;
@@ -158,7 +160,7 @@ class ChatApiService {
     try {
       const params = category ? { category } : {};
       const response = await axiosInstance.get(`${CHAT_API_BASE}/quick-replies`, { params });
-      return response.data;
+      return response; // interceptor already unwraps response.data
     } catch (error) {
       console.error('Error fetching quick replies:', error);
       throw error;

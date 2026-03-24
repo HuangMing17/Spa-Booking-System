@@ -19,6 +19,7 @@ export const ChatProvider = ({ children }) => {
   const [messages, setMessages] = useState([]);
   const [typingUsers, setTypingUsers] = useState([]);
   const [unreadCounts, setUnreadCounts] = useState({});
+  const [currentUser, setCurrentUser] = useState(null);
   const [quickReplies, setQuickReplies] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -58,15 +59,26 @@ export const ChatProvider = ({ children }) => {
   const loadConversations = useCallback(async (userId, userType) => {
     try {
       setLoading(true);
-      let data;
+      let data = [];
       
       if (userType === 'CUSTOMER') {
         data = await chatApiService.getCustomerConversations(userId);
       } else if (userType === 'STAFF' || userType === 'ADMIN') {
-        data = await chatApiService.getStaffConversations(userId);
+        // Load both assigned and unassigned for admin/staff
+        const [assigned, unassigned] = await Promise.allSettled([
+          chatApiService.getStaffConversations(userId),
+          chatApiService.getUnassignedConversations()
+        ]);
+        
+        const assignedList = assigned.status === 'fulfilled' ? assigned.value : [];
+        const unassignedList = unassigned.status === 'fulfilled' ? unassigned.value : [];
+        
+        // Merge and deduplicate by id
+        const merged = [...unassignedList, ...assignedList].filter(c => c != null);
+        data = merged.filter((c, i, arr) => arr.findIndex(x => x && x.id === c.id) === i);
       }
       
-      setConversations(data || []);
+      setConversations(data.filter(c => c != null));
       setError(null);
     } catch (err) {
       console.error('Error loading conversations:', err);
@@ -89,10 +101,15 @@ export const ChatProvider = ({ children }) => {
         assignedStaffId: null
       });
       
+      // Accept any response from the server as long as it's an object
+      if (!data) {
+        throw new Error('No data returned from server');
+      }
+
       setCurrentConversation(data);
       setConversations(prev => {
-        const exists = prev.find(c => c.id === data.id);
-        return exists ? prev : [data, ...prev];
+        const exists = prev.find(c => c && c.id === data.id);
+        return exists ? prev : [data, ...prev.filter(c => c != null)];
       });
       
       return data;
@@ -124,16 +141,26 @@ export const ChatProvider = ({ children }) => {
       
       // Subscribe to new conversation
       chatWebSocketService.subscribeToConversation(conversation.id, (newMessage) => {
-        setMessages(prev => [...prev, newMessage]);
+        setMessages(prev => {
+          // Check if message already exists to avoid duplicates
+          if (prev.find(m => m.id === newMessage.id)) return prev;
+          return [...prev, newMessage];
+        });
         
-        // Update conversation's last message
-        setConversations(prevConvs => 
-          prevConvs.map(c => 
+        // Update conversation's last message in the list
+        setConversations(prevConvs => {
+          const updated = prevConvs.map(c => 
             c.id === conversation.id 
-              ? { ...c, lastMessageAt: newMessage.createdAt, lastMessageContent: newMessage.content }
+              ? { ...c, ...newMessage, lastMessageAt: newMessage.createdAt, lastMessageContent: newMessage.content }
               : c
-          )
-        );
+          );
+          
+          // If the conversation isn't in the list (e.g. newly created unassigned), add it
+          if (!updated.find(c => c.id === conversation.id)) {
+            return [{ ...conversation, ...newMessage, lastMessageAt: newMessage.createdAt, lastMessageContent: newMessage.content }, ...updated];
+          }
+          return updated;
+        });
       });
       
       // Subscribe to typing indicators
@@ -171,13 +198,17 @@ export const ChatProvider = ({ children }) => {
 
     const fullMessageData = {
       conversationId: currentConversation.id,
+      senderId: messageData.senderId || currentUser?.id,
+      senderType: messageData.senderType || currentUser?.type || 'CUSTOMER',
+      senderName: messageData.senderName || currentUser?.name || 'User',
+      messageType: messageData.messageType || 'TEXT',
       ...messageData
     };
 
     const sent = chatWebSocketService.sendMessage(fullMessageData);
     
     // Stop typing indicator when message is sent
-    if (sent && currentUserRef.current) {
+    if (sent) {
       sendTypingIndicator(false);
     }
     
@@ -301,13 +332,6 @@ export const ChatProvider = ({ children }) => {
   }, [currentConversation]);
 
   /**
-   * Set current user for context
-   */
-  const setCurrentUser = useCallback((user) => {
-    currentUserRef.current = user;
-  }, []);
-
-  /**
    * Cleanup on unmount
    */
   useEffect(() => {
@@ -318,6 +342,20 @@ export const ChatProvider = ({ children }) => {
       disconnectWebSocket();
     };
   }, [disconnectWebSocket]);
+
+  useEffect(() => {
+    currentUserRef.current = currentUser;
+  }, [currentUser]);
+
+  // Sync currentConversation with the version in the conversations list if it updates
+  useEffect(() => {
+    if (currentConversation) {
+      const updated = conversations.find(c => c.id === currentConversation.id);
+      if (updated && updated.lastMessageAt !== currentConversation.lastMessageAt) {
+        setCurrentConversation(updated);
+      }
+    }
+  }, [conversations, currentConversation]);
 
   const value = {
     // Connection state
@@ -351,6 +389,7 @@ export const ChatProvider = ({ children }) => {
     unreadCounts,
     
     // User
+    currentUser,
     setCurrentUser,
     
     // UI state

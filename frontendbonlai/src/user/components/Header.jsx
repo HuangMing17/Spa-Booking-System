@@ -40,6 +40,7 @@ import {
 import { useCustomerAuth } from "../../auth/customer/context/CustomerAuthContext";
 
 const { Text, Title } = Typography;
+const TOP_BAR_HEIGHT = 42; // Chiều cao cố định của TopBar
 
 const Header = () => {
   const [mobileMenuVisible, setMobileMenuVisible] = useState(false);
@@ -162,10 +163,11 @@ const Header = () => {
         left: 0,
         right: 0,
         width: "100%",
+        height: `${TOP_BAR_HEIGHT}px`,
         zIndex: 1001,
         borderBottom: "1px solid rgba(255, 255, 255, 0.2)",
-        transition: "all 0.3s ease",
-        transform: scrolled ? "translateY(-100%)" : "translateY(0)",
+        transition: "transform 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
+        transform: scrolled ? `translateY(-${TOP_BAR_HEIGHT}px)` : "translateY(0)",
       }}
     >
       <div style={{ maxWidth: "1400px", margin: "0 auto", padding: "0 50px" }}>
@@ -588,7 +590,7 @@ const Header = () => {
         style={{
           background: "#fff",
           position: "fixed",
-          top: scrolled ? 0 : "46px", // 46px là chiều cao của TopBar
+          top: scrolled ? 0 : `${TOP_BAR_HEIGHT}px`, // Use the constant here
           left: 0,
           right: 0,
           width: "100%",

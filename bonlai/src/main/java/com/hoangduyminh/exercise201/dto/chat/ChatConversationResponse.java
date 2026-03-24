@@ -40,6 +40,8 @@ public class ChatConversationResponse {
                 .status(conversation.getStatus())
                 .subject(conversation.getSubject())
                 .lastMessageAt(conversation.getLastMessageAt())
+                .lastMessageContent(conversation.getLastMessageContent())
+                .unreadCount(conversation.getUnreadCount())
                 .closedBy(conversation.getClosedBy())
                 .closedAt(conversation.getClosedAt())
                 .createdAt(conversation.getCreatedAt())
