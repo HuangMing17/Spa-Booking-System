@@ -487,7 +487,7 @@ const Home = ({ onMount }) => {
                     onClick={() => handleServiceClick(service.id)} // THÊM ONE-CLICK
                     style={{ 
                       cursor: 'pointer',
-                      border: `2px solid ${index === 0 ? '#ff6b35' : index === 1 ? '#1890ff' : index === 2 ? '#52c41a' : '#faad14'}`,
+                      border: `1px solid ${index === 0 ? '#FFD700' : '#f0f0f0'}`,
                       borderRadius: '8px',
                       overflow: 'hidden'
                     }}
@@ -526,8 +526,9 @@ const Home = ({ onMount }) => {
                           handleServiceClick(service.id);
                         }}
                         style={{ 
-                          backgroundColor: index === 0 ? "#ff6b35" : "#ff8c69",
-                          borderColor: index === 0 ? "#ff6b35" : "#ff8c69"
+                          backgroundColor: "#FF99AC",
+                          borderColor: "#FF99AC",
+                          width: "100%"
                         }}
                       >
                         Đặt Lịch
@@ -541,7 +542,7 @@ const Home = ({ onMount }) => {
                             <Badge
                               count="Phổ biến nhất"
                               style={{
-                                backgroundColor: "#ff6b35",
+                                backgroundColor: "#FF99AC",
                                 fontSize: "14px",
                                 height: "22px",
                                 lineHeight: "22px",
@@ -560,7 +561,7 @@ const Home = ({ onMount }) => {
                             {service.description}
                           </Paragraph>
                           <div className="service-price">
-                            <Text strong style={{ color: "#ff6b35", fontSize: "20px" }}>
+                            <Text strong style={{ color: "#FF99AC", fontSize: "20px" }}>
                               {formatPrice(service)}
                             </Text>
                           </div>
@@ -608,7 +609,7 @@ const Home = ({ onMount }) => {
                     background: 'white',
                     borderRadius: '12px',
                     boxShadow: '0 2px 8px rgba(0,0,0,0.06)',
-                    borderLeft: '4px solid #1890ff'
+                    borderLeft: '4px solid #FF99AC'
                   }}>
                     <div>                      <Title level={3} style={{ margin: '0 0 8px 0', color: '#2c3e50', fontSize: '26px' }}>
                         {category.name}
@@ -621,12 +622,8 @@ const Home = ({ onMount }) => {
                       type="primary"
                       onClick={() => navigate(`/dich-vu?category=${category.id}`)}
                       style={{ 
-                        backgroundColor: categoryIndex === 0 ? "#1890ff" : 
-                        categoryIndex === 1 ? "#52c41a" : 
-                        categoryIndex === 2 ? "#fa8c16" : "#722ed1",
-                        borderColor: categoryIndex === 0 ? "#1890ff" : 
-                        categoryIndex === 1 ? "#52c41a" : 
-                        categoryIndex === 2 ? "#fa8c16" : "#722ed1",
+                        backgroundColor: "#FF99AC",
+                        borderColor: "#FF99AC",
                         fontWeight: '500'
                       }}
                       icon={<ArrowRightOutlined />}
@@ -645,12 +642,7 @@ const Home = ({ onMount }) => {
                             style={{
                               borderRadius: '12px',
                               overflow: 'hidden',
-                              border: `2px solid ${
-                                categoryIndex === 0 ? '#1890ff' : 
-                                categoryIndex === 1 ? '#52c41a' : 
-                                categoryIndex === 2 ? '#fa8c16' : 
-                                '#722ed1'
-                              }`,
+                              border: '1px solid #f0f0f0',
                               boxShadow: '0 2px 8px rgba(0,0,0,0.06)',
                               transition: 'all 0.3s ease',
                               height: '100%',
@@ -682,12 +674,9 @@ const Home = ({ onMount }) => {
                                   handleServiceClick(service.id);
                                 }}
                                 style={{ 
-                                  backgroundColor: categoryIndex === 0 ? "#1890ff" : 
-                                  categoryIndex === 1 ? "#52c41a" : 
-                                  categoryIndex === 2 ? "#fa8c16" : "#722ed1",
-                                  borderColor: categoryIndex === 0 ? "#1890ff" : 
-                                  categoryIndex === 1 ? "#52c41a" : 
-                                  categoryIndex === 2 ? "#fa8c16" : "#722ed1"
+                                  backgroundColor: "#FF99AC",
+                                  borderColor: "#FF99AC",
+                                  width: "100%"
                                 }}
                               >
                                 Đặt Lịch
@@ -708,7 +697,7 @@ const Home = ({ onMount }) => {
                                     {service.description}
                                   </Paragraph>
                                   <div style={{ textAlign: 'right' }}>
-                                    <Text strong style={{ color: "#1890ff", fontSize: '20px' }}>
+                                    <Text strong style={{ color: "#FF99AC", fontSize: '20px' }}>
                                       {formatPrice(service)}
                                     </Text>
                                   </div>
