@@ -281,8 +281,10 @@ const Booking = () => {
         message.loading("Đang kết nối tới cổng thanh toán VNPay...", 3);
         try {
           const paymentRes = await axiosInstance.get(`/api/payment/create-url/${createdAppointment.id}`);
-          if (paymentRes.data && paymentRes.data.url) {
-            window.location.href = paymentRes.data.url;
+          // axiosInstance interceptor đã trả về thẳng response.data, nên paymentRes.url mới là biến chính xác.
+          const vnpayUrl = paymentRes?.url || paymentRes?.data?.url;
+          if (vnpayUrl) {
+            window.location.href = vnpayUrl;
             return; // Ngắt luồng ở đây để nó không văng Box popup thành công nữa
           }
         } catch (paymentErr) {
