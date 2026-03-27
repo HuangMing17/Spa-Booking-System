@@ -91,8 +91,8 @@ const Home = ({ onMount }) => {
       setLoading(true);
 
       // Load basic data first
-      console.log("Loading basic data...");
-      const [servicesRes, categoriesRes, customersRes] =
+      console.log("Loading basic data from public endpoints...");
+      const [servicesRes, categoriesRes] =
         await Promise.all([
           fetchServices().catch((err) => {
             console.error("Error fetching services:", err);
@@ -102,17 +102,15 @@ const Home = ({ onMount }) => {
             console.error("Error fetching categories:", err);
             return [];
           }),
-          getCustomers().catch((err) => {
-            console.error("Error fetching customers:", err);
-            return [];
-          }),
         ]);
 
       console.log("API Responses:", {
         servicesRes,
         categoriesRes,
-        customersRes,
       });
+
+      // Mock customers for public statistics
+      const customersRes = []; 
 
       // Process services data - Giữ lại để tính toán top services
       const servicesData = Array.isArray(servicesRes) ? servicesRes : [];

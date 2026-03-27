@@ -292,31 +292,48 @@ public class ChatService {
      */
     private ChatConversationResponse enrichConversationResponse(ChatConversationResponse response) {
         if (response.getCustomerId() != null) {
-            customerRepository.findById(response.getCustomerId()).ifPresent(customer -> {
-                String first = customer.getFirst_name();
-                String last = customer.getLast_name();
-                String fullName = "";
-                if (first != null) fullName += first;
-                if (last != null) {
-                    if (!fullName.isEmpty()) fullName += " ";
-                    fullName += last;
+            try {
+                log.info("Enriching conversation {} - looking up customer with ID: {}", response.getId(), response.getCustomerId());
+                var customerOpt = customerRepository.findById(response.getCustomerId());
+                if (customerOpt.isPresent()) {
+                    var customer = customerOpt.get();
+                    String first = customer.getFirst_name();
+                    String last = customer.getLast_name();
+                    String fullName = "";
+                    if (first != null) fullName += first;
+                    if (last != null) {
+                        if (!fullName.isEmpty()) fullName += " ";
+                        fullName += last;
+                    }
+                    String finalName = fullName.trim().isEmpty() ? customer.getUser_name() : fullName.trim();
+                    response.setCustomerName(finalName);
+                    log.info("Enriched conversation {} with customerName: {}", response.getId(), finalName);
+                } else {
+                    log.warn("Customer NOT FOUND for ID: {} in conversation {}", response.getCustomerId(), response.getId());
+                    response.setCustomerName("Khách #" + response.getCustomerId().toString().substring(0, 8));
                 }
-                response.setCustomerName(fullName.trim().isEmpty() ? customer.getUser_name() : fullName.trim());
-            });
+            } catch (Exception e) {
+                log.error("Error enriching customer name for conversation {}: {}", response.getId(), e.getMessage(), e);
+                response.setCustomerName("Khách hàng");
+            }
         }
         
         if (response.getAssignedStaffId() != null) {
-            staffAccountRepository.findById(response.getAssignedStaffId()).ifPresent(staff -> {
-                String first = staff.getFirst_name();
-                String last = staff.getLast_name();
-                String fullName = "";
-                if (first != null) fullName += first;
-                if (last != null) {
-                    if (!fullName.isEmpty()) fullName += " ";
-                    fullName += last;
-                }
-                response.setAssignedStaffName(fullName.trim().isEmpty() ? staff.getUserName() : fullName.trim());
-            });
+            try {
+                staffAccountRepository.findById(response.getAssignedStaffId()).ifPresent(staff -> {
+                    String first = staff.getFirst_name();
+                    String last = staff.getLast_name();
+                    String fullName = "";
+                    if (first != null) fullName += first;
+                    if (last != null) {
+                        if (!fullName.isEmpty()) fullName += " ";
+                        fullName += last;
+                    }
+                    response.setAssignedStaffName(fullName.trim().isEmpty() ? staff.getUserName() : fullName.trim());
+                });
+            } catch (Exception e) {
+                log.error("Error enriching staff name for conversation {}: {}", response.getId(), e.getMessage());
+            }
         }
         
         return response;
