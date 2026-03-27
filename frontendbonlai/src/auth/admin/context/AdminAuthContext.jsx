@@ -7,6 +7,7 @@ import {
   clearAuthData,
   isAuthenticated,
   getUserData,
+  getUserType,
 } from "../../../utils/storage";
 
 const AdminAuthContext = createContext(null);
@@ -28,16 +29,18 @@ export const AdminAuthProvider = ({ children }) => {
   useEffect(() => {
     const initializeAuth = () => {
       if (isAuthenticated()) {
-        const userData = getUserData();
-        // Kiểm tra có phải là admin/staff không
-        const hasStaffRole = userData?.roles?.some(role =>
-          role === "ROLE_ADMIN" || role === "ROLE_STAFF" || role === "STAFF"
-        );
-        if (hasStaffRole) {
-          setAdmin(userData);
-          setIsLoggedIn(true);
-        } else {
-          clearAuthData();
+        const userType = getUserType();
+        // Chỉ xử lý nếu userType là staff/admin (so sánh không phân biệt hoa/thường)
+        const ut = userType ? userType.toLowerCase() : "";
+        if (ut === "staff" || ut === "admin") {
+          const userData = getUserData();
+          const hasStaffRole = userData?.roles?.some(role =>
+            role === "ROLE_ADMIN" || role === "ROLE_STAFF" || role === "STAFF"
+          );
+          if (hasStaffRole) {
+            setAdmin(userData);
+            setIsLoggedIn(true);
+          }
         }
       }
       setLoading(false);
