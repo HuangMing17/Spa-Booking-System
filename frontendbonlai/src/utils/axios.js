@@ -33,11 +33,13 @@ axiosInstance.interceptors.request.use(
       delete config.headers["Content-Type"];
     }
 
-    // Luôn thêm token vào header mà không kiểm tra điều kiện
+    // Thêm log chẩn đoán token cho F5
     const token = getAuthToken();
     if (token) {
-      // Đã loại bỏ kiểm tra token hết hạn
+      console.log("Token sent in request header:", token.substring(0, 15) + "...");
       config.headers.Authorization = `${token}`;
+    } else {
+      console.log("No token found for request:", config.url);
     }
     return config;
   },
@@ -58,30 +60,41 @@ axiosInstance.interceptors.response.use(
 
     // Xử lý các lỗi response
     if (error.response) {
+      const currentPath = window.location.pathname;
+
       switch (error.response.status) {
         case 401:
-          // Unauthorized - Clear auth data và redirect
-          clearAuthData();
-          window.location.href = "/dang-nhap";
-          return Promise.reject(new Error("Vui lòng đăng nhập lại"));
+          // Unauthorized - Chỉ logout nếu là lỗi 401 (Hết hạn hoặc chưa đăng nhập)
+          // Kiểm tra xem đã có tiến trình redirect nào đang chạy chưa để tránh lặp
+          if (!window._isRedirectingToLogin) {
+            window._isRedirectingToLogin = true;
+            console.warn("Unauthorized (401) - Clearing session and redirecting...");
+            
+            clearAuthData();
+            
+            if (currentPath.startsWith("/admin")) {
+              window.location.href = "/admin/login";
+            } else {
+              window.location.href = "/dang-nhap";
+            }
+          }
+          return Promise.reject(new Error("Phiên đăng nhập đã hết hạn"));
 
         case 403:
-          // Forbidden
-          return Promise.reject(new Error("Bạn không có quyền truy cập"));
+          // Forbidden - Không có quyền. QUAN TRỌNG: Không được gọi logout ở đây!
+          console.error("Forbidden (403) - Access denied for path:", config?.url);
+          return Promise.reject(new Error("Bạn không có quyền thực hiện hành động này"));
 
         case 404:
-          // Not found
-          return Promise.reject(new Error("Không tìm thấy tài nguyên"));
+          return Promise.reject(new Error("Không tìm thấy tài nguyên (404)"));
 
         case 500:
-          // Server error
-          return Promise.reject(
-            new Error("Lỗi hệ thống, vui lòng thử lại sau")
-          );
+          console.error("Server Error (500):", error.response.data);
+          return Promise.reject(new Error("Lỗi hệ thống từ server, vui lòng thử lại sau"));
 
         default:
           return Promise.reject(
-            new Error(error.response.data?.message || "Có lỗi xảy ra")
+            new Error(error.response.data?.message || `Lỗi ${error.response.status}`)
           );
       }
     }

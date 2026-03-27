@@ -8,6 +8,7 @@ import {
   clearAuthData,
   isAuthenticated,
   getUserData,
+  getUserType,
 } from "../../../utils/storage";
 
 const CustomerAuthContext = createContext(null);
@@ -32,9 +33,13 @@ export const CustomerAuthProvider = ({ children }) => {
   useEffect(() => {
     const initializeAuth = () => {
       if (isAuthenticated()) {
-        const userData = getUserData();
-        setUser(userData);
-        setIsLoggedIn(true);
+        const userType = getUserType();
+        // Chỉ xử lý nếu userType là customer (so sánh không phân biệt hoa/thường)
+        if (userType && userType.toLowerCase() === "customer") {
+          const userData = getUserData();
+          setUser(userData);
+          setIsLoggedIn(true);
+        }
       }
       setLoading(false);
     };

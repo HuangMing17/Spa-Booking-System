@@ -615,53 +615,30 @@ const Header = () => {
           >
             {/* Logo Section */}
             <Col flex="none">
-              <Link to="/">
-                <div
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    gap: "12px",
-                  }}
-                >
-                  <div
-                    style={{
-                      width: "40px",
-                      height: "40px",
-                      borderRadius: "50%",
+              <Link to="/" style={{ textDecoration: 'none' }}>
+                <div style={{ display: "flex", alignItems: "center" }}>
+                   <div style={{
+                      fontSize: "36px",
+                      fontWeight: "700",
+                      fontFamily: '"Great Vibes", cursive',
                       background: "linear-gradient(135deg, #FF99AC, #FFB6C1)",
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      color: "#fff",
-                      fontSize: "18px",
-                      fontWeight: "bold",
-                      boxShadow: "0 4px 12px rgba(255, 153, 172, 0.3)",
-                    }}
-                  >
-                    S
-                  </div>
-                  <div>
-                    <div
-                      style={{
-                        fontSize: "34px",
-                        fontWeight: "700",
-                        fontFamily: '"Great Vibes", cursive',
-                        background: "linear-gradient(135deg, #FF99AC, #FFB6C1)",
-                        WebkitBackgroundClip: "text",
-                        WebkitTextFillColor: "transparent",
-                        backgroundClip: "text",
-                        lineHeight: "1.2",
-                      }}
-                    >
-                      God Spa Central
+                      WebkitBackgroundClip: "text",
+                      WebkitTextFillColor: "transparent",
+                      backgroundClip: "text",
+                      lineHeight: "1.2",
+                      letterSpacing: "1px",
+                      textShadow: "0 2px 4px rgba(255, 153, 172, 0.1)"
+                    }}>
+                      God Spa
                     </div>
-                  </div>
                 </div>
               </Link>
-            </Col>{" "}
-            {/* Desktop Navigation Menu */}
-            <Col flex="auto" xs={0} md={24}>
-              <div style={{ display: "flex", justifyContent: "center" }}>
+            </Col>
+
+            {/* Navigation and Actions */}
+            <Col flex="auto">
+              <div style={{ display: "flex", justifyContent: "flex-end", alignItems: "center" }}>
+                {/* Desktop and Mobile Navigation together for simplicity */}
                 <Menu
                   mode="horizontal"
                   selectedKeys={[
@@ -671,189 +648,121 @@ const Header = () => {
                   items={menuItems.map((item) => ({
                     key: item.key,
                     label: (
-                      <Space style={{ fontSize: "14px", fontWeight: "500" }}>
+                      <Link to={item.link} style={{ fontSize: "15px", fontWeight: "600" }}>
                         {item.label}
-                      </Space>
+                      </Link>
                     ),
-                    onClick: () => navigate(item.link),
                   }))}
                   style={{
                     border: "none",
                     background: "transparent",
-                    fontSize: "14px",
-                    fontWeight: "500",
-                    minWidth: "600px", // Tăng minWidth để đảm bảo tất cả menu items hiển thị
-                    flex: 1,
-                    justifyContent: "center",
-                    width: "100%", // Đảm bảo menu sử dụng toàn bộ không gian có sẵn
+                    marginRight: "40px",
+                    minWidth: "400px",
+                    display: { xs: "none", lg: "flex" }
                   }}
-                  overflowedIndicator={null} // Ẩn dấu 3 chấm
-                />
-              </div>
-            </Col>
-            {/* Action Buttons */}
-            <Col flex="none">
-              <Space size="middle" align="center">
-                {/* Desktop Search */}
-                <Button
-                  type="text"
-                  icon={
-                    <SearchOutlined
-                      style={{ color: "#FF99AC", fontSize: "18px" }}
-                    />
-                  }
-                  onClick={() => setSearchVisible(true)}
-                  style={{
-                    width: "40px",
-                    height: "40px",
-                    borderRadius: "50%",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    transition: "all 0.3s ease",
-                  }}
-                  className="header-action-btn"
+                  overflowedIndicator={null}
                 />
 
-                {/* Notifications for logged in users */}
-                {isLoggedIn && (
-                  <Badge
-                    count={3}
-                    size="small"
-                    style={{ backgroundColor: "#FF99AC" }}
+                <Space size="large" align="center">
+                  {/* Search Button */}
+                  <Button
+                    type="text"
+                    icon={<SearchOutlined style={{ color: "#FF99AC", fontSize: "20px" }} />}
+                    onClick={() => setSearchVisible(true)}
+                    className="header-action-btn"
+                    style={{ borderRadius: "50%", width: "44px", height: "44px" }}
+                  />
+
+                  {/* Notifications */}
+                  {isLoggedIn && (
+                    <Badge count={2} size="small" offset={[-2, 6]} style={{ backgroundColor: "#FF99AC" }}>
+                      <Button
+                        type="text"
+                        icon={<BellOutlined style={{ color: "#FF99AC", fontSize: "20px" }} />}
+                        className="header-action-btn"
+                        style={{ borderRadius: "50%", width: "44px", height: "44px" }}
+                        onClick={() => navigate("/thong-bao")}
+                      />
+                    </Badge>
+                  )}
+
+                  {/* Booking Button */}
+                  <Button
+                    type="primary"
+                    icon={<CalendarOutlined />}
+                    onClick={() => navigate("/dat-lich")}
+                    className="book-btn"
+                    style={{
+                      background: "linear-gradient(135deg, #FF99AC, #FFB6C1)",
+                      borderColor: "transparent",
+                      borderRadius: "12px",
+                      height: "44px",
+                      padding: "0 24px",
+                      fontWeight: "700",
+                      boxShadow: "0 6px 15px rgba(255, 153, 172, 0.3)"
+                    }}
                   >
+                    <span style={{ display: { xs: "none", sm: "inline" } }}>Đặt lịch ngay</span>
+                  </Button>
+
+                  {/* User Profile / Login */}
+                  {isLoggedIn ? (
                     <Button
                       type="text"
-                      icon={
-                        <BellOutlined
-                          style={{ color: "#FF99AC", fontSize: "18px" }}
-                        />
-                      }
+                      className="user-profile-btn"
+                      onClick={() => navigate("/thong-tin-ca-nhan")}
                       style={{
-                        width: "40px",
-                        height: "40px",
-                        borderRadius: "50%",
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        transition: "all 0.3s ease",
+                        height: "44px",
+                        padding: "0 8px",
+                        borderRadius: "12px",
+                        background: "rgba(255, 240, 245, 0.6)",
+                        border: "1px solid #FFD1DC"
                       }}
-                      className="header-action-btn"
-                    />
-                  </Badge>
-                )}
-
-                {/* Book Appointment Button */}
-                <Button
-                  type="primary"
-                  icon={<CalendarOutlined />}
-                  onClick={() => navigate("/dat-lich")}
-                  style={{
-                    background: "linear-gradient(135deg, #FF99AC, #FFB6C1)",
-                    borderColor: "transparent",
-                    borderRadius: "10px",
-                    height: "42px",
-                    padding: "0 20px",
-                    fontWeight: "600",
-                    fontSize: "14px",
-                    boxShadow: "0 4px 12px rgba(255, 153, 172, 0.3)",
-                    transition: "all 0.3s ease",
-                  }}
-                  className="book-btn"
-                >
-                  <span style={{ display: { xs: "none", sm: "inline" } }}>
-                    Đặt lịch
-                  </span>
-                </Button>
-
-                {/* User Menu or Login */}
-                {isLoggedIn ? (
-                  <Dropdown
-                    menu={{ items: userMenuItems }}
-                    placement="bottomRight"
-                    arrow
-                    trigger={["click"]}
-                  >
-                    <Button
-                      type="text"
-                      style={{
-                        height: "42px",
-                        borderRadius: "10px",
-                        padding: "0 12px",
-                        border: "1px solid #FFD1DC",
-                        background: "rgba(255, 240, 245, 0.5)",
-                        transition: "all 0.3s ease",
-                      }}
-                      className="user-menu-btn"
                     >
-                      <Space align="center">
+                      <Space size={8}>
                         <Avatar
-                          size={28}
-                          style={{
-                            background:
-                              "linear-gradient(135deg, #FFB6C1, #FF99AC)",
-                            color: "#fff",
-                            fontSize: "12px",
-                          }}
+                          size={32}
+                          style={{ background: "linear-gradient(135deg, #FFB6C1, #FF99AC)" }}
                           icon={<UserOutlined />}
                         />
-                        <span
-                          style={{
-                            color: "#4A4A4A",
-                            fontWeight: "500",
-                            maxWidth: "100px",
-                            overflow: "hidden",
-                            textOverflow: "ellipsis",
-                            whiteSpace: "nowrap",
-                          }}
-                        >
-                          {user?.fullName || "User"}
+                        <span style={{ fontWeight: "600", color: "#4A4A4A" }}>
+                          {user?.fullName?.split(' ')[0] || "User"}
                         </span>
                       </Space>
                     </Button>
-                  </Dropdown>
-                ) : (
-                  <Button
-                    icon={<UserOutlined />}
-                    onClick={() => navigate("/dang-nhap")}
-                    style={{
-                      borderColor: "#FFB6C1",
-                      color: "#FF99AC",
-                      borderRadius: "10px",
-                      height: "42px",
-                      padding: "0 16px",
-                      fontWeight: "500",
-                      transition: "all 0.3s ease",
-                    }}
-                    className="login-btn"
-                  >
-                    <span style={{ display: { xs: "none", sm: "inline" } }}>
+                  ) : (
+                    <Button
+                      type="primary"
+                      ghost
+                      className="login-btn"
+                      onClick={() => navigate("/dang-nhap")}
+                      style={{
+                        borderColor: "#FFB6C1",
+                        color: "#FF99AC",
+                        borderRadius: "12px",
+                        height: "44px",
+                        fontWeight: "600",
+                        padding: "0 20px"
+                      }}
+                    >
                       Đăng nhập
-                    </span>
-                  </Button>
-                )}
+                    </Button>
+                  )}
 
-                {/* Mobile Menu Button */}
-                <Button
-                  type="text"
-                  icon={
-                    <MenuOutlined
-                      style={{ color: "#FF99AC", fontSize: "20px" }}
+                  {/* Logout Button if Logged In (instead of dropdown) */}
+                  {isLoggedIn && (
+                    <Button
+                      type="text"
+                      icon={<LogoutOutlined style={{ color: "#ff4d4f" }} />}
+                      onClick={logout}
+                      title="Đăng xuất"
+                      style={{ borderRadius: "50%", width: "44px", height: "44px" }}
                     />
-                  }
-                  style={{
-                    width: "40px",
-                    height: "40px",
-                    borderRadius: "8px",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    transition: "all 0.3s ease",
-                  }}
-                  className="mobile-menu-btn"
-                  onClick={() => setMobileMenuVisible(true)}
-                />
-              </Space>
+                  )}
+
+                  {/* Mobile Menu removed per user request */}
+                </Space>
+              </div>
             </Col>
           </Row>
         </div>
