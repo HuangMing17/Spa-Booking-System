@@ -12,26 +12,36 @@ export const setAuthData = (authResponse) => {
   const { token, tokenType, expiresIn, userType, user } = authResponse;
 
   // Tính thời điểm hết hạn (12 giờ)
-  const expirationTime = Date.now() + 12 * 60 * 60 * 1000;
+  const expirationTime = Date.now() + 24 * 60 * 60 * 1000;
 
-  sessionStorage.setItem(STORAGE_KEYS.TOKEN, token);
-  sessionStorage.setItem(STORAGE_KEYS.TOKEN_TYPE, tokenType);
-  sessionStorage.setItem(STORAGE_KEYS.EXPIRES_IN, expirationTime.toString());
-  sessionStorage.setItem(STORAGE_KEYS.USER_TYPE, userType);
-  sessionStorage.setItem(STORAGE_KEYS.USER_DATA, JSON.stringify(user));
+  localStorage.setItem(STORAGE_KEYS.TOKEN, token);
+  localStorage.setItem(STORAGE_KEYS.TOKEN_TYPE, tokenType);
+  localStorage.setItem(STORAGE_KEYS.EXPIRES_IN, expirationTime.toString());
+  localStorage.setItem(STORAGE_KEYS.USER_TYPE, userType);
+  localStorage.setItem(STORAGE_KEYS.USER_DATA, JSON.stringify(user));
 };
 
 // Lấy token authentication
 export const getAuthToken = () => {
-  const token = sessionStorage.getItem(STORAGE_KEYS.TOKEN);
-  const tokenType = sessionStorage.getItem(STORAGE_KEYS.TOKEN_TYPE);
+  const token = localStorage.getItem(STORAGE_KEYS.TOKEN);
+  const tokenType = localStorage.getItem(STORAGE_KEYS.TOKEN_TYPE);
   return token ? `${tokenType} ${token}` : null;
 };
 
 // Lấy thông tin người dùng
 export const getUserData = () => {
-  const userDataStr = sessionStorage.getItem(STORAGE_KEYS.USER_DATA);
-  return userDataStr ? JSON.parse(userDataStr) : null;
+  const userDataStr = localStorage.getItem(STORAGE_KEYS.USER_DATA);
+  try {
+    return userDataStr ? JSON.parse(userDataStr) : null;
+  } catch (e) {
+    console.error("Error parsing userData from storage", e);
+    return null;
+  }
+};
+
+// Lấy loại người dùng (admin/customer)
+export const getUserType = () => {
+  return localStorage.getItem(STORAGE_KEYS.USER_TYPE);
 };
 
 // Kiểm tra token có hết hạn chưa
@@ -43,7 +53,7 @@ export const isTokenExpired = () => {
 // Xóa tất cả thông tin authentication
 export const clearAuthData = () => {
   Object.values(STORAGE_KEYS).forEach((key) => {
-    sessionStorage.removeItem(key);
+    localStorage.removeItem(key);
   });
 };
 

@@ -151,13 +151,13 @@ export const ChatProvider = ({ children }) => {
         setConversations(prevConvs => {
           const updated = prevConvs.map(c => 
             c.id === conversation.id 
-              ? { ...c, ...newMessage, lastMessageAt: newMessage.createdAt, lastMessageContent: newMessage.content }
+              ? { ...c, lastMessageAt: newMessage.createdAt, lastMessageContent: newMessage.content }
               : c
           );
           
           // If the conversation isn't in the list (e.g. newly created unassigned), add it
           if (!updated.find(c => c.id === conversation.id)) {
-            return [{ ...conversation, ...newMessage, lastMessageAt: newMessage.createdAt, lastMessageContent: newMessage.content }, ...updated];
+            return [{ ...conversation, lastMessageAt: newMessage.createdAt, lastMessageContent: newMessage.content }, ...updated];
           }
           return updated;
         });
