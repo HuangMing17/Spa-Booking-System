@@ -24,11 +24,18 @@ desktop.ini
 # Logs
 *.log
 logs/
+docker_logs.txt
+log.txt
+frontendbonlai/build_error.txt
+inspect*.json
 
 # Backup files
 *.backup
 *.bak
 *~
+backups/
+backup_*/
+project_backups/
 
 # Docker volumes (không commit data volumes)
 docker/volumes/
