@@ -458,23 +458,13 @@ const ServiceDetailUser = () => {
                   prefix={<CalendarOutlined />}
                 />
               </Col>
-              <Col span={6}>
+              <Col span={8}>
                 <Statistic
                   title="Hoàn thành"
                   value={98}
                   suffix="%"
                   valueStyle={{ color: "#3f8600" }}
                   prefix={<CheckCircleOutlined />}
-                />
-              </Col>
-              <Col span={6}>
-                <Statistic
-                  title="Còn lại"
-                  value={service.stock || 0}
-                  valueStyle={{
-                    color: service.stock > 10 ? "#3f8600" : "#cf1322",
-                  }}
-                  suffix="slot"
                 />
               </Col>
             </Row>
@@ -691,15 +681,6 @@ const ServiceDetailUser = () => {
                 </Text>
               )}
             </div>
-            {/* Stock Alert */}
-            {service.stock && service.stock < 5 && (
-              <Alert
-                message={`Chỉ còn ${service.stock} slot khả dụng!`}
-                type="warning"
-                showIcon
-                style={{ marginBottom: 16 }}
-              />
-            )}
             {/* Variant Selection */}
             {variants.length > 0 && (
               <div style={{ marginBottom: 24 }}>
