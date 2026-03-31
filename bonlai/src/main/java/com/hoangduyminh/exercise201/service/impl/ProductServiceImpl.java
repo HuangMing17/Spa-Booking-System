@@ -38,7 +38,6 @@ public class ProductServiceImpl implements ProductService {
     private final VariantOptionRepository variantOptionRepository;
     private final AttributeValueRepository attributeValueRepository;
     private final ProductAttributeValueRepository productAttributeValueRepository;
-    private final ProductShippingInfoRepository productShippingInfoRepository;
 
     public ProductServiceImpl(ProductRepository productRepository,
             GalleryRepository galleryRepository,
@@ -51,8 +50,7 @@ public class ProductServiceImpl implements ProductService {
             ProductAttributeRepository productAttributeRepository,
             VariantOptionRepository variantOptionRepository,
             AttributeValueRepository attributeValueRepository,
-            ProductAttributeValueRepository productAttributeValueRepository,
-            ProductShippingInfoRepository productShippingInfoRepository) {
+            ProductAttributeValueRepository productAttributeValueRepository) {
         this.productRepository = productRepository;
         this.galleryRepository = galleryRepository;
         this.productTagRepository = productTagRepository;
@@ -65,7 +63,6 @@ public class ProductServiceImpl implements ProductService {
         this.variantOptionRepository = variantOptionRepository;
         this.attributeValueRepository = attributeValueRepository;
         this.productAttributeValueRepository = productAttributeValueRepository;
-        this.productShippingInfoRepository = productShippingInfoRepository;
     }
 
     /**
@@ -97,7 +94,6 @@ public class ProductServiceImpl implements ProductService {
         response.setSlug(product.getSlug());
         response.setRegularPrice(product.getComparePrice() != null ? product.getComparePrice().doubleValue() : null);
         response.setSalePrice(product.getSalePrice() != null ? product.getSalePrice().doubleValue() : null);
-        response.setStock(product.getQuantity());
         response.setIsActive(product.getPublished());
         response.setCreatedAt(product.getCreatedAt());
         response.setUpdatedAt(product.getUpdatedAt());
@@ -240,11 +236,6 @@ public class ProductServiceImpl implements ProductService {
         }
         productAttributeRepository.deleteByProduct(product);
 
-        // 6. Xóa shipping info nếu có
-        if (product.getShippingInfo() != null) {
-            productShippingInfoRepository.delete(product.getShippingInfo());
-        }
-
         // 7. Cuối cùng xóa product
         productRepository.delete(product);
     }
@@ -305,7 +296,6 @@ public class ProductServiceImpl implements ProductService {
         }
 
         // Thiết lập các giá trị mặc định cho các trường còn lại
-        product.setQuantity(request.getStock() != null ? request.getStock() : 0);
         product.setPublished(request.getIsActive() != null ? request.getIsActive() : false);
         product.setProductType(Product.ProductType.variable); // Dịch vụ spa luôn là variable
 
@@ -346,7 +336,6 @@ public class ProductServiceImpl implements ProductService {
                 variantOption.setTitle(variantRequest.getName());
                 variantOption.setProduct(savedProduct);
                 variantOption.setSale_price(BigDecimal.valueOf(variantRequest.getPrice()));
-                variantOption.setQuantity(request.getStock() != null ? request.getStock() : 0);
                 variantOption.setActive(true);
                 variantOption.setDuration(variantRequest.getDuration());
                 variantOption = variantOptionRepository.save(variantOption);
@@ -504,9 +493,6 @@ public class ProductServiceImpl implements ProductService {
         if (request.getSalePrice() != null) {
             product.setSalePrice(BigDecimal.valueOf(request.getSalePrice()));
         }
-        if (request.getStock() != null) {
-            product.setQuantity(request.getStock());
-        }
 
         // Cập nhật trạng thái
         if (request.getIsActive() != null) {
@@ -578,7 +564,6 @@ public class ProductServiceImpl implements ProductService {
                 variantOption.setTitle(variantRequest.getName());
                 variantOption.setProduct(product);
                 variantOption.setSale_price(BigDecimal.valueOf(variantRequest.getPrice()));
-                variantOption.setQuantity(request.getStock() != null ? request.getStock() : 0);
                 variantOption.setActive(true);
                 variantOption.setDuration(variantRequest.getDuration());
                 variantOption = variantOptionRepository.save(variantOption);
