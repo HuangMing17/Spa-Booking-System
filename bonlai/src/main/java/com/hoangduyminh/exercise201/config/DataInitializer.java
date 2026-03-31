@@ -27,20 +27,23 @@ public class DataInitializer implements CommandLineRunner {
     }
 
     private void seedRolesAndAdmin() {
-        if (roleRepository.count() == 0) {
-            log.info("Seeding mandatory roles...");
-            com.hoangduyminh.exercise201.entity.Role adminRole = new com.hoangduyminh.exercise201.entity.Role();
+        log.info("Seeding mandatory roles...");
+        com.hoangduyminh.exercise201.entity.Role adminRole = roleRepository.findByRoleName("ADMIN").orElse(null);
+        if (adminRole == null) {
+            adminRole = new com.hoangduyminh.exercise201.entity.Role();
             adminRole.setRoleName("ADMIN");
-            roleRepository.save(adminRole);
+            adminRole = roleRepository.save(adminRole);
+        }
 
-            com.hoangduyminh.exercise201.entity.Role staffRole = new com.hoangduyminh.exercise201.entity.Role();
+        com.hoangduyminh.exercise201.entity.Role staffRole = roleRepository.findByRoleName("STAFF").orElse(null);
+        if (staffRole == null) {
+            staffRole = new com.hoangduyminh.exercise201.entity.Role();
             staffRole.setRoleName("STAFF");
             roleRepository.save(staffRole);
         }
 
         if (staffAccountRepository.findByUserName("admin").isEmpty()) {
             log.info("Creating default admin account...");
-            com.hoangduyminh.exercise201.entity.Role adminRole = roleRepository.findByRoleName("ADMIN").orElse(null);
 
             com.hoangduyminh.exercise201.entity.StaffAccount admin = new com.hoangduyminh.exercise201.entity.StaffAccount();
             admin.setFirst_name("Super");
