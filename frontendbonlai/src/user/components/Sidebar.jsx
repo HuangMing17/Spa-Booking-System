@@ -55,8 +55,8 @@ const Sidebar = () => {
             .filter((child) => child.isActive) // Chỉ lấy danh mục đang hoạt động
             .map((child) => ({
               key: child.id,
-              label: <span style={{ fontSize: "18px" }}>{child.name}</span>,
-              icon: <TagsOutlined style={{ color: "#FFB6C1", fontSize: "18px" }} />,
+              label: <span >{child.name}</span>,
+              icon: <TagsOutlined style={{ color: "#FFB6C1" }} />,
             }))
         : [];
     } catch (error) {
@@ -92,8 +92,8 @@ const Sidebar = () => {
         const children = await fetchChildCategories(rootCategory.id);
         categoriesData.push({
           key: rootCategory.id,
-          label: <span style={{ fontSize: "18px" }}>{rootCategory.name}</span>,
-          icon: <TagsOutlined style={{ color: "#FFB6C1", fontSize: "18px" }} />,
+          label: <span >{rootCategory.name}</span>,
+          icon: <TagsOutlined style={{ color: "#FFB6C1" }} />,
           children: children.length > 0 ? children : null,
         });
       }
@@ -267,7 +267,7 @@ const Sidebar = () => {
   };  const CardTitle = ({ icon, children }) => (
     <Space align="center">
       {icon}{" "}
-      <Text strong style={{ color: "#4A4A4A", fontSize: "24px" }}>
+      <Text strong style={{ color: "#4A4A4A" }}>
         {children}
       </Text>
     </Space>
@@ -316,7 +316,7 @@ const Sidebar = () => {
           </div>
         ) : error ? (
           <div
-            style={{ padding: "20px", textAlign: "center", color: "#FF6B6B", fontSize: "18px" }}
+            style={{ padding: "20px", textAlign: "center", color: "#FF6B6B" }}
           >
             {error}
           </div>
@@ -325,8 +325,7 @@ const Sidebar = () => {
             items={categories}
             style={{
               border: "none",
-              background: "transparent",
-              fontSize: "18px"
+              background: "transparent"
             }}
             expandedKeys={expandedKeys}
             onOpenChange={onExpand}
@@ -381,17 +380,17 @@ const Sidebar = () => {
                       gap: "8px",
                     }}
                   >
-                    <Text style={{ fontSize: "18px", fontWeight: "500" }}>
+                    <Text style={{ fontWeight: "500" }}>
                       {service.name}
                     </Text>
                     {service.orderCount > 0 && (                      <Badge
                         count={service.orderCount}
                         size="small"
-                        style={{ backgroundColor: "#FFB6C1", fontSize: "16px" }}
+                        style={{ backgroundColor: "#FFB6C1" }}
                       />
                     )}
                   </div>
-                  {service.category && (                  <Text type="secondary" style={{ fontSize: "18px" }}>
+                  {service.category && (                  <Text type="secondary" >
                       {service.category}
                     </Text>
                   )}
@@ -403,7 +402,7 @@ const Sidebar = () => {
                     alignItems: "flex-end",
                   }}
                 >                  {service.originalPrice && (
-                    <Text delete type="secondary" style={{ fontSize: "18px" }}>
+                    <Text delete type="secondary" >
                       {formatPrice(service.originalPrice)}
                     </Text>
                   )}
@@ -412,8 +411,7 @@ const Sidebar = () => {
                     style={{                      color: "#fff",
                       borderRadius: "12px",
                       padding: "4px 14px",
-                      margin: 0,
-                      fontSize: "18px"
+                      margin: 0
                     }}
                   >
                     {service.price}
@@ -422,7 +420,7 @@ const Sidebar = () => {
               </div>
             ))          ) : (
             <div style={{ textAlign: "center", padding: "20px" }}>
-              <Text type="secondary" style={{ fontSize: "18px" }}>Đang cập nhật dịch vụ...</Text>
+              <Text type="secondary" >Đang cập nhật dịch vụ...</Text>
             </div>
           )}
         </Space>
@@ -464,11 +462,11 @@ const Sidebar = () => {
                 className="offer-item"
                 onClick={() => handleServiceClick(offer.id)}
               >
-                <div style={{ flex: 1 }}>                <Text style={{ fontSize: "18px", fontWeight: "500" }}>
+                <div style={{ flex: 1 }}>                <Text style={{ fontWeight: "500" }}>
                   {offer.name}
                 </Text>
                 {offer.description && (
-                  <div>                    <Text type="secondary" style={{ fontSize: "18px" }}>
+                  <div>                    <Text type="secondary" >
                       {offer.description}
                     </Text>
                   </div>
@@ -477,8 +475,7 @@ const Sidebar = () => {
                   color="#FF99AC"
                   style={{                    color: "#FFF",
                     borderRadius: "12px",
-                    padding: "4px 14px",
-                    fontSize: "18px"
+                    padding: "4px 14px"
                   }}
                 >
                   {offer.discount}
@@ -486,7 +483,7 @@ const Sidebar = () => {
               </div>
             ))
           ) : (            <div style={{ textAlign: "center", padding: "20px" }}>
-              <Text type="secondary" style={{ fontSize: "18px" }}>Chưa có ưu đãi nào</Text>
+              <Text type="secondary" >Chưa có ưu đãi nào</Text>
             </div>
           )}
         </Space>
@@ -518,13 +515,12 @@ const Sidebar = () => {
                 marginBottom: "12px",
               }}
             >
-              <FireOutlined style={{ fontSize: "24px", color: "#FFF" }} />
+              <FireOutlined style={{ color: "#FFF" }} />
             </div>            <Title              level={5}
               style={{
                 margin: "0 0 8px",
                 color: "#4A4A4A",
-                textAlign: "center",
-                fontSize: "24px"
+                textAlign: "center"
               }}
             >
               {featuredDeal.name}
@@ -534,16 +530,15 @@ const Sidebar = () => {
               style={{
                 color: "#666666",
                 textAlign: "center",
-                marginBottom: "12px",
-                fontSize: "18px"
+                marginBottom: "12px"
               }}
             >
               {featuredDeal.description}
             </Text>            <div style={{ textAlign: "center", marginBottom: "16px" }}>
-              <Text delete type="secondary" style={{ fontSize: "18px" }}>
+              <Text delete type="secondary" >
                 {featuredDeal.originalPrice}
               </Text>
-              <br />              <Text strong style={{ fontSize: "24px", color: "#FF99AC" }}>
+              <br />              <Text strong style={{ color: "#FF99AC" }}>
                 {featuredDeal.salePrice}
               </Text>
             </div>
@@ -553,7 +548,6 @@ const Sidebar = () => {
               style={{                color: "#FFF",
                 padding: "8px 16px",
                 borderRadius: "12px",
-                fontSize: "18px",
               }}
             >
               <HeartOutlined /> Tiết kiệm {featuredDeal.savings}
@@ -564,7 +558,6 @@ const Sidebar = () => {
                 borderColor: "#FF99AC",
                 borderRadius: "8px",
                 height: "44px",
-                fontSize: "18px",
                 padding: "0 20px"
               }}
               onClick={(e) => {
@@ -603,8 +596,7 @@ const Sidebar = () => {
               background: "linear-gradient(45deg, #FF99AC, #FFB6C1)",
               borderColor: "#FF99AC",              borderRadius: "8px",
               height: "48px",
-              fontWeight: "600",
-              fontSize: "18px"
+              fontWeight: "600"
             }}
             onClick={handleBookingClick}
           >
@@ -617,8 +609,7 @@ const Sidebar = () => {
             style={{
               borderColor: "#FFB6C1",
               borderRadius: "8px",              height: "44px",
-              color: "#FF99AC",
-              fontSize: "18px"
+              color: "#FF99AC"
             }}
             onClick={() => navigate("/dich-vu")}
           >
