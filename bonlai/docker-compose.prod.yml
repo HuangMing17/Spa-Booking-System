@@ -15,12 +15,12 @@ services:
 
   backend:
     build:
-      context: ./bonlai
+      context: .
       dockerfile: Dockerfile
     container_name: bonlai-api
     restart: always
     ports:
-      - "8080:8080" # Optional, Nginx in frontend container proxies this anyway
+      - "8080:8080"
     environment:
       - SPRING_PROFILES_ACTIVE=prod
       - SPRING_DATASOURCE_URL=jdbc:mysql://db:3306/webthuoc?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
@@ -28,17 +28,6 @@ services:
       - SPRING_DATASOURCE_PASSWORD=root
     depends_on:
       - db
-
-  frontend:
-    build:
-      context: ./frontendbonlai
-      dockerfile: Dockerfile
-    container_name: bonlai-frontend
-    restart: always
-    ports:
-      - "80:80"
-    depends_on:
-      - backend
 
 volumes:
   mysql-data:
