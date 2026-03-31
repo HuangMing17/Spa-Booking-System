@@ -36,8 +36,12 @@ public class DataInitializer implements CommandLineRunner {
             com.hoangduyminh.exercise201.entity.Role staffRole = new com.hoangduyminh.exercise201.entity.Role();
             staffRole.setRoleName("STAFF");
             roleRepository.save(staffRole);
+        }
 
+        if (staffAccountRepository.findByUserName("admin").isEmpty()) {
             log.info("Creating default admin account...");
+            com.hoangduyminh.exercise201.entity.Role adminRole = roleRepository.findByRoleName("ADMIN").orElse(null);
+
             com.hoangduyminh.exercise201.entity.StaffAccount admin = new com.hoangduyminh.exercise201.entity.StaffAccount();
             admin.setFirst_name("Super");
             admin.setLast_name("Admin");
@@ -51,7 +55,7 @@ public class DataInitializer implements CommandLineRunner {
             
             log.info("Admin account seeded successfully (Username: admin / Password: admin123).");
         } else {
-            log.info("Roles and Admin account already exist. Skipping seeding.");
+            log.info("Admin account already exists. Skipping seeding.");
         }
     }
 
