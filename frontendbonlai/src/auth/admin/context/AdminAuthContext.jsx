@@ -34,13 +34,8 @@ export const AdminAuthProvider = ({ children }) => {
         const ut = userType ? userType.toLowerCase() : "";
         if (ut === "staff" || ut === "admin") {
           const userData = getUserData();
-          const hasStaffRole = userData?.roles?.some(role =>
-            role === "ROLE_ADMIN" || role === "ROLE_STAFF" || role === "STAFF"
-          );
-          if (hasStaffRole) {
-            setAdmin(userData);
-            setIsLoggedIn(true);
-          }
+          setAdmin(userData);
+          setIsLoggedIn(true);
         }
       }
       setLoading(false);
@@ -60,12 +55,8 @@ export const AdminAuthProvider = ({ children }) => {
         password,
       });
 
-      // Kiểm tra có role admin hoặc staff không
-      const hasStaffRole = response.user?.roles?.some(role =>
-        role === "ROLE_ADMIN" || role === "ROLE_STAFF" || role === "STAFF"
-      );
-      if (!hasStaffRole) {
-        throw new Error("Không có quyền truy cập");
+      if (response.userType !== "STAFF" && response.userType !== "ADMIN") {
+        throw new Error("Không có quyền truy cập (không phải Staff/Admin)");
       }
 
       setAuthData(response);
