@@ -46,7 +46,6 @@ const ServiceForm = ({ service, onSubmitSuccess, onCancel }) => {
         description: service.description,
         regularPrice: service.regularPrice || service.price,
         salePrice: service.salePrice,
-        stock: service.stock || 0,
         categoryIds:
           service.categoryIds ||
           (service.categories && service.categories.map((cat) => cat.id)) ||
@@ -222,19 +221,6 @@ const ServiceForm = ({ service, onSubmitSuccess, onCancel }) => {
               }
               parser={(value) => value.replace(/\$\s?|(,*)/g, "")}
               placeholder="Nhập giá khuyến mãi..."
-            />
-          </Form.Item>
-        </Col>
-        <Col span={8}>
-          <Form.Item
-            label="Số lượng tồn kho"
-            name="stock"
-            rules={[{ required: true, message: "Vui lòng nhập số lượng!" }]}
-          >
-            <InputNumber
-              min={0}
-              style={{ width: "100%" }}
-              placeholder="Số lượng"
             />
           </Form.Item>
         </Col>

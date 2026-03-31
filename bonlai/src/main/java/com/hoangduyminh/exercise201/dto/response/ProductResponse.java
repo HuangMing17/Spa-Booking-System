@@ -17,7 +17,6 @@ public class ProductResponse {
     private String thumbnail;
     private Double regularPrice;
     private Double salePrice;
-    private Integer stock;
     private Boolean isActive;
 
     private Date createdAt;

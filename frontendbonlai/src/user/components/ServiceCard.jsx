@@ -67,13 +67,11 @@ const ServiceCard = ({ service, onFavoriteToggle }) => {
     reviews: Math.floor(Math.random() * 200) + 50,
     views: Math.floor(Math.random() * 1000) + 100,
     bookings: Math.floor(Math.random() * 100) + 20,
-    availability: Math.floor(Math.random() * 20) + 5,
   };
 
   const discountPercentage = getDiscountPercentage();
   const isOnSale = discountPercentage > 0;
   const isPopular = mockData.bookings > 50;
-  const isLowStock = mockData.availability < 10;
 
   return (
     <Badge.Ribbon
@@ -126,11 +124,6 @@ const ServiceCard = ({ service, onFavoriteToggle }) => {
                 </Tooltip>
               </Space>
             </div>
-            {isLowStock && (
-              <div className="stock-warning">
-                <ThunderboltOutlined /> Chỉ còn {mockData.availability} slot!
-              </div>
-            )}
           </div>
         }
         onClick={handleCardClick}
@@ -239,21 +232,6 @@ const ServiceCard = ({ service, onFavoriteToggle }) => {
                   </Space>
                 </Tooltip>
               </Space>
-
-              {/* Availability Progress */}
-              {isLowStock && (
-                <div style={{ marginTop: 8 }}>
-                  <Text type="secondary" style={{ fontSize: 11 }}>
-                    Còn lại:
-                  </Text>
-                  <Progress
-                    percent={(mockData.availability / 20) * 100}
-                    size="small"
-                    status={mockData.availability < 5 ? "exception" : "normal"}
-                    showInfo={false}
-                  />
-                </div>
-              )}
             </Space>
           }
         />
