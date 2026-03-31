@@ -34,5 +34,4 @@ public class ProductDTO {
     private BigDecimal regularPrice = BigDecimal.ZERO;
     private BigDecimal salePrice = BigDecimal.ZERO;
     private Boolean isPublished = false;
-    private Integer stockQuantity = 0; // Số lượt có thể đặt trong ngày
 }

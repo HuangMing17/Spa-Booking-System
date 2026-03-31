@@ -32,9 +32,6 @@ public class ProductRequest {
     @PositiveOrZero(message = "Giá khuyến mãi phải lớn hơn hoặc bằng 0")
     private Double salePrice;
 
-    @PositiveOrZero(message = "Số lượng phải lớn hơn hoặc bằng 0")
-    private Integer stock;
-
     private Boolean isActive;
     private List<UUID> categoryIds;
     private List<String> tagNames;

@@ -40,9 +40,6 @@ public class Product {
     @Column(name = "buying_price")
     private BigDecimal buyingPrice;
 
-    @Column(nullable = false)
-    private Integer quantity = 0;
-
     @Column(name = "short_description", nullable = false, length = 165)
     private String shortDescription;
 
@@ -55,9 +52,6 @@ public class Product {
 
     @Column
     private Boolean published = false;
-
-    @Column(name = "disable_out_of_stock")
-    private Boolean disableOutOfStock = true;
 
     @Column
     private String note;
@@ -82,9 +76,6 @@ public class Product {
 
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
     private List<ProductCategory> productCategories;
-
-    @OneToOne(mappedBy = "product", cascade = CascadeType.ALL, optional = true)
-    private ProductShippingInfo shippingInfo;
 
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
     private List<Gallery> galleries;

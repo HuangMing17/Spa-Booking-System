@@ -210,16 +210,6 @@ const ServiceList = () => {
       ),
     },
     {
-      title: "Tồn kho",
-      dataIndex: "stock",
-      key: "stock",
-      render: (stock) => (
-        <Text style={{ color: stock > 0 ? "inherit" : "#ff4d4f" }}>
-          {stock || 0}
-        </Text>
-      ),
-    },
-    {
       title: "Mô tả",
       dataIndex: "description",
       key: "description",
