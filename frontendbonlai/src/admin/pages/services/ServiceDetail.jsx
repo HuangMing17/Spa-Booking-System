@@ -163,13 +163,6 @@ const ServiceDetail = ({ service }) => {
               </Descriptions.Item>
 
               <Descriptions.Item
-                label={<strong>Số lượng có thể đặt</strong>}
-                labelStyle={{ width: "200px", backgroundColor: "#fafafa" }}
-              >
-                <Tag color="blue">{service.stock || "Không giới hạn"}</Tag>
-              </Descriptions.Item>
-
-              <Descriptions.Item
                 label={<strong>Thời gian tạo</strong>}
                 labelStyle={{ width: "200px", backgroundColor: "#fafafa" }}
               >

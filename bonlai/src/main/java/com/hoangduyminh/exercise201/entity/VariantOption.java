@@ -44,12 +44,6 @@ public class VariantOption {
     private BigDecimal compare_price = BigDecimal.ZERO;
 
     @Column
-    private BigDecimal buying_price;
-
-    @Column(nullable = false)
-    private Integer quantity = 0;
-
-    @Column
     private String sku;
 
     @Column
