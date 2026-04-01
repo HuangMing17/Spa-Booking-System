@@ -97,9 +97,7 @@ public class CategoryServiceImpl implements CategoryService {
             category.setCategoryDescription(request.getDescription());
         }
 
-        if (request.getThumbnail() != null) {
-            category.setImage(request.getThumbnail());
-        }
+
 
         category.setActive(request.getIsActive() != null ? request.getIsActive() : true);
         category.setCreated_at(new java.util.Date());
@@ -130,9 +128,7 @@ public class CategoryServiceImpl implements CategoryService {
             existingCategory.setCategoryDescription(null);
         }
 
-        if (request.getThumbnail() != null) {
-            existingCategory.setImage(request.getThumbnail());
-        }
+
 
         existingCategory.setActive(request.getIsActive() != null ? request.getIsActive() : true);
         existingCategory.setUpdated_at(new java.util.Date());
@@ -189,31 +185,7 @@ public class CategoryServiceImpl implements CategoryService {
                 .collect(Collectors.toList());
     }
 
-    @Override
-    @Transactional
-    public CategoryResponse uploadImage(UUID id, String imageUrl) {
-        Category category = categoryRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Category", "id", id));
 
-        category.setImage(imageUrl);
-        category.setUpdated_at(new java.util.Date());
-
-        Category updatedCategory = categoryRepository.save(category);
-        return convertToResponse(updatedCategory);
-    }
-
-    @Override
-    @Transactional
-    public CategoryResponse deleteImage(UUID id) {
-        Category category = categoryRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Category", "id", id));
-
-        category.setImage(null);
-        category.setUpdated_at(new java.util.Date());
-
-        Category updatedCategory = categoryRepository.save(category);
-        return convertToResponse(updatedCategory);
-    }
 
     /**
      * Convert Category entity sang Response DTO cơ bản
@@ -230,9 +202,7 @@ public class CategoryServiceImpl implements CategoryService {
             response.setDescription(category.getCategoryDescription());
         }
 
-        if (category.getImage() != null && !category.getImage().isEmpty()) {
-            response.setThumbnail(category.getImage());
-        }
+
 
         response.setIsActive(category.isActive());
 

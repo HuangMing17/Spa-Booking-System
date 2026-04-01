@@ -35,15 +35,6 @@ public class Category {
     @Column(name = "category_description")
     private String categoryDescription;
 
-    @Column
-    private String icon;
-
-    @Column
-    private String image;
-
-    @Column
-    private String placeholder;
-
     @Column(columnDefinition = "boolean default true")
     private boolean active;
 

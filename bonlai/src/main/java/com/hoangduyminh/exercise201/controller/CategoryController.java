@@ -133,32 +133,5 @@ public class CategoryController {
         return ResponseEntity.ok(responses);
     }
 
-    /**
-     * Upload ảnh cho danh mục
-     * 
-     * @param id       id danh mục
-     * @param imageUrl URL ảnh đã upload
-     * @return thông tin chi tiết sau khi upload
-     */
-    @PostMapping("/{id}/image")
-    @PreAuthorize("hasAnyRole('STAFF', 'ADMIN')")
-    public ResponseEntity<CategoryResponse> uploadImage(
-            @PathVariable UUID id,
-            @RequestBody String imageUrl) {
-        CategoryResponse response = categoryService.uploadImage(id, imageUrl);
-        return ResponseEntity.ok(response);
-    }
 
-    /**
-     * Xóa ảnh của danh mục
-     * 
-     * @param id id danh mục
-     * @return thông tin chi tiết sau khi xóa ảnh
-     */
-    @DeleteMapping("/{id}/image")
-    @PreAuthorize("hasAnyRole('STAFF', 'ADMIN')")
-    public ResponseEntity<CategoryResponse> deleteImage(@PathVariable UUID id) {
-        CategoryResponse response = categoryService.deleteImage(id);
-        return ResponseEntity.ok(response);
-    }
 }

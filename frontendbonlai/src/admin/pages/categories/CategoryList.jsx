@@ -8,8 +8,6 @@ import {
   Input,
   Tooltip,
   Tag,
-  Image,
-  Avatar,
   Typography,
   Popconfirm,
 } from "antd";
@@ -23,7 +21,7 @@ import {
 import axios from "../../../utils/axios";
 import CategoryForm from "./CategoryForm";
 import CategoryDetail from "./CategoryDetail";
-import { getImageUrl, getPlaceholderImage } from "../../../utils/imageUtils";
+
 
 const { Text } = Typography;
 
@@ -120,25 +118,7 @@ const CategoryList = () => {
   }, []);
   // Table columns
   const columns = [
-    {
-      title: "Ảnh",
-      dataIndex: "thumbnail",
-      key: "thumbnail",
-      width: 80,
-      render: (thumbnail, record) => (
-        <Avatar
-          size={50}
-          src={getImageUrl(thumbnail)}
-          alt={record.name}
-          style={{
-            backgroundColor: thumbnail ? "transparent" : "#f56a00",
-            border: "1px solid #d9d9d9",
-          }}
-        >
-          {!thumbnail && record.name?.charAt(0)?.toUpperCase()}
-        </Avatar>
-      ),
-    },
+
     {
       title: "Tên danh mục",
       dataIndex: "name",
