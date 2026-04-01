@@ -81,7 +81,7 @@ public class SecurityConfig {
                         .permitAll()
                         // Public GET endpoints for orders
                         // Public GET access to uploaded files
-                        .requestMatchers(HttpMethod.GET, "/uploads/**")
+                        .requestMatchers("/uploads/**")
                         .permitAll()
                         // All other endpoints need authentication
                         .anyRequest()
