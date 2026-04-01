@@ -144,6 +144,21 @@ export const ChatProvider = ({ children }) => {
         setMessages(prev => {
           // Check if message already exists to avoid duplicates
           if (prev.find(m => m.id === newMessage.id)) return prev;
+          
+          // Check if this is an echo of our optimistically sent message
+          const tempIndex = prev.findIndex(m => 
+            typeof m.id === 'string' && m.id.startsWith('temp-') && 
+            m.senderId === newMessage.senderId && 
+            m.content === newMessage.content
+          );
+
+          if (tempIndex >= 0) {
+            // Replace the optimistic message with the real one from server
+            const newMessages = [...prev];
+            newMessages[tempIndex] = newMessage;
+            return newMessages;
+          }
+
           return [...prev, newMessage];
         });
         
@@ -191,20 +206,40 @@ export const ChatProvider = ({ children }) => {
    * Send a message
    */
   const sendMessage = useCallback((messageData) => {
-    if (!isConnected || !currentConversation) {
+    if (!isConnected || !currentConversation || !currentUserRef.current) {
       console.error('Cannot send message: Not connected or no conversation selected');
       return false;
     }
 
     const fullMessageData = {
       conversationId: currentConversation.id,
-      senderId: messageData.senderId || currentUser?.id,
-      senderType: messageData.senderType || currentUser?.type || 'CUSTOMER',
-      senderName: messageData.senderName || currentUser?.name || 'User',
+      senderId: messageData.senderId || currentUserRef.current.id,
+      senderType: messageData.senderType || currentUserRef.current.type || 'CUSTOMER',
+      senderName: messageData.senderName || currentUserRef.current.name || 'User',
       messageType: messageData.messageType || 'TEXT',
       ...messageData
     };
 
+    // 1. Optimistic Update - Append to UI immediately
+    const optimisticMessage = {
+      id: `temp-${Date.now()}`, // Temporary ID
+      ...fullMessageData,
+      createdAt: new Date().toISOString(),
+      sending: true
+    };
+    
+    setMessages(prev => [...prev, optimisticMessage]);
+
+    // Update conversation list locally
+    setConversations(prevConvs => {
+      return prevConvs.map(c => 
+        c.id === currentConversation.id 
+          ? { ...c, lastMessageAt: optimisticMessage.createdAt, lastMessageContent: optimisticMessage.content }
+          : c
+      );
+    });
+
+    // 2. Send to WebSocket server
     const sent = chatWebSocketService.sendMessage(fullMessageData);
     
     // Stop typing indicator when message is sent
