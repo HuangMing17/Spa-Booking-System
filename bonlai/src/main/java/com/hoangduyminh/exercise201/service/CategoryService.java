@@ -86,20 +86,5 @@ public interface CategoryService {
      */
     List<ProductResponse> getCategoryProducts(UUID categoryId);
 
-    /**
-     * Upload ảnh cho danh mục
-     * 
-     * @param id       id danh mục
-     * @param imageUrl URL ảnh đã upload
-     * @return thông tin chi tiết sau khi upload
-     */
-    CategoryResponse uploadImage(UUID id, String imageUrl);
 
-    /**
-     * Xóa ảnh của danh mục
-     * 
-     * @param id id danh mục
-     * @return thông tin chi tiết sau khi xóa ảnh
-     */
-    CategoryResponse deleteImage(UUID id);
 }

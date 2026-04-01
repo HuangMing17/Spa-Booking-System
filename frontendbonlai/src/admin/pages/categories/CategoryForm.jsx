@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { Form, Input, Button, message, Switch, Divider } from "antd";
 import axios from "../../../utils/axios";
-import { ImageUpload } from "../../../components";
 
 const CategoryForm = ({ category, onSubmitSuccess, onCancel }) => {
   const [form] = Form.useForm();
@@ -34,35 +33,7 @@ const CategoryForm = ({ category, onSubmitSuccess, onCancel }) => {
         categoryResponse = await axios.post("/api/categories", formData);
         message.success("Thêm danh mục mới thành công!");
       } // If there's a thumbnail to update, make a separate API call to update the image
-      if (values.thumbnail) {
-        const categoryId = isEditing
-          ? category.id
-          : categoryResponse.id || categoryResponse.data?.id;
-        if (categoryId) {
-          try {
-            console.log("Sending thumbnail URL:", values.thumbnail);
-            console.log("Category ID:", categoryId);
 
-            // Gửi URL ảnh dưới dạng JSON string theo API documentation
-            // API mong đợi string được quoted trong JSON body
-            await axios.post(
-              `/api/categories/${categoryId}/image`,
-              JSON.stringify(values.thumbnail),
-              {
-                headers: {
-                  "Content-Type": "application/json",
-                },
-              }
-            );
-            console.log("Category image updated successfully");
-          } catch (imageError) {
-            console.error("Error updating category image:", imageError);
-            message.warning(
-              "Danh mục đã được lưu nhưng có lỗi khi cập nhật ảnh!"
-            );
-          }
-        }
-      }
 
       // Notify parent component that submission was successful
       onSubmitSuccess();
@@ -95,7 +66,6 @@ const CategoryForm = ({ category, onSubmitSuccess, onCancel }) => {
         description: category.description,
         isActive: category.isActive,
         parentId: category.parentId,
-        thumbnail: category.thumbnail,
       });
     }
   }, [category, form]);
@@ -119,15 +89,7 @@ const CategoryForm = ({ category, onSubmitSuccess, onCancel }) => {
       <Form.Item name="description" label="Mô tả">
         <Input.TextArea placeholder="Nhập mô tả danh mục" rows={4} />
       </Form.Item>
-      <Divider>Hình ảnh</Divider>
-      {/* Ảnh đại diện */}
-      <Form.Item
-        label="Ảnh đại diện"
-        name="thumbnail"
-        rules={[{ required: true, message: "Vui lòng upload ảnh đại diện!" }]}
-      >
-        <ImageUpload placeholder="Upload ảnh đại diện" />
-      </Form.Item>
+
       <Form.Item
         name="parentId"
         label="ID danh mục cha (để trống nếu là danh mục gốc)"
