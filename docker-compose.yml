@@ -26,6 +26,8 @@ services:
       - SPRING_DATASOURCE_URL=jdbc:mysql://db:3306/webthuoc?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
       - SPRING_DATASOURCE_USERNAME=root
       - SPRING_DATASOURCE_PASSWORD=root
+    volumes:
+      - bonlai-uploads:/app/uploads
     depends_on:
       - db
 
@@ -42,3 +44,4 @@ services:
 
 volumes:
   mysql-data:
+  bonlai-uploads:
