@@ -31,7 +31,7 @@ public class CategoryController {
      * @return thông tin danh mục đã tạo
      */
     @PostMapping
-    @PreAuthorize("hasRole('STAFF')")
+    @PreAuthorize("hasAnyRole('STAFF', 'ADMIN')")
     public ResponseEntity<CategoryResponse> createCategory(
             @Valid @RequestBody CategoryRequest request) {
         CategoryResponse response = categoryService.createCategoryFromRequest(request);
@@ -46,7 +46,7 @@ public class CategoryController {
      * @return thông tin sau khi cập nhật
      */
     @PutMapping("/{id}")
-    @PreAuthorize("hasRole('STAFF')")
+    @PreAuthorize("hasAnyRole('STAFF', 'ADMIN')")
     public ResponseEntity<CategoryResponse> updateCategory(
             @PathVariable UUID id,
             @Valid @RequestBody CategoryRequest request) {
@@ -60,7 +60,7 @@ public class CategoryController {
      * @param id id danh mục
      */
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasRole('STAFF')")
+    @PreAuthorize("hasAnyRole('STAFF', 'ADMIN')")
     public ResponseEntity<Void> deleteCategory(@PathVariable UUID id) {
         categoryService.deleteCategory(id);
         return ResponseEntity.noContent().build();
@@ -141,7 +141,7 @@ public class CategoryController {
      * @return thông tin chi tiết sau khi upload
      */
     @PostMapping("/{id}/image")
-    @PreAuthorize("hasRole('STAFF')")
+    @PreAuthorize("hasAnyRole('STAFF', 'ADMIN')")
     public ResponseEntity<CategoryResponse> uploadImage(
             @PathVariable UUID id,
             @RequestBody String imageUrl) {
@@ -156,7 +156,7 @@ public class CategoryController {
      * @return thông tin chi tiết sau khi xóa ảnh
      */
     @DeleteMapping("/{id}/image")
-    @PreAuthorize("hasRole('STAFF')")
+    @PreAuthorize("hasAnyRole('STAFF', 'ADMIN')")
     public ResponseEntity<CategoryResponse> deleteImage(@PathVariable UUID id) {
         CategoryResponse response = categoryService.deleteImage(id);
         return ResponseEntity.ok(response);

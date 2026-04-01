@@ -24,7 +24,7 @@ public class FileUploadController {
     private String uploadDir;
 
     @PostMapping("/image")
-    @PreAuthorize("hasAnyRole('STAFF')")
+    @PreAuthorize("hasAnyRole('STAFF', 'ADMIN')")
     public ResponseEntity<String> uploadImage(@RequestParam("file") MultipartFile file) {
         try {
             // Tạo thư mục nếu chưa tồn tại
@@ -75,7 +75,7 @@ public class FileUploadController {
     }
 
     @GetMapping("/image/{filename}")
-    @PreAuthorize("hasAnyRole('STAFF')")
+    @PreAuthorize("hasAnyRole('STAFF', 'ADMIN')")
     public ResponseEntity<String> getImageInfo(@PathVariable String filename) {
         try {
             Path filePath = Paths.get(uploadDir, filename);

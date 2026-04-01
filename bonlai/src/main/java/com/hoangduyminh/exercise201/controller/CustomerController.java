@@ -45,7 +45,7 @@ public class CustomerController {
      * @return thông tin sau khi cập nhật
      */
     @PutMapping("/{id}")
-    @PreAuthorize("hasRole('CUSTOMER') or hasRole('STAFF')")
+    @PreAuthorize("hasAnyRole('CUSTOMER', 'STAFF', 'ADMIN')")
     public ResponseEntity<CustomerResponse> updateCustomer(
             @PathVariable UUID id,
             @Valid @RequestBody CustomerRequest request) {
@@ -59,7 +59,7 @@ public class CustomerController {
      * @param id id khách hàng
      */
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasRole('STAFF')")
+    @PreAuthorize("hasAnyRole('STAFF', 'ADMIN')")
     public ResponseEntity<Void> deleteCustomer(@PathVariable UUID id) {
         customerService.deleteCustomer(id);
         return ResponseEntity.noContent().build();
@@ -83,7 +83,7 @@ public class CustomerController {
      * @return danh sách khách hàng
      */
     @GetMapping
-    @PreAuthorize("hasRole('STAFF')")
+    @PreAuthorize("hasAnyRole('STAFF', 'ADMIN')")
     public ResponseEntity<List<CustomerResponse>> getAllCustomers() {
         List<CustomerResponse> responses = customerService.getAllCustomerDetails();
         return ResponseEntity.ok(responses);
@@ -96,7 +96,7 @@ public class CustomerController {
      * @return danh sách khách hàng phù hợp
      */
     @GetMapping("/search")
-    @PreAuthorize("hasRole('STAFF')")
+    @PreAuthorize("hasAnyRole('STAFF', 'ADMIN')")
     public ResponseEntity<List<CustomerResponse>> searchCustomers(
             @RequestParam(required = false) String keyword) {
         List<CustomerResponse> responses = customerService.searchCustomers(keyword);
@@ -110,7 +110,7 @@ public class CustomerController {
      * @return danh sách khách hàng mới
      */
     @GetMapping("/recent")
-    @PreAuthorize("hasRole('STAFF')")
+    @PreAuthorize("hasAnyRole('STAFF', 'ADMIN')")
     public ResponseEntity<List<CustomerResponse>> getRecentCustomers(
             @RequestParam(defaultValue = "30") Integer days) {
         List<CustomerResponse> responses = customerService.getRecentCustomers(days);
@@ -125,7 +125,7 @@ public class CustomerController {
      * @return thông tin sau khi cập nhật
      */
     @PutMapping("/{id}/status")
-    @PreAuthorize("hasRole('STAFF')")
+    @PreAuthorize("hasAnyRole('STAFF', 'ADMIN')")
     public ResponseEntity<CustomerResponse> updateStatus(
             @PathVariable UUID id,
             @RequestParam Boolean isActive) {
