@@ -39,7 +39,8 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(FirebaseUnavailableException.class)
-    public ResponseEntity<Object> handleFirebaseUnavailableException(FirebaseUnavailableException ex, WebRequest request) {
+    public ResponseEntity<Object> handleFirebaseUnavailableException(FirebaseUnavailableException ex,
+            WebRequest request) {
         Map<String, Object> body = new LinkedHashMap<>();
         body.put("timestamp", LocalDateTime.now());
         body.put("status", HttpStatus.SERVICE_UNAVAILABLE.value());

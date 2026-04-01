@@ -15,7 +15,7 @@ public class CategoryResponse {
     private UUID id;
     private String name;
     private String description;
-    private String thumbnail; // Được map từ trường image trong entity
+
     private Boolean isActive;
 
     private UUID parentId;

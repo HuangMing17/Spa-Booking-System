@@ -38,8 +38,6 @@ public class Category {
     @Column
     private String icon;
 
-    @Column
-    private String image;
 
     @Column
     private String placeholder;

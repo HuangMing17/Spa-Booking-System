@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import {
   Descriptions,
   Button,
-  Image,
   Spin,
   Tag,
   Typography,
@@ -10,7 +9,6 @@ import {
   message,
 } from "antd";
 import axios from "../../../utils/axios";
-import { getImageUrl, getPlaceholderImage } from "../../../utils/imageUtils";
 
 const { Title, Paragraph, Text } = Typography;
 
@@ -70,31 +68,7 @@ const CategoryDetail = ({ category }) => {
         </div>
       ) : (
         <>
-          <Card title="Ảnh đại diện" style={{ marginBottom: 16 }}>
-            <div style={{ textAlign: "center" }}>
-              <Image
-                src={getImageUrl(category.thumbnail) || getPlaceholderImage()}
-                alt={category.name}
-                style={{
-                  maxWidth: "300px",
-                  maxHeight: "200px",
-                  objectFit: "cover",
-                  borderRadius: "8px",
-                  border: "1px solid #d9d9d9",
-                }}
-                fallback={getPlaceholderImage()}
-                preview={{
-                  mask: (
-                    <div
-                      style={{ background: "rgba(0,0,0,0.5)", color: "white" }}
-                    >
-                      Xem ảnh
-                    </div>
-                  ),
-                }}
-              />
-            </div>
-          </Card>
+
           <Descriptions title="Thông tin danh mục" bordered column={2}>
             <Descriptions.Item label="Tên danh mục" span={2}>
               <Text strong>{category.name}</Text>
@@ -104,19 +78,7 @@ const CategoryDetail = ({ category }) => {
               {category.description || "Không có mô tả"}
             </Descriptions.Item>
 
-            <Descriptions.Item label="Ảnh đại diện">
-              {category.thumbnail ? (
-                <a
-                  href={getImageUrl(category.thumbnail)}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  Xem ảnh gốc
-                </a>
-              ) : (
-                <Text type="secondary">Chưa có ảnh</Text>
-              )}
-            </Descriptions.Item>
+
 
             <Descriptions.Item label="Trạng thái">
               <Tag color={category.isActive ? "green" : "red"}>
