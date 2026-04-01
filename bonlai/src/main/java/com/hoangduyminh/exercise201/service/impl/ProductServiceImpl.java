@@ -273,13 +273,13 @@ public class ProductServiceImpl implements ProductService {
             product.setShortDescription("Chưa có mô tả ngắn");
         }
 
-        // Đảm bảo slug không bao giờ null
         if (request.getSlug() != null && !request.getSlug().isEmpty()) {
             product.setSlug(request.getSlug());
         } else {
-            // Tạo slug từ tên dịch vụ
+            // Tạo slug từ tên dịch vụ + timestamp để đảm bảo unique
             String name = request.getName() != null ? request.getName() : "dich-vu-moi";
-            product.setSlug(name.toLowerCase().replaceAll("[^a-z0-9\\-]", "-"));
+            String baseSlug = name.toLowerCase().replaceAll("[^a-z0-9\\-]", "-");
+            product.setSlug(baseSlug + "-" + System.currentTimeMillis());
         }
 
         // Convert price từ Double sang BigDecimal
@@ -504,9 +504,12 @@ public class ProductServiceImpl implements ProductService {
 
         // Xử lý gallery images và thumbnail
         if (request.getThumbnail() != null || request.getImages() != null) {
-            // Xóa gallery cũ
-            List<Gallery> oldGalleries = galleryRepository.findByProduct(product);
-            galleryRepository.deleteAll(oldGalleries);
+            // Khởi tạo collection nếu null
+            if (product.getGalleries() == null) {
+                product.setGalleries(new ArrayList<>());
+            }
+            // Clear items (orphanRemoval = true sẽ xóa trong DB)
+            product.getGalleries().clear();
 
             // Thêm thumbnail mới nếu có
             if (request.getThumbnail() != null) {
@@ -515,7 +518,7 @@ public class ProductServiceImpl implements ProductService {
                 thumbnail.setImage(request.getThumbnail());
                 thumbnail.setPlaceholder("");
                 thumbnail.setIsThumbnail(true);
-                galleryRepository.save(thumbnail);
+                product.getGalleries().add(thumbnail);
             }
 
             // Thêm gallery mới
@@ -526,7 +529,7 @@ public class ProductServiceImpl implements ProductService {
                     gallery.setImage(imageUrl);
                     gallery.setPlaceholder("");
                     gallery.setIsThumbnail(false);
-                    galleryRepository.save(gallery);
+                    product.getGalleries().add(gallery);
                 }
             }
         }
@@ -612,13 +615,20 @@ public class ProductServiceImpl implements ProductService {
                 ProductAttribute productAttribute = new ProductAttribute();
                 productAttribute.setProduct(product);
                 productAttribute.setAttribute(attribute);
-                productAttributeRepository.save(productAttribute);
 
                 // Liên kết giá trị với product attribute
                 ProductAttributeValue productAttributeValue = new ProductAttributeValue();
                 productAttributeValue.setProductAttribute(productAttribute);
                 productAttributeValue.setAttributeValue(attributeValue);
-                productAttributeValueRepository.save(productAttributeValue);
+                
+                // Khởi tạo danh sách nếu là mảng null
+                if (productAttribute.getProductAttributeValues() == null) {
+                    productAttribute.setProductAttributeValues(new ArrayList<>());
+                }
+                productAttribute.getProductAttributeValues().add(productAttributeValue);
+                
+                // Thêm vào collection của Product
+                product.getProductAttributes().add(productAttribute);
             }
         }
 

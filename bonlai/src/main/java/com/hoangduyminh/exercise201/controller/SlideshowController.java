@@ -30,7 +30,7 @@ public class SlideshowController {
      * @return thông tin slideshow đã tạo
      */
     @PostMapping
-    @PreAuthorize("hasRole('STAFF')")
+    @PreAuthorize("hasAnyRole('STAFF', 'ADMIN')")
     public ResponseEntity<SlideshowResponse> createSlideshow(
             @Valid @RequestBody SlideshowRequest request) {
         SlideshowResponse response = slideshowService.createSlideshowFromRequest(request);
@@ -45,7 +45,7 @@ public class SlideshowController {
      * @return thông tin sau khi cập nhật
      */
     @PutMapping("/{id}")
-    @PreAuthorize("hasRole('STAFF')")
+    @PreAuthorize("hasAnyRole('STAFF', 'ADMIN')")
     public ResponseEntity<SlideshowResponse> updateSlideshow(
             @PathVariable UUID id,
             @Valid @RequestBody SlideshowRequest request) {
@@ -59,7 +59,7 @@ public class SlideshowController {
      * @param id id slideshow
      */
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasRole('STAFF')")
+    @PreAuthorize("hasAnyRole('STAFF', 'ADMIN')")
     public ResponseEntity<Void> deleteSlideshow(@PathVariable UUID id) {
         slideshowService.deleteSlideshow(id);
         return ResponseEntity.noContent().build();
@@ -107,7 +107,7 @@ public class SlideshowController {
      * @return thông tin sau khi cập nhật
      */
     @PutMapping("/{id}/status")
-    @PreAuthorize("hasRole('STAFF')")
+    @PreAuthorize("hasAnyRole('STAFF', 'ADMIN')")
     public ResponseEntity<SlideshowResponse> updateStatus(
             @PathVariable UUID id,
             @RequestParam Boolean isActive) {
@@ -123,7 +123,7 @@ public class SlideshowController {
      * @return thông tin sau khi cập nhật
      */
     @PutMapping("/{id}/order")
-    @PreAuthorize("hasRole('STAFF')")
+    @PreAuthorize("hasAnyRole('STAFF', 'ADMIN')")
     public ResponseEntity<SlideshowResponse> updateDisplayOrder(
             @PathVariable UUID id,
             @RequestParam Integer order) {

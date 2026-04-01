@@ -1,5 +1,5 @@
 # Build stage cho React/Vite
-FROM node:18-alpine AS build
+FROM node:22-alpine AS build
 
 WORKDIR /app
 # Cài đặt dependencies
@@ -22,7 +22,7 @@ FROM nginx:alpine
 COPY nginx.conf /etc/nginx/conf.d/default.conf
 
 # Copy thư mục build từ Stage 1 sang Nginx
-COPY --from=build /app/dist /usr/share/nginx/html
+COPY --from=build /app/build /usr/share/nginx/html
 
 EXPOSE 80
 

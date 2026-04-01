@@ -30,7 +30,7 @@ public class ProductController {
      * @return thông tin sản phẩm đã tạo
      */
     @PostMapping
-    @PreAuthorize("hasRole('STAFF')")
+    @PreAuthorize("hasAnyRole('STAFF', 'ADMIN')")
     public ResponseEntity<ProductResponse> createProduct(
             @Valid @RequestBody ProductRequest request) {
         ProductResponse response = productService.createProductFromRequest(request);
@@ -45,7 +45,7 @@ public class ProductController {
      * @return thông tin sau khi cập nhật
      */
     @PutMapping("/{id}")
-    @PreAuthorize("hasRole('STAFF')")
+    @PreAuthorize("hasAnyRole('STAFF', 'ADMIN')")
     public ResponseEntity<ProductResponse> updateProduct(
             @PathVariable UUID id,
             @Valid @RequestBody ProductRequest request) {
@@ -59,7 +59,7 @@ public class ProductController {
      * @param id id sản phẩm
      */
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasRole('STAFF')")
+    @PreAuthorize("hasAnyRole('STAFF', 'ADMIN')")
     public ResponseEntity<Void> deleteProduct(@PathVariable UUID id) {
         productService.deleteProduct(id);
         return ResponseEntity.noContent().build();
@@ -135,7 +135,7 @@ public class ProductController {
      * @return thông tin sau khi upload
      */
     @PostMapping("/{id}/images")
-    @PreAuthorize("hasRole('STAFF')")
+    @PreAuthorize("hasAnyRole('STAFF', 'ADMIN')")
     public ResponseEntity<ProductResponse> uploadImages(
             @PathVariable UUID id,
             @RequestBody List<String> imageUrls) {
@@ -150,7 +150,7 @@ public class ProductController {
      * @param imageId id ảnh
      */
     @DeleteMapping("/{id}/images/{imageId}")
-    @PreAuthorize("hasRole('STAFF')")
+    @PreAuthorize("hasAnyRole('STAFF', 'ADMIN')")
     public ResponseEntity<Void> deleteImage(
             @PathVariable UUID id,
             @PathVariable UUID imageId) {
@@ -166,7 +166,7 @@ public class ProductController {
      * @return thông tin sau khi cập nhật
      */
     @PutMapping("/{id}/status")
-    @PreAuthorize("hasRole('STAFF')")
+    @PreAuthorize("hasAnyRole('STAFF', 'ADMIN')")
     public ResponseEntity<ProductResponse> updateStatus(
             @PathVariable UUID id,
             @RequestParam Boolean isActive) {

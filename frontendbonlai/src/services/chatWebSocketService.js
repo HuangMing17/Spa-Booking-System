@@ -21,7 +21,8 @@ class ChatWebSocketService {
     }
 
     try {
-      const socket = new SockJS('http://localhost:8080/ws/chat');
+      const wsBase = import.meta.env.VITE_API_URL || 'http://localhost:8080';
+      const socket = new SockJS(`${wsBase}/ws/chat`);
       this.stompClient = Stomp.over(socket);
 
       // Disable debug logging in production

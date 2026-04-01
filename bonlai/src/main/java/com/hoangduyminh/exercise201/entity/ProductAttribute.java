@@ -30,6 +30,6 @@ public class ProductAttribute {
     @JsonIgnore
     private Attribute attribute;
 
-    @OneToMany(mappedBy = "productAttribute", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "productAttribute", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ProductAttributeValue> productAttributeValues;
 }

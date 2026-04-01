@@ -2,7 +2,7 @@ import axios from "axios";
 import { getAuthToken, clearAuthData, isTokenExpired } from "./storage";
 
 // Base URL cho backend
-export const API_BASE_URL = "http://localhost:8080";
+export const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:8080";
 
 // Tạo instance axios với config mặc định
 const axiosInstance = axios.create({

@@ -67,7 +67,7 @@ public class OrderController {
     }
 
     @PutMapping("/{id}/status/{statusCode}")
-    @PreAuthorize("hasRole('STAFF')")
+    @PreAuthorize("hasAnyRole('STAFF', 'ADMIN')")
     public ResponseEntity<OrderDTO> updateOrderStatus(
             @PathVariable String id,
             @PathVariable String statusCode) {
@@ -75,7 +75,7 @@ public class OrderController {
     }
 
     @PutMapping("/customer/{id}/status/{statusCode}")
-    @PreAuthorize("hasRole('CUSTOMER')")
+    @PreAuthorize("hasAnyRole('CUSTOMER', 'STAFF', 'ADMIN')")
     public ResponseEntity<OrderDTO> updateOrderStatusByCustomer(
             @PathVariable String id,
             @PathVariable String statusCode) {
@@ -121,7 +121,7 @@ public class OrderController {
      * @return danh sách đơn hàng
      */
     @GetMapping
-    @PreAuthorize("hasRole('STAFF')")
+    @PreAuthorize("hasAnyRole('STAFF', 'ADMIN')")
     public ResponseEntity<List<OrderDTO>> getAllOrders() {
         return ResponseEntity.ok(orderService.getAllOrders());
     }
