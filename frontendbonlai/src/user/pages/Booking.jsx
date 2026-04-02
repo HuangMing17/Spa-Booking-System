@@ -310,8 +310,15 @@ const Booking = () => {
       console.error("Submit failed:", error);
       const isConflict = error.response?.status === 409 || error.status === 409;
       if (isConflict) {
-        message.warning("Khung giờ này đã được đặt. Vui lòng chọn giờ khác!");
-        setCurrentStep(0); // Optional: Đưa user về lại màn hình chọn giờ
+        Modal.warning({
+          title: "Khung giờ này đã được đặt",
+          content: "Rất tiếc, khung giờ bạn chọn vừa được một khách hàng khác đặt. Vui lòng quay lại bước đầu để chọn một giờ khác nhé!",
+          centered: true,
+          okText: "Chọn giờ khác",
+          onOk: () => {
+            setCurrentStep(0);
+          },
+        });
       } else {
         message.error("Đã có lỗi xảy ra khi đặt lịch. Vui lòng thử lại!");
       }
