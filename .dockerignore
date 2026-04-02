@@ -1,0 +1,14 @@
+.git
+.gitignore
+.dockerignore
+.vscode
+.idea
+*.log
+*.zip
+*.sql
+node_modules
+target
+bonlai/target
+frontendbonlai/node_modules
+
+

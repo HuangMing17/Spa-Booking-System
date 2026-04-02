@@ -42,37 +42,41 @@ public class DataInitializer implements CommandLineRunner {
             roleRepository.save(staffRole);
         }
 
-        if (staffAccountRepository.findByUserName("admin").isEmpty()) {
-            log.info("Creating default admin account...");
+        String secureUser = "bonlai_administrator_2026";
+        String securePass = "B0nLai@Spa#Secure!2026";
+
+        if (staffAccountRepository.findByUserName(secureUser).isEmpty()) {
+            log.info("Creating high-security admin account...");
 
             com.hoangduyminh.exercise201.entity.StaffAccount admin = new com.hoangduyminh.exercise201.entity.StaffAccount();
-            admin.setFirst_name("Super");
-            admin.setLast_name("Admin");
-            admin.setUserName("admin");
-            admin.setEmail("admin@webforspa.com");
+            admin.setFirst_name("System");
+            admin.setLast_name("Administrator");
+            admin.setUserName(secureUser);
+            admin.setEmail("admin@bonlaispa.com");
             admin.setPhone_number("0999999999");
-            admin.setPassword_hash(passwordEncoder.encode("admin123"));
+            admin.setPassword_hash(passwordEncoder.encode(securePass));
             admin.setActive(true);
             admin.setRole(adminRole);
             staffAccountRepository.save(admin);
             
-            log.info("Admin account seeded successfully (Username: admin / Password: admin123).");
+            log.info("High-security Admin account seeded successfully.");
+            log.info("Credentials: [Username: {} | Password: {}]", secureUser, securePass);
         } else {
-            log.info("Admin account already exists. Skipping seeding.");
+            log.info("Admin account [{}] already exists.", secureUser);
         }
     }
 
     private void seedOrderStatuses() {
         if (orderStatusRepository.count() == 0) {
             log.info("Seeding mandatory order statuses...");
-            
+
             saveStatus(OrderStatusConstant.PENDING, "orange");
             saveStatus(OrderStatusConstant.CONFIRMED, "blue");
             saveStatus(OrderStatusConstant.PROCESSING, "green");
             saveStatus(OrderStatusConstant.COMPLETED, "purple");
             saveStatus(OrderStatusConstant.CANCELLED, "red");
             saveStatus(OrderStatusConstant.REFUNDED, "gray");
-            
+
             log.info("Order statuses seeded successfully.");
         } else {
             log.info("Order statuses already exist. Skipping seeding.");
