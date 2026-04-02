@@ -74,4 +74,18 @@ public interface OrderRepository extends JpaRepository<Order, String> {
          * Tìm đơn theo khoảng thời gian hẹn
          */
         List<Order> findByAppointmentDateBetween(Date startDate, Date endDate);
+
+        /**
+         * Kiểm tra trùng lịch hẹn (cùng service, cùng ngày giờ) bỏ qua lịch đã hủy
+         */
+        @Query("""
+            SELECT COUNT(o) > 0 FROM Order o JOIN OrderItem i ON i.order.id = o.id
+            WHERE i.product.id = :productId 
+            AND o.appointmentDate = :appointmentDate
+            AND o.orderStatus.statusName NOT IN ('CANCELLED', 'REJECTED', 'FAILED')
+        """)
+        boolean existsBySlot(
+          @Param("productId") UUID productId, 
+          @Param("appointmentDate") Date appointmentDate
+        );
 }

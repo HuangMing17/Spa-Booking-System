@@ -63,6 +63,15 @@ public class OrderServiceImpl implements OrderService {
         OrderStatus initialStatus = orderStatusRepository.findByStatusName(OrderStatusConstant.PENDING)
                 .orElseThrow(() -> new IllegalStateException("Chưa cấu hình trạng thái đơn hàng"));
 
+        // Kiểm tra trùng lịch hẹn TRƯỚC khi save
+        if (orderDTO.getItems() != null && !orderDTO.getItems().isEmpty()) {
+            for (OrderItemDTO itemDTO : orderDTO.getItems()) {
+                if (orderRepository.existsBySlot(itemDTO.getProductId(), orderDTO.getAppointmentDate())) {
+                    throw new BusinessException.TimeSlotNotAvailable("Khung giờ này đã được đặt. Vui lòng chọn giờ khác!");
+                }
+            }
+        }
+
         Order order = new Order();
         order.setId(UUID.randomUUID().toString());
         order.setCustomer(customer);
