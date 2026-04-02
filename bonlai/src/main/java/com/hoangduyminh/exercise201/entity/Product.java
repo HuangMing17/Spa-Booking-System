@@ -75,13 +75,13 @@ public class Product {
     private StaffAccount updatedBy;
 
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<ProductCategory> productCategories;
+    private List<ProductCategory> productCategories = new java.util.ArrayList<>();
 
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Gallery> galleries;
+    private List<Gallery> galleries = new java.util.ArrayList<>();
 
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<ProductAttribute> productAttributes;
+    private List<ProductAttribute> productAttributes = new java.util.ArrayList<>();
 
     public enum ProductType {
         simple,

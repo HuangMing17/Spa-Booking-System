@@ -31,5 +31,5 @@ public class ProductAttribute {
     private Attribute attribute;
 
     @OneToMany(mappedBy = "productAttribute", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<ProductAttributeValue> productAttributeValues;
+    private List<ProductAttributeValue> productAttributeValues = new java.util.ArrayList<>();
 }
