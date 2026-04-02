@@ -9,52 +9,54 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.io.Resource;
 
-import jakarta.annotation.PostConstruct;
+import java.io.ByteArrayInputStream;
+import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
+import java.util.Base64;
 
-/**
- * Cấu hình Firebase cho ứng dụng
- */
 @Configuration
 public class FirebaseConfig {
 
     private static final Logger logger = LoggerFactory.getLogger(FirebaseConfig.class);
-    private boolean firebaseInitialized = false;
 
-    @Value("${firebase.service-account-key}")
-    private Resource serviceAccountKey;
-
-    @Value("${firebase.project-id}")
+    @Value("${firebase.project-id:react-vite-ecommerce}")
     private String projectId;
 
-    @PostConstruct
-    public void initializeFirebase() {
-        if (FirebaseApp.getApps().isEmpty()) {
-            try (InputStream serviceAccount = serviceAccountKey.getInputStream()) {
-                FirebaseOptions options = FirebaseOptions.builder()
-                        .setCredentials(GoogleCredentials.fromStream(serviceAccount))
-                        .setProjectId(projectId)
-                        .build();
+    @Value("${firebase.credentials.path:./src/main/resources/serviceAccountKey.json}")
+    private String fallbackPath;
 
-                FirebaseApp.initializeApp(options);
-                firebaseInitialized = true;
-                logger.info("Firebase initialized successfully with project ID: {}", projectId);
-            } catch (Exception e) {
-                logger.warn("Firebase initialization failed: {}. Firebase authentication will not be available.", e.getMessage());
-                logger.warn("To enable Firebase, provide a valid service account key file.");
-            }
+    @Bean
+    public FirebaseApp firebaseApp() throws IOException {
+        if (!FirebaseApp.getApps().isEmpty()) {
+            return FirebaseApp.getInstance();
         }
+
+        GoogleCredentials credentials;
+
+        // Vị cứu tinh của Docker/VPS: Đọc chuỗi Base64 siêu dài từ Biến môi trường
+        String base64Key = System.getenv("FIREBASE_CREDENTIALS_BASE64");
+
+        if (base64Key != null && !base64Key.trim().isEmpty()) {
+            logger.info("📱 Firebase is initializing using Base64 Secure Environment Variable.");
+            byte[] decoded = Base64.getDecoder().decode(base64Key);
+            credentials = GoogleCredentials.fromStream(new ByteArrayInputStream(decoded));
+        } else {
+            // Dành cho lúc bạn chạy Local Debug Console
+            logger.info("💻 Firebase is initializing using local JSON file path fallback.");
+            credentials = GoogleCredentials.fromStream(new FileInputStream(fallbackPath));
+        }
+
+        FirebaseOptions options = FirebaseOptions.builder()
+                .setCredentials(credentials)
+                .setProjectId(projectId)
+                .build();
+
+        return FirebaseApp.initializeApp(options);
     }
 
     @Bean
-    public FirebaseAuth firebaseAuth() {
-        if (firebaseInitialized && !FirebaseApp.getApps().isEmpty()) {
-            return FirebaseAuth.getInstance();
-        }
-        logger.warn("FirebaseAuth bean not available - Firebase was not initialized successfully");
-        return null;
+    public FirebaseAuth firebaseAuth(FirebaseApp firebaseApp) {
+        return FirebaseAuth.getInstance(firebaseApp);
     }
 }
