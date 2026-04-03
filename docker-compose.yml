@@ -6,12 +6,23 @@ services:
     container_name: bonlai-mysql
     restart: always
     environment:
-      MYSQL_DATABASE: exercise201
-      MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
-    ports:
-      - "3306:3306"
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+    # KHÔNG expose port 3306 ra ngoài
+    # Các container cùng network vẫn kết nối được
+    expose:
+      - "3306"
     volumes:
       - mysql-data:/var/lib/mysql
+    networks:
+      - bonlai-network
+    healthcheck:
+      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "--password=${MYSQL_ROOT_PASSWORD}" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   backend:
     build:
@@ -19,20 +30,27 @@ services:
       dockerfile: Dockerfile
     container_name: bonlai-api
     restart: always
-    ports:
-      - "8080:8080" # Đồng bộ với Frontend mặc định (8080)
+    # KHÔNG expose port 8080 ra ngoài
+    # Nginx gọi nội bộ qua Docker network
+    expose:
+      - "8080"
     environment:
       - SPRING_PROFILES_ACTIVE=prod
-      - SPRING_DATASOURCE_URL=jdbc:mysql://db:3306/exercise201?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
-      - SPRING_DATASOURCE_USERNAME=root
-      - SPRING_DATASOURCE_PASSWORD=
+      - SPRING_DATASOURCE_URL=jdbc:mysql://db:3306/${MYSQL_DATABASE}?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+      - SPRING_DATASOURCE_USERNAME=${MYSQL_USER}
+      - SPRING_DATASOURCE_PASSWORD=${MYSQL_PASSWORD}
       - FIREBASE_CREDENTIALS_BASE64=${FIREBASE_CREDENTIALS_BASE64}
-      - INITIAL_ADMIN_USERNAME=spadmin_secure
-      - INITIAL_ADMIN_PASSWORD=change_this_password_123456
+      - INITIAL_ADMIN_USERNAME=${ADMIN_USERNAME}
+      - INITIAL_ADMIN_PASSWORD=${ADMIN_PASSWORD}
     volumes:
       - bonlai-uploads:/app/uploads
+    env_file:
+      - .env
     depends_on:
-      - db
+      db:
+        condition: service_healthy
+    networks:
+      - bonlai-network
 
   frontend:
     build:
@@ -41,10 +59,18 @@ services:
     container_name: bonlai-frontend
     restart: always
     ports:
-      - "8082:80"
+      - "80:80" # Chỉ Nginx mới cần public
+      - "443:443"
     depends_on:
       - backend
+    networks:
+      - bonlai-network
 
 volumes:
   mysql-data:
   bonlai-uploads:
+
+
+networks:
+  bonlai-network:
+    driver: bridge
