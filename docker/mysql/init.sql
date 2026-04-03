@@ -5,9 +5,9 @@ USE exercise201;
 -- 1. Khởi tạo Roles (Dùng chuỗi UUID giả định để trùng khớp hoặc để Hibernate tự sinh)
 -- Ở đây chúng ta nạp dữ liệu mầm với tên cột đúng là 'role_name'
 INSERT INTO roles (id, role_name, privileges) VALUES
-(UUID_TO_BIN(UUID()), 'ADMIN', 'ALL_PRIVILEGES'),
-(UUID_TO_BIN(UUID()), 'STAFF', 'STAFF_PRIVILEGES'),
-(UUID_TO_BIN(UUID()), 'CUSTOMER', 'CUSTOMER_PRIVILEGES')
+(UUID_TO_BIN(UUID()), 'ROLE_ADMIN', 'ALL_PRIVILEGES'),
+(UUID_TO_BIN(UUID()), 'ROLE_STAFF', 'STAFF_PRIVILEGES'),
+(UUID_TO_BIN(UUID()), 'ROLE_CUSTOMER', 'CUSTOMER_PRIVILEGES')
 ON DUPLICATE KEY UPDATE role_name=role_name;
 
 -- 2. Khởi tạo Order Statuses (Tên cột: status_name)

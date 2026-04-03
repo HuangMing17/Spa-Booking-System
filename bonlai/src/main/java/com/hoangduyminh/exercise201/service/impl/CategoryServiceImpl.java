@@ -146,6 +146,7 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public CategoryResponse getCategoryDetailById(UUID id) {
         Category category = categoryRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Category", "id", id));
@@ -153,6 +154,7 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<CategoryResponse> getAllCategoryDetails() {
         return categoryRepository.findAll().stream()
                 .map(this::convertToDetailedResponse)
@@ -160,6 +162,7 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<CategoryResponse> searchCategories(String keyword) {
         return categoryRepository.findByCategoryNameContainingIgnoreCase(keyword).stream()
                 .map(this::convertToResponse)
@@ -167,6 +170,7 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<CategoryResponse> getChildCategories(UUID parentId) {
         return categoryRepository.findById(parentId)
                 .map(parent -> categoryRepository.findByParentId(parentId).stream()
@@ -176,6 +180,7 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<ProductResponse> getCategoryProducts(UUID categoryId) {
         Category category = categoryRepository.findById(categoryId)
                 .orElseThrow(() -> new ResourceNotFoundException("Category", "id", categoryId));
