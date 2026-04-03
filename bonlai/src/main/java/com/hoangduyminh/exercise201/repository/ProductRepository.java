@@ -3,6 +3,7 @@ package com.hoangduyminh.exercise201.repository;
 import com.hoangduyminh.exercise201.entity.Product;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.stereotype.Repository;
 
 import java.math.BigDecimal;
@@ -15,6 +16,14 @@ import java.util.UUID;
  */
 @Repository
 public interface ProductRepository extends JpaRepository<Product, UUID> {
+
+    @Override
+    @EntityGraph(attributePaths = {"galleries", "productCategories", "productAttributes"})
+    List<Product> findAll();
+
+    @Override
+    @EntityGraph(attributePaths = {"galleries", "productCategories", "productAttributes"})
+    Optional<Product> findById(UUID id);
 
         /**
          * Tìm kiếm sản phẩm theo tên hoặc mô tả

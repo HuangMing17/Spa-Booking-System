@@ -3,6 +3,7 @@ package com.hoangduyminh.exercise201.repository;
 import com.hoangduyminh.exercise201.entity.Category;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -13,6 +14,10 @@ import java.util.UUID;
  */
 @Repository
 public interface CategoryRepository extends JpaRepository<Category, UUID> {
+    
+    @Override
+    @EntityGraph(attributePaths = {"subCategories"})
+    List<Category> findAll();
 
         /**
          * Tìm kiếm danh mục theo tên (không phân biệt hoa thường)
