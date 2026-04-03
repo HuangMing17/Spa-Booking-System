@@ -1,40 +1,38 @@
 -- Database initialization script for SPA Bon Lai
+-- Khớp với cấu trúc UUID và tên cột thực tế trong code Java
 USE exercise201;
 
--- Create default roles
-INSERT INTO roles (id, name, description) VALUES
-(1, 'ROLE_ADMIN', 'Administrator role'),
-(2, 'ROLE_STAFF', 'Staff role'),
-(3, 'ROLE_CUSTOMER', 'Customer role')
-ON DUPLICATE KEY UPDATE name=name;
+-- 1. Khởi tạo Roles (Dùng chuỗi UUID giả định để trùng khớp hoặc để Hibernate tự sinh)
+-- Ở đây chúng ta nạp dữ liệu mầm với tên cột đúng là 'role_name'
+INSERT INTO roles (id, role_name, privileges) VALUES
+(UUID_TO_BIN(UUID()), 'ADMIN', 'ALL_PRIVILEGES'),
+(UUID_TO_BIN(UUID()), 'STAFF', 'STAFF_PRIVILEGES'),
+(UUID_TO_BIN(UUID()), 'CUSTOMER', 'CUSTOMER_PRIVILEGES')
+ON DUPLICATE KEY UPDATE role_name=role_name;
 
+-- 2. Khởi tạo Order Statuses (Tên cột: status_name)
+INSERT INTO order_statuses (id, status_name, color, privacy, created_at, updated_at) VALUES
+(UUID_TO_BIN(UUID()), 'PENDING', '#FFA500', 'public_', NOW(), NOW()),
+(UUID_TO_BIN(UUID()), 'CONFIRMED', '#4CAF50', 'public_', NOW(), NOW()),
+(UUID_TO_BIN(UUID()), 'COMPLETED', '#2196F3', 'public_', NOW(), NOW()),
+(UUID_TO_BIN(UUID()), 'CANCELLED', '#F44336', 'public_', NOW(), NOW())
+ON DUPLICATE KEY UPDATE status_name=status_name;
 
--- Create default order statuses
-INSERT INTO order_statuses (id, name, description, color, created_at, updated_at) VALUES
-(1, 'PENDING', 'Chờ xác nhận', '#FFA500', NOW(), NOW()),
-(2, 'CONFIRMED', 'Đã xác nhận', '#4CAF50', NOW(), NOW()),
-(3, 'COMPLETED', 'Hoàn thành', '#2196F3', NOW(), NOW()),
-(4, 'CANCELLED', 'Đã hủy', '#F44336', NOW(), NOW())
-ON DUPLICATE KEY UPDATE name=name;
+-- 3. Khởi tạo Categories (Tên cột: category_name)
+INSERT INTO categories (id, category_name, category_description, active, created_at, updated_at) VALUES
+(UUID_TO_BIN(UUID()), 'Massage', 'Các dịch vụ massage thư giãn', true, NOW(), NOW()),
+(UUID_TO_BIN(UUID()), 'Chăm sóc da', 'Chăm sóc và điều trị da mặt', true, NOW(), NOW()),
+(UUID_TO_BIN(UUID()), 'Nail & Tóc', 'Dịch vụ làm nail và tóc', true, NOW(), NOW()),
+(UUID_TO_BIN(UUID()), 'Spa body', 'Các liệu trình chăm sóc toàn thân', true, NOW(), NOW())
+ON DUPLICATE KEY UPDATE category_name=category_name;
 
--- Create sample categories
-INSERT INTO categories (name, slug, description, is_active, display_order, created_at, updated_at) VALUES
-('Massage', 'massage', 'Các dịch vụ massage thư giãn', true, 1, NOW(), NOW()),
-('Chăm sóc da', 'cham-soc-da', 'Chăm sóc và điều trị da mặt', true, 2, NOW(), NOW()),
-('Nail & Tóc', 'nail-toc', 'Dịch vụ làm nail và tóc', true, 3, NOW(), NOW()),
-('Spa body', 'spa-body', 'Các liệu trình chăm sóc toàn thân', true, 4, NOW(), NOW())
-ON DUPLICATE KEY UPDATE name=name;
+-- 4. Khởi tạo Tags (Tên cột: tag_name)
+INSERT INTO tags (id, tag_name, created_at, updated_at) VALUES
+(UUID_TO_BIN(UUID()), 'Thư giãn', NOW(), NOW()),
+(UUID_TO_BIN(UUID()), 'Cao cấp', NOW(), NOW()),
+(UUID_TO_BIN(UUID()), 'Hot deal', NOW(), NOW()),
+(UUID_TO_BIN(UUID()), 'Mới', NOW(), NOW())
+ON DUPLICATE KEY UPDATE tag_name=tag_name;
 
--- Create sample tags
-INSERT INTO tags (name, slug, created_at, updated_at) VALUES
-('Thư giãn', 'thu-gian', NOW(), NOW()),
-('Cao cấp', 'cao-cap', NOW(), NOW()),
-('Hot deal', 'hot-deal', NOW(), NOW()),
-('Mới', 'moi', NOW(), NOW())
-ON DUPLICATE KEY UPDATE name=name;
-
-
--- Log initialization
-SELECT 'Database initialized successfully' AS Status;
-SELECT COUNT(*) AS RolesCount FROM roles;
-SELECT COUNT(*) AS CategoriesCount FROM categories;
+-- Log kết quả
+SELECT 'Database seeds initialized successfully' AS Status;
