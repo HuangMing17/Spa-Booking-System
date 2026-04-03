@@ -61,6 +61,9 @@ public class SecurityConfig {
                                 "/api/test/**",
                                 "/api/payment/vnpay-ipn", // Cho phép Máy chủ VNPay gọi tự do
                                 "/ws/chat/**", // Cho phép kết nối WebSocket chat
+                                "/actuator/health",
+                                "/api/services/**",
+                                "/auth/**",
                                 "/error")
                         .permitAll()
                         // Public GET endpoints for categories
@@ -88,6 +91,12 @@ public class SecurityConfig {
                         .authenticated())
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .headers(headers -> headers
+                        .frameOptions(fo -> fo.deny()) // Chặn Clickjacking
+                        .xssProtection(xss -> xss.disable()) // Modern browser dùng CSP thay thế
+                        .contentSecurityPolicy(csp -> csp
+                                .policyDirectives("default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; connect-src 'self' https:;"))
+                )
                 .authenticationProvider(authenticationProvider())
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
 
