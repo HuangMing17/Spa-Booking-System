@@ -7,7 +7,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import java.util.Date;
 import java.util.UUID;
-import java.util.List;
+import java.util.Set;
+import java.util.HashSet;
 import java.math.BigDecimal;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -75,13 +76,13 @@ public class Product {
     private StaffAccount updatedBy;
 
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<ProductCategory> productCategories = new java.util.ArrayList<>();
+    private Set<ProductCategory> productCategories = new HashSet<>();
 
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Gallery> galleries = new java.util.ArrayList<>();
+    private Set<Gallery> galleries = new HashSet<>();
 
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<ProductAttribute> productAttributes = new java.util.ArrayList<>();
+    private Set<ProductAttribute> productAttributes = new HashSet<>();
 
     public enum ProductType {
         simple,

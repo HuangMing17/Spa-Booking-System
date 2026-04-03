@@ -8,6 +8,8 @@ import lombok.Setter;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.Set;
+import java.util.HashSet;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -63,7 +65,7 @@ public class Order {
     private StaffAccount updatedBy;
 
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
-    private List<OrderItem> orderItems;
+    private Set<OrderItem> orderItems = new HashSet<>();
 
     @PrePersist
     protected void onCreate() {

@@ -7,6 +7,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import java.util.Date;
 import java.util.UUID;
+import java.util.Set;
+import java.util.HashSet;
 import java.util.List;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -27,7 +29,7 @@ public class Category {
     private Category parent;
 
     @OneToMany(mappedBy = "parent")
-    private List<Category> subCategories;
+    private Set<Category> subCategories = new HashSet<>();
 
     @Column(name = "category_name", nullable = false, unique = true)
     private String categoryName;
