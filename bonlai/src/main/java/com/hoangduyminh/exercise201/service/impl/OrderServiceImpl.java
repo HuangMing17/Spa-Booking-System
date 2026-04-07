@@ -187,6 +187,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public OrderDTO getOrderById(String id) {
         Order order = orderRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Đơn đặt lịch", "id", id));
@@ -194,6 +195,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<OrderDTO> searchOrders(String keyword) {
         return orderRepository
                 .findByCustomer_first_nameContainingIgnoreCaseOrCustomer_last_nameContainingIgnoreCaseOrIdContainingIgnoreCase(
@@ -204,6 +206,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<OrderDTO> getOrdersByCustomer(UUID customerId) {
         return orderRepository.findByCustomerId(customerId)
                 .stream()
@@ -212,6 +215,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<OrderDTO> getOrdersByStatus(String statusCode) {
         OrderStatus status = orderStatusRepository.findByStatusName(statusCode)
                 .orElseThrow(() -> new ResourceNotFoundException("Trạng thái", "code", statusCode));
