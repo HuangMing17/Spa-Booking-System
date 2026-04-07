@@ -37,7 +37,7 @@ public class OrderController {
     }
 
     @PostMapping
-    @PreAuthorize("hasAnyRole('CUSTOMER', 'STAFF')")
+    @PreAuthorize("hasAnyRole('CUSTOMER', 'STAFF', 'ADMIN')")
     public ResponseEntity<OrderDTO> createOrder(
             @Valid @RequestBody OrderDTO orderDTO,
             Authentication authentication) {
@@ -46,7 +46,7 @@ public class OrderController {
     }
 
     @PutMapping("/{id}")
-    @PreAuthorize("hasAnyRole('STAFF')")
+    @PreAuthorize("hasAnyRole('STAFF', 'ADMIN')")
     public ResponseEntity<OrderDTO> updateOrder(
             @PathVariable String id,
             @Valid @RequestBody OrderDTO orderDTO) {
@@ -54,7 +54,7 @@ public class OrderController {
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasAnyRole('CUSTOMER', 'STAFF')")
+    @PreAuthorize("hasAnyRole('CUSTOMER', 'STAFF', 'ADMIN')")
     public ResponseEntity<Void> cancelOrder(@PathVariable String id, Authentication authentication) {
         enforceOrderAccess(authentication, id);
         orderService.cancelOrder(id);
@@ -62,20 +62,20 @@ public class OrderController {
     }
 
     @GetMapping("/{id}")
-    @PreAuthorize("hasAnyRole('CUSTOMER', 'STAFF')")
+    @PreAuthorize("hasAnyRole('CUSTOMER', 'STAFF', 'ADMIN')")
     public ResponseEntity<OrderDTO> getOrder(@PathVariable String id, Authentication authentication) {
         enforceOrderAccess(authentication, id);
         return ResponseEntity.ok(orderService.getOrderById(id));
     }
 
     @GetMapping("/search")
-    @PreAuthorize("hasAnyRole('STAFF')")
+    @PreAuthorize("hasAnyRole('STAFF', 'ADMIN')")
     public ResponseEntity<List<OrderDTO>> searchOrders(@RequestParam String keyword) {
         return ResponseEntity.ok(orderService.searchOrders(keyword));
     }
 
     @GetMapping("/customer/{customerId}")
-    @PreAuthorize("hasAnyRole('CUSTOMER', 'STAFF')")
+    @PreAuthorize("hasAnyRole('CUSTOMER', 'STAFF', 'ADMIN')")
     public ResponseEntity<List<OrderDTO>> getOrdersByCustomer(
             @PathVariable UUID customerId,
             Authentication authentication) {
@@ -84,7 +84,7 @@ public class OrderController {
     }
 
     @GetMapping("/status/{statusCode}")
-    @PreAuthorize("hasAnyRole('STAFF')")
+    @PreAuthorize("hasAnyRole('STAFF', 'ADMIN')")
     public ResponseEntity<List<OrderDTO>> getOrdersByStatus(@PathVariable String statusCode) {
         return ResponseEntity.ok(orderService.getOrdersByStatus(statusCode));
     }
@@ -112,7 +112,7 @@ public class OrderController {
     }
 
     @PostMapping("/{orderId}/items")
-    @PreAuthorize("hasAnyRole('CUSTOMER', 'STAFF')")
+    @PreAuthorize("hasAnyRole('CUSTOMER', 'STAFF', 'ADMIN')")
     public ResponseEntity<OrderItemDTO> addOrderItem(
             @PathVariable String orderId,
             @Valid @RequestBody OrderItemDTO itemDTO,
@@ -122,7 +122,7 @@ public class OrderController {
     }
 
     @PutMapping("/items/{itemId}")
-    @PreAuthorize("hasAnyRole('CUSTOMER', 'STAFF')")
+    @PreAuthorize("hasAnyRole('CUSTOMER', 'STAFF', 'ADMIN')")
     public ResponseEntity<OrderItemDTO> updateOrderItem(
             @PathVariable UUID itemId,
             @Valid @RequestBody OrderItemDTO itemDTO,
@@ -132,7 +132,7 @@ public class OrderController {
     }
 
     @DeleteMapping("/items/{itemId}")
-    @PreAuthorize("hasAnyRole('CUSTOMER', 'STAFF')")
+    @PreAuthorize("hasAnyRole('CUSTOMER', 'STAFF', 'ADMIN')")
     public ResponseEntity<Void> removeOrderItem(@PathVariable UUID itemId, Authentication authentication) {
         enforceOrderItemAccess(authentication, itemId);
         orderService.removeOrderItem(itemId);
@@ -140,7 +140,7 @@ public class OrderController {
     }
 
     @GetMapping("/{orderId}/items")
-    @PreAuthorize("hasAnyRole('CUSTOMER', 'STAFF')")
+    @PreAuthorize("hasAnyRole('CUSTOMER', 'STAFF', 'ADMIN')")
     public ResponseEntity<List<OrderItemDTO>> getOrderItems(
             @PathVariable String orderId,
             Authentication authentication) {

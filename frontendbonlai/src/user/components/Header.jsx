@@ -705,6 +705,28 @@ const Header = () => {
                     <span style={{ display: { xs: "none", sm: "inline" } }}>Đặt lịch ngay</span>
                   </Button>
 
+                  {isLoggedIn && (
+                    <Button
+                      type="default"
+                      icon={<HistoryOutlined />}
+                      onClick={() => navigate("/lich-hen")}
+                      className="booking-history-btn"
+                      style={{
+                        borderColor: "#FFB6C1",
+                        color: "#FF99AC",
+                        borderRadius: "12px",
+                        height: "44px",
+                        padding: "0 20px",
+                        fontWeight: "600",
+                        background: "#FFF5F7",
+                      }}
+                    >
+                      <span style={{ display: { xs: "none", md: "inline" } }}>
+                        Lịch hẹn của tôi
+                      </span>
+                    </Button>
+                  )}
+
                   {/* User Profile / Login */}
                   {isLoggedIn ? (
                     <Button
@@ -779,6 +801,13 @@ const Header = () => {
         .book-btn:hover {
           transform: translateY(-2px);
           box-shadow: 0 6px 20px rgba(255, 153, 172, 0.4) !important;
+        }
+
+        .booking-history-btn:hover {
+          background: rgba(255, 240, 245, 1) !important;
+          border-color: #ff99ac !important;
+          color: #ff7f9f !important;
+          transform: translateY(-1px);
         }
 
         .user-menu-btn:hover,
