@@ -23,6 +23,7 @@ import CategoryForm from "./CategoryForm";
 import CategoryDetail from "./CategoryDetail";
 
 
+
 const { Text } = Typography;
 
 const CategoryList = () => {

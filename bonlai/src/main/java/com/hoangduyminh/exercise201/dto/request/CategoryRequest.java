@@ -19,6 +19,7 @@ public class CategoryRequest {
     @Size(max = 1000, message = "Mô tả không được quá 1000 ký tự")
     private String description;
 
+
     private Boolean isActive;
     private UUID parentId; // ID của danh mục cha nếu có
 }

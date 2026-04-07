@@ -40,6 +40,5 @@ public class CategoryDTO {
     private String description;
 
     // Các trường sau đã được cập nhật để phù hợp với entity hiện tại
-    private String thumbnail; // Tương ứng với trường image trong entity
     private Boolean isActive = true;
 }

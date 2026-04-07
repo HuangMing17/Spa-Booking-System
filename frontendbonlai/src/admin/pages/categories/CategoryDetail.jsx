@@ -11,6 +11,7 @@ import {
 import axios from "../../../utils/axios";
 
 
+
 const { Title, Paragraph, Text } = Typography;
 
 const CategoryDetail = ({ category }) => {

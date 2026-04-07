@@ -66,10 +66,12 @@ public class PaymentServiceImpl implements PaymentService {
                 hashData.append(fieldName);
                 hashData.append('=');
                 hashData.append(URLEncoder.encode(fieldValue, StandardCharsets.US_ASCII));
+                
                 // Build query string
                 query.append(URLEncoder.encode(fieldName, StandardCharsets.US_ASCII));
                 query.append('=');
                 query.append(URLEncoder.encode(fieldValue, StandardCharsets.US_ASCII));
+
                 if (itr.hasNext()) {
                     query.append('&');
                     hashData.append('&');
@@ -80,6 +82,14 @@ public class PaymentServiceImpl implements PaymentService {
         String queryUrl = query.toString();
         String vnp_SecureHash = vnPayConfig.hmacSHA512(vnPayConfig.secretKey, hashData.toString());
         queryUrl += "&vnp_SecureHash=" + vnp_SecureHash;
+
+        System.out.println("========== VNPAY DEBUG ==========");
+        System.out.println("Secret Key in Backend: " + (vnPayConfig.secretKey != null ? vnPayConfig.secretKey.substring(0, Math.min(6, vnPayConfig.secretKey.length())) + "..." : "NULL!!!"));
+        System.out.println("Hash Data string: " + hashData.toString());
+        System.out.println("Secure Hash generated: " + vnp_SecureHash);
+        System.out.println("Payment URL: " + vnPayConfig.vnp_PayUrl + "?" + queryUrl);
+        System.out.println("=================================");
+
         return vnPayConfig.vnp_PayUrl + "?" + queryUrl;
     }
 

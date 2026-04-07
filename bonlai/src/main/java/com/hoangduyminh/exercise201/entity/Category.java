@@ -37,6 +37,7 @@ public class Category {
     @Column(name = "category_description")
     private String categoryDescription;
 
+
     @Column(columnDefinition = "boolean default true")
     private boolean active;
 

@@ -35,6 +35,7 @@ const CategoryForm = ({ category, onSubmitSuccess, onCancel }) => {
       } // If there's a thumbnail to update, make a separate API call to update the image
 
 
+
       // Notify parent component that submission was successful
       onSubmitSuccess();
     } catch (error) {

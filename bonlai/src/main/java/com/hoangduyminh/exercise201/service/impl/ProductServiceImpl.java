@@ -508,6 +508,7 @@ public class ProductServiceImpl implements ProductService {
         if (request.getThumbnail() != null || request.getImages() != null) {
             // Collection đã được khởi tạo ở Entity (new ArrayList<>())
             
+
             // Clear items (orphanRemoval = true sẽ xóa trong DB)
             product.getGalleries().clear();
 
@@ -622,6 +623,7 @@ public class ProductServiceImpl implements ProductService {
                 productAttributeValue.setAttributeValue(attributeValue);
                 
                 // Loại bỏ thao tác setCollection(new ArrayList) gây lỗi orphanRemoval
+
                 productAttribute.getProductAttributeValues().add(productAttributeValue);
                 
                 // Thêm vào collection của Product

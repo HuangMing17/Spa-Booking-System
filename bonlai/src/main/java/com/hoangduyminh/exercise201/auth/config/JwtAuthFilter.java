@@ -99,7 +99,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
         final String authHeader = request.getHeader("Authorization");
         final String jwt;
-        final String username;
+        String username = null;
 
         // Kiểm tra header có Bearer token không
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
@@ -110,30 +110,37 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         // Lấy token từ header
         jwt = authHeader.substring(7);
 
-        // Lấy username từ token
-        username = jwtService.extractUsername(jwt);
+        try {
+            // Lấy username từ token - sẽ ném exception nếu token hết hạn hoặc sai chữ ký
+            username = jwtService.extractUsername(jwt);
+            
+            // Nếu có username và chưa authenticated
+            if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
 
-        // Nếu có username và chưa authenticated
-        if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+                // Lấy user details
+                UserDetails userDetails = this.userDetailsService.loadUserByUsername(username);
 
-            // Lấy user details
-            UserDetails userDetails = this.userDetailsService.loadUserByUsername(username);
+                // Kiểm tra token có hợp lệ không
+                if (jwtService.isTokenValid(jwt, userDetails)) {
 
-            // Kiểm tra token có hợp lệ không
-            if (jwtService.isTokenValid(jwt, userDetails)) {
+                    // Tạo authentication token
+                    UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
+                            userDetails,
+                            null,
+                            userDetails.getAuthorities());
 
-                // Tạo authentication token
-                UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
-                        userDetails,
-                        null,
-                        userDetails.getAuthorities());
+                    authToken.setDetails(
+                            new WebAuthenticationDetailsSource().buildDetails(request));
 
-                authToken.setDetails(
-                        new WebAuthenticationDetailsSource().buildDetails(request));
-
-                // Set authentication vào context
-                SecurityContextHolder.getContext().setAuthentication(authToken);
+                    // Set authentication vào context
+                    SecurityContextHolder.getContext().setAuthentication(authToken);
+                }
             }
+        } catch (Exception e) {
+            // Token không hợp lệ (có thể do đổi cấu hình JWT_SECRET hoặc token hết hạn)
+            // Log ở mức warn tránh spam console
+            logger.warn("JWT Validation Failed: " + e.getMessage());
+            // Frontend sẽ cấu hình tự logout hoặc xin token mới nếu nhận được HTTP 401 hoặc 403
         }
 
         filterChain.doFilter(request, response);
