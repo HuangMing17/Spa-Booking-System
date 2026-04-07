@@ -78,6 +78,13 @@ public class FirebaseAuthService {
                 signInProvider = "firebase";
             }
 
+            // Xử lý trường hợp Facebook/Phone auth không trả về email
+            if (email == null || email.trim().isEmpty()) {
+                String provider = resolveAuthProvider(signInProvider).name().toLowerCase();
+                email = firebaseUid + "@" + provider + ".com";
+                log.info("Email is null from Firebase, generated fallback email: {}", email);
+            }
+
             // Tìm hoặc tạo customer
             Customer customer = findOrCreateCustomer(firebaseUid, email, name, signInProvider);
 
