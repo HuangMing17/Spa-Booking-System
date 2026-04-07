@@ -28,6 +28,7 @@ public class OrderItemDTO {
     private Double discountAmount = 0.0;
 
     private String productName;
+    private String serviceName;
 
     private String productThumbnail;
 

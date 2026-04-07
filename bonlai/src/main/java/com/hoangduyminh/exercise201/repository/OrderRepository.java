@@ -26,21 +26,25 @@ public interface OrderRepository extends JpaRepository<Order, String> {
         /**
          * Tìm đơn đặt lịch theo khách hàng
          */
+        @EntityGraph(attributePaths = {"orderItems", "customer", "orderStatus"})
         List<Order> findByCustomerId(UUID customerId);
 
         /**
          * Tìm đơn theo trạng thái
          */
+        @EntityGraph(attributePaths = {"orderItems", "customer", "orderStatus"})
         List<Order> findByOrderStatus_Id(UUID statusId);
 
         /**
          * Tìm đơn theo khách hàng và trạng thái
          */
+        @EntityGraph(attributePaths = {"orderItems", "customer", "orderStatus"})
         List<Order> findByCustomerIdAndOrderStatus_Id(UUID customerId, UUID statusId);
 
         /**
          * Tìm đơn theo thông tin khách hàng
          */
+        @EntityGraph(attributePaths = {"orderItems", "customer", "orderStatus"})
         @Query("SELECT o FROM Order o WHERE LOWER(o.customer.first_name) LIKE LOWER(CONCAT('%', :keyword, '%')) OR LOWER(o.customer.last_name) LIKE LOWER(CONCAT('%', :keyword, '%')) OR LOWER(o.id) LIKE LOWER(CONCAT('%', :keyword, '%'))")
         List<Order> findByCustomer_first_nameContainingIgnoreCaseOrCustomer_last_nameContainingIgnoreCaseOrIdContainingIgnoreCase(
                         @Param("keyword") String keyword);
@@ -60,6 +64,7 @@ public interface OrderRepository extends JpaRepository<Order, String> {
         /**
          * Tìm đơn chưa hoàn thành của khách hàng
          */
+        @EntityGraph(attributePaths = {"orderItems", "customer", "orderStatus"})
         List<Order> findByCustomerIdAndOrderStatus_StatusName(UUID customerId, String statusName);
 
         /**
@@ -78,11 +83,13 @@ public interface OrderRepository extends JpaRepository<Order, String> {
         /**
          * Tìm đơn theo ngày hẹn
          */
+        @EntityGraph(attributePaths = {"orderItems", "customer", "orderStatus"})
         List<Order> findByAppointmentDate(Date appointmentDate);
 
         /**
          * Tìm đơn theo khoảng thời gian hẹn
          */
+        @EntityGraph(attributePaths = {"orderItems", "customer", "orderStatus"})
         List<Order> findByAppointmentDateBetween(Date startDate, Date endDate);
 
         /**

@@ -37,7 +37,7 @@ axiosInstance.interceptors.request.use(
     const token = getAuthToken();
     if (token) {
       console.log("Token sent in request header:", token.substring(0, 15) + "...");
-      config.headers.Authorization = `${token}`;
+      config.headers.Authorization = token;
     } else {
       console.log("No token found for request:", config.url);
     }
@@ -82,7 +82,7 @@ axiosInstance.interceptors.response.use(
 
         case 403:
           // Forbidden - Không có quyền. QUAN TRỌNG: Không được gọi logout ở đây!
-          console.error("Forbidden (403) - Access denied for path:", config?.url);
+          console.error("Forbidden (403) - Access denied for path:", error.config?.url);
           return Promise.reject(new Error("Bạn không có quyền thực hiện hành động này"));
 
         case 404:

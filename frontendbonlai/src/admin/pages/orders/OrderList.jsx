@@ -245,11 +245,11 @@ const AppointmentList = () => {
       dataIndex: "items",
       key: "items",
       render: (items) => (
-        <div>
-          <div style={{ fontWeight: 500 }}>{items?.length || 0} dịch vụ</div>
+          <div>
+            <div style={{ fontWeight: 500 }}>{items?.length || 0} dịch vụ</div>
           {items && items.length > 0 && (
             <div style={{ fontSize: 12, color: "#666" }}>
-              {items[0].serviceName}
+              {items[0].serviceName || items[0].productName}
               {items.length > 1 && ` +${items.length - 1} khác`}
             </div>
           )}
