@@ -707,29 +707,34 @@ const Header = () => {
 
                   {/* User Profile / Login */}
                   {isLoggedIn ? (
-                    <Button
-                      type="text"
-                      className="user-profile-btn"
-                      onClick={() => navigate("/thong-tin-ca-nhan")}
-                      style={{
-                        height: "44px",
-                        padding: "0 8px",
-                        borderRadius: "12px",
-                        background: "rgba(255, 240, 245, 0.6)",
-                        border: "1px solid #FFD1DC"
-                      }}
+                    <Dropdown
+                      menu={{ items: userMenuItems }}
+                      trigger={["click"]}
+                      placement="bottomRight"
                     >
-                      <Space size={8}>
-                        <Avatar
-                          size={32}
-                          style={{ background: "linear-gradient(135deg, #FFB6C1, #FF99AC)" }}
-                          icon={<UserOutlined />}
-                        />
-                        <span style={{ fontWeight: "600", color: "#4A4A4A" }}>
-                          {user?.fullName?.split(' ')[0] || "User"}
-                        </span>
-                      </Space>
-                    </Button>
+                      <Button
+                        type="text"
+                        className="user-profile-btn"
+                        style={{
+                          height: "44px",
+                          padding: "0 8px",
+                          borderRadius: "12px",
+                          background: "rgba(255, 240, 245, 0.6)",
+                          border: "1px solid #FFD1DC"
+                        }}
+                      >
+                        <Space size={8}>
+                          <Avatar
+                            size={32}
+                            style={{ background: "linear-gradient(135deg, #FFB6C1, #FF99AC)" }}
+                            icon={<UserOutlined />}
+                          />
+                          <span style={{ fontWeight: "600", color: "#4A4A4A" }}>
+                            {user?.fullName?.split(' ')[0] || "User"}
+                          </span>
+                        </Space>
+                      </Button>
+                    </Dropdown>
                   ) : (
                     <Button
                       type="primary"
@@ -747,17 +752,6 @@ const Header = () => {
                     >
                       Đăng nhập
                     </Button>
-                  )}
-
-                  {/* Logout Button if Logged In (instead of dropdown) */}
-                  {isLoggedIn && (
-                    <Button
-                      type="text"
-                      icon={<LogoutOutlined style={{ color: "#ff4d4f" }} />}
-                      onClick={logout}
-                      title="Đăng xuất"
-                      style={{ borderRadius: "50%", width: "44px", height: "44px" }}
-                    />
                   )}
 
                   {/* Mobile Menu removed per user request */}
@@ -779,6 +773,13 @@ const Header = () => {
         .book-btn:hover {
           transform: translateY(-2px);
           box-shadow: 0 6px 20px rgba(255, 153, 172, 0.4) !important;
+        }
+
+        .booking-history-btn:hover {
+          background: rgba(255, 240, 245, 1) !important;
+          border-color: #ff99ac !important;
+          color: #ff7f9f !important;
+          transform: translateY(-1px);
         }
 
         .user-menu-btn:hover,

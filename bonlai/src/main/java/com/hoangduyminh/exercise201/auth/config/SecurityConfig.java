@@ -1,6 +1,7 @@
 package com.hoangduyminh.exercise201.auth.config;
 
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -19,6 +20,7 @@ import com.hoangduyminh.exercise201.auth.service.CombinedUserDetailsService;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import java.util.List;
 import java.util.Arrays;
 import org.springframework.http.HttpMethod;
 
@@ -32,12 +34,18 @@ public class SecurityConfig {
 
     private final JwtAuthFilter jwtAuthFilter;
     private final CombinedUserDetailsService userDetailsService;
+    private final List<String> allowedOriginPatterns;
 
     public SecurityConfig(
             JwtAuthFilter jwtAuthFilter,
-            CombinedUserDetailsService userDetailsService) {
+            CombinedUserDetailsService userDetailsService,
+            @Value("${app.cors.allowed-origin-patterns:http://localhost:3000,http://localhost:5173,http://localhost:4173}") String allowedOriginPatterns) {
         this.jwtAuthFilter = jwtAuthFilter;
         this.userDetailsService = userDetailsService;
+        this.allowedOriginPatterns = Arrays.stream(allowedOriginPatterns.split(","))
+                .map(String::trim)
+                .filter(origin -> !origin.isEmpty())
+                .toList();
     }
 
     @Bean
@@ -106,7 +114,7 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOriginPatterns(Arrays.asList("*"));
+        configuration.setAllowedOriginPatterns(allowedOriginPatterns);
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(Arrays.asList("*"));
         configuration.setAllowCredentials(true);

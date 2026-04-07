@@ -2,6 +2,9 @@ package com.hoangduyminh.exercise201.auth.config;
 
 import com.hoangduyminh.exercise201.auth.service.JwtService;
 import com.hoangduyminh.exercise201.auth.service.CombinedUserDetailsService;
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.MalformedJwtException;
+import io.jsonwebtoken.security.SignatureException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -18,6 +21,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import org.springframework.util.AntPathMatcher;
 
 import java.io.IOException;
+import java.time.Instant;
 import java.util.Arrays;
 import java.util.List;
 
@@ -136,13 +140,34 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                     SecurityContextHolder.getContext().setAuthentication(authToken);
                 }
             }
+        } catch (ExpiredJwtException e) {
+            writeUnauthorizedResponse(response, "Token has expired", request.getRequestURI());
+            return;
+        } catch (MalformedJwtException e) {
+            writeUnauthorizedResponse(response, "Token is malformed", request.getRequestURI());
+            return;
+        } catch (SignatureException e) {
+            writeUnauthorizedResponse(response, "Token signature is invalid", request.getRequestURI());
+            return;
         } catch (Exception e) {
-            // Token không hợp lệ (có thể do đổi cấu hình JWT_SECRET hoặc token hết hạn)
-            // Log ở mức warn tránh spam console
             logger.warn("JWT Validation Failed: " + e.getMessage());
-            // Frontend sẽ cấu hình tự logout hoặc xin token mới nếu nhận được HTTP 401 hoặc 403
+            writeUnauthorizedResponse(response, "Token is invalid", request.getRequestURI());
+            return;
         }
 
         filterChain.doFilter(request, response);
+    }
+
+    private void writeUnauthorizedResponse(HttpServletResponse response, String message, String path) throws IOException {
+        if (response.isCommitted()) {
+            return;
+        }
+
+        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+        response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
+        response.getWriter().write("""
+                {"timestamp":"%s","status":401,"error":"Unauthorized","message":"%s","path":"%s"}
+                """.formatted(Instant.now(), message, path));
     }
 }

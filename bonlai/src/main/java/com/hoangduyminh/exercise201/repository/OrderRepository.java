@@ -15,33 +15,80 @@ import java.util.UUID;
 @Repository
 public interface OrderRepository extends JpaRepository<Order, String> {
 
-    @Override
-    @Query("SELECT DISTINCT o FROM Order o LEFT JOIN FETCH o.orderItems LEFT JOIN FETCH o.customer LEFT JOIN FETCH o.orderStatus")
+    @Query("""
+        SELECT DISTINCT o FROM Order o
+        LEFT JOIN FETCH o.customer
+        LEFT JOIN FETCH o.orderStatus
+        LEFT JOIN FETCH o.orderItems oi
+        LEFT JOIN FETCH oi.product
+    """)
     List<Order> findAll();
 
     @Override
-    @Query("SELECT o FROM Order o LEFT JOIN FETCH o.orderItems LEFT JOIN FETCH o.customer LEFT JOIN FETCH o.orderStatus WHERE o.id = :id")
+    @Query("""
+        SELECT DISTINCT o FROM Order o
+        LEFT JOIN FETCH o.customer
+        LEFT JOIN FETCH o.orderStatus
+        LEFT JOIN FETCH o.orderItems oi
+        LEFT JOIN FETCH oi.product
+        WHERE o.id = :id
+    """)
     Optional<Order> findById(@Param("id") String id);
 
         /**
          * Tìm đơn đặt lịch theo khách hàng
          */
-        List<Order> findByCustomerId(UUID customerId);
+        @Query("""
+            SELECT DISTINCT o FROM Order o
+            LEFT JOIN FETCH o.customer
+            LEFT JOIN FETCH o.orderStatus
+            LEFT JOIN FETCH o.orderItems oi
+            LEFT JOIN FETCH oi.product
+            WHERE o.customer.id = :customerId
+        """)
+        List<Order> findByCustomerId(@Param("customerId") UUID customerId);
 
         /**
          * Tìm đơn theo trạng thái
          */
-        List<Order> findByOrderStatus_Id(UUID statusId);
+        @Query("""
+            SELECT DISTINCT o FROM Order o
+            LEFT JOIN FETCH o.customer
+            LEFT JOIN FETCH o.orderStatus
+            LEFT JOIN FETCH o.orderItems oi
+            LEFT JOIN FETCH oi.product
+            WHERE o.orderStatus.id = :statusId
+        """)
+        List<Order> findByOrderStatus_Id(@Param("statusId") UUID statusId);
 
         /**
          * Tìm đơn theo khách hàng và trạng thái
          */
-        List<Order> findByCustomerIdAndOrderStatus_Id(UUID customerId, UUID statusId);
+        @Query("""
+            SELECT DISTINCT o FROM Order o
+            LEFT JOIN FETCH o.customer
+            LEFT JOIN FETCH o.orderStatus
+            LEFT JOIN FETCH o.orderItems oi
+            LEFT JOIN FETCH oi.product
+            WHERE o.customer.id = :customerId AND o.orderStatus.id = :statusId
+        """)
+        List<Order> findByCustomerIdAndOrderStatus_Id(
+                        @Param("customerId") UUID customerId,
+                        @Param("statusId") UUID statusId);
 
         /**
          * Tìm đơn theo thông tin khách hàng
          */
-        @Query("SELECT o FROM Order o WHERE LOWER(o.customer.first_name) LIKE LOWER(CONCAT('%', :keyword, '%')) OR LOWER(o.customer.last_name) LIKE LOWER(CONCAT('%', :keyword, '%')) OR LOWER(o.id) LIKE LOWER(CONCAT('%', :keyword, '%'))")
+        @Query("""
+            SELECT DISTINCT o FROM Order o
+            LEFT JOIN FETCH o.customer
+            LEFT JOIN FETCH o.orderStatus
+            LEFT JOIN FETCH o.orderItems oi
+            LEFT JOIN FETCH oi.product
+            WHERE LOWER(o.customer.first_name) LIKE LOWER(CONCAT('%', :keyword, '%'))
+               OR LOWER(o.customer.last_name) LIKE LOWER(CONCAT('%', :keyword, '%'))
+               OR LOWER(o.id) LIKE LOWER(CONCAT('%', :keyword, '%'))
+        """)
         List<Order> findByCustomer_first_nameContainingIgnoreCaseOrCustomer_last_nameContainingIgnoreCaseOrIdContainingIgnoreCase(
                         @Param("keyword") String keyword);
 
@@ -60,7 +107,17 @@ public interface OrderRepository extends JpaRepository<Order, String> {
         /**
          * Tìm đơn chưa hoàn thành của khách hàng
          */
-        List<Order> findByCustomerIdAndOrderStatus_StatusName(UUID customerId, String statusName);
+        @Query("""
+            SELECT DISTINCT o FROM Order o
+            LEFT JOIN FETCH o.customer
+            LEFT JOIN FETCH o.orderStatus
+            LEFT JOIN FETCH o.orderItems oi
+            LEFT JOIN FETCH oi.product
+            WHERE o.customer.id = :customerId AND o.orderStatus.statusName = :statusName
+        """)
+        List<Order> findByCustomerIdAndOrderStatus_StatusName(
+                        @Param("customerId") UUID customerId,
+                        @Param("statusName") String statusName);
 
         /**
          * Tìm đơn theo khoảng thời gian
@@ -78,12 +135,30 @@ public interface OrderRepository extends JpaRepository<Order, String> {
         /**
          * Tìm đơn theo ngày hẹn
          */
-        List<Order> findByAppointmentDate(Date appointmentDate);
+        @Query("""
+            SELECT DISTINCT o FROM Order o
+            LEFT JOIN FETCH o.customer
+            LEFT JOIN FETCH o.orderStatus
+            LEFT JOIN FETCH o.orderItems oi
+            LEFT JOIN FETCH oi.product
+            WHERE o.appointmentDate = :appointmentDate
+        """)
+        List<Order> findByAppointmentDate(@Param("appointmentDate") Date appointmentDate);
 
         /**
          * Tìm đơn theo khoảng thời gian hẹn
          */
-        List<Order> findByAppointmentDateBetween(Date startDate, Date endDate);
+        @Query("""
+            SELECT DISTINCT o FROM Order o
+            LEFT JOIN FETCH o.customer
+            LEFT JOIN FETCH o.orderStatus
+            LEFT JOIN FETCH o.orderItems oi
+            LEFT JOIN FETCH oi.product
+            WHERE o.appointmentDate BETWEEN :startDate AND :endDate
+        """)
+        List<Order> findByAppointmentDateBetween(
+                        @Param("startDate") Date startDate,
+                        @Param("endDate") Date endDate);
 
         /**
          * Kiểm tra trùng lịch hẹn (cùng service, cùng ngày giờ) bỏ qua lịch đã hủy

@@ -376,6 +376,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<OrderItemDTO> getOrderItems(String orderId) {
         return orderItemRepository.findByOrderId(orderId)
                 .stream()
@@ -384,6 +385,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<OrderDTO> getOrdersByAppointmentDate(Date appointmentDate) {
         return orderRepository.findByAppointmentDate(appointmentDate)
                 .stream()
@@ -392,6 +394,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<OrderDTO> getOrdersByAppointmentDateBetween(Date startDate, Date endDate) {
         return orderRepository.findByAppointmentDateBetween(startDate, endDate)
                 .stream()
@@ -400,6 +403,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<OrderDTO> getAllOrders() {
         return orderRepository.findAll()
                 .stream()
@@ -462,6 +466,7 @@ public class OrderServiceImpl implements OrderService {
         if (item.getProduct() != null) {
             dto.setProductId(item.getProduct().getId());
             dto.setProductName(item.getProduct().getProductName());
+            dto.setServiceName(item.getProduct().getProductName());
 
             // Lấy ảnh thumbnail từ gallery
             Gallery thumbnail = galleryRepository.findByProductIdAndIsThumbnailTrue(item.getProduct().getId());
