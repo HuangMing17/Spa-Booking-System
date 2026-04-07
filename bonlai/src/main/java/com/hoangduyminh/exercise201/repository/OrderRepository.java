@@ -16,12 +16,12 @@ import java.util.UUID;
 public interface OrderRepository extends JpaRepository<Order, String> {
 
     @Override
-    @EntityGraph(attributePaths = {"orderItems", "customer", "orderStatus"})
+    @Query("SELECT DISTINCT o FROM Order o LEFT JOIN FETCH o.orderItems LEFT JOIN FETCH o.customer LEFT JOIN FETCH o.orderStatus")
     List<Order> findAll();
 
     @Override
-    @EntityGraph(attributePaths = {"orderItems", "customer", "orderStatus"})
-    Optional<Order> findById(String id);
+    @Query("SELECT o FROM Order o LEFT JOIN FETCH o.orderItems LEFT JOIN FETCH o.customer LEFT JOIN FETCH o.orderStatus WHERE o.id = :id")
+    Optional<Order> findById(@Param("id") String id);
 
         /**
          * Tìm đơn đặt lịch theo khách hàng
