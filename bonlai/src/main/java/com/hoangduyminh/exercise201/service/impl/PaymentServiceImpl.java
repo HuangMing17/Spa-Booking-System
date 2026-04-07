@@ -62,19 +62,15 @@ public class PaymentServiceImpl implements PaymentService {
             String fieldName = itr.next();
             String fieldValue = vnp_Params.get(fieldName);
             if ((fieldValue != null) && (fieldValue.length() > 0)) {
-                // VNPay bắt buộc chuẩn URL Encode là UTF-8 thay space bằng %20 (thay vì dấu +)
-                String encodedFieldName = URLEncoder.encode(fieldName, StandardCharsets.UTF_8).replace("+", "%20");
-                String encodedFieldValue = URLEncoder.encode(fieldValue, StandardCharsets.UTF_8).replace("+", "%20");
-
                 // Build hash data
                 hashData.append(fieldName);
                 hashData.append('=');
-                hashData.append(encodedFieldValue);
+                hashData.append(URLEncoder.encode(fieldValue, StandardCharsets.US_ASCII));
                 
                 // Build query string
-                query.append(encodedFieldName);
+                query.append(URLEncoder.encode(fieldName, StandardCharsets.US_ASCII));
                 query.append('=');
-                query.append(encodedFieldValue);
+                query.append(URLEncoder.encode(fieldValue, StandardCharsets.US_ASCII));
 
                 if (itr.hasNext()) {
                     query.append('&');
@@ -86,6 +82,14 @@ public class PaymentServiceImpl implements PaymentService {
         String queryUrl = query.toString();
         String vnp_SecureHash = vnPayConfig.hmacSHA512(vnPayConfig.secretKey, hashData.toString());
         queryUrl += "&vnp_SecureHash=" + vnp_SecureHash;
+
+        System.out.println("========== VNPAY DEBUG ==========");
+        System.out.println("Secret Key in Backend: " + (vnPayConfig.secretKey != null ? vnPayConfig.secretKey.substring(0, Math.min(6, vnPayConfig.secretKey.length())) + "..." : "NULL!!!"));
+        System.out.println("Hash Data string: " + hashData.toString());
+        System.out.println("Secure Hash generated: " + vnp_SecureHash);
+        System.out.println("Payment URL: " + vnPayConfig.vnp_PayUrl + "?" + queryUrl);
+        System.out.println("=================================");
+
         return vnPayConfig.vnp_PayUrl + "?" + queryUrl;
     }
 
@@ -120,12 +124,9 @@ public class PaymentServiceImpl implements PaymentService {
             String fieldName = itr.next();
             String fieldValue = fields.get(fieldName);
             if ((fieldValue != null) && (fieldValue.length() > 0)) {
-                String encodedFieldName = URLEncoder.encode(fieldName, StandardCharsets.UTF_8).replace("+", "%20");
-                String encodedFieldValue = URLEncoder.encode(fieldValue, StandardCharsets.UTF_8).replace("+", "%20");
-
-                hashData.append(encodedFieldName);
+                hashData.append(fieldName);
                 hashData.append('=');
-                hashData.append(encodedFieldValue);
+                hashData.append(URLEncoder.encode(fieldValue, StandardCharsets.US_ASCII));
                 if (itr.hasNext()) {
                     hashData.append('&');
                 }
