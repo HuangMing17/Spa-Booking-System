@@ -705,53 +705,36 @@ const Header = () => {
                     <span style={{ display: { xs: "none", sm: "inline" } }}>Đặt lịch ngay</span>
                   </Button>
 
-                  {isLoggedIn && (
-                    <Button
-                      type="default"
-                      icon={<HistoryOutlined />}
-                      onClick={() => navigate("/lich-hen")}
-                      className="booking-history-btn"
-                      style={{
-                        borderColor: "#FFB6C1",
-                        color: "#FF99AC",
-                        borderRadius: "12px",
-                        height: "44px",
-                        padding: "0 20px",
-                        fontWeight: "600",
-                        background: "#FFF5F7",
-                      }}
-                    >
-                      <span style={{ display: { xs: "none", md: "inline" } }}>
-                        Lịch hẹn của tôi
-                      </span>
-                    </Button>
-                  )}
-
                   {/* User Profile / Login */}
                   {isLoggedIn ? (
-                    <Button
-                      type="text"
-                      className="user-profile-btn"
-                      onClick={() => navigate("/thong-tin-ca-nhan")}
-                      style={{
-                        height: "44px",
-                        padding: "0 8px",
-                        borderRadius: "12px",
-                        background: "rgba(255, 240, 245, 0.6)",
-                        border: "1px solid #FFD1DC"
-                      }}
+                    <Dropdown
+                      menu={{ items: userMenuItems }}
+                      trigger={["click"]}
+                      placement="bottomRight"
                     >
-                      <Space size={8}>
-                        <Avatar
-                          size={32}
-                          style={{ background: "linear-gradient(135deg, #FFB6C1, #FF99AC)" }}
-                          icon={<UserOutlined />}
-                        />
-                        <span style={{ fontWeight: "600", color: "#4A4A4A" }}>
-                          {user?.fullName?.split(' ')[0] || "User"}
-                        </span>
-                      </Space>
-                    </Button>
+                      <Button
+                        type="text"
+                        className="user-profile-btn"
+                        style={{
+                          height: "44px",
+                          padding: "0 8px",
+                          borderRadius: "12px",
+                          background: "rgba(255, 240, 245, 0.6)",
+                          border: "1px solid #FFD1DC"
+                        }}
+                      >
+                        <Space size={8}>
+                          <Avatar
+                            size={32}
+                            style={{ background: "linear-gradient(135deg, #FFB6C1, #FF99AC)" }}
+                            icon={<UserOutlined />}
+                          />
+                          <span style={{ fontWeight: "600", color: "#4A4A4A" }}>
+                            {user?.fullName?.split(' ')[0] || "User"}
+                          </span>
+                        </Space>
+                      </Button>
+                    </Dropdown>
                   ) : (
                     <Button
                       type="primary"
@@ -769,17 +752,6 @@ const Header = () => {
                     >
                       Đăng nhập
                     </Button>
-                  )}
-
-                  {/* Logout Button if Logged In (instead of dropdown) */}
-                  {isLoggedIn && (
-                    <Button
-                      type="text"
-                      icon={<LogoutOutlined style={{ color: "#ff4d4f" }} />}
-                      onClick={logout}
-                      title="Đăng xuất"
-                      style={{ borderRadius: "50%", width: "44px", height: "44px" }}
-                    />
                   )}
 
                   {/* Mobile Menu removed per user request */}
