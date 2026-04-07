@@ -483,11 +483,7 @@ const Home = ({ onMount }) => {
                       <div className="popular-service-cover">
                         <img
                           alt={service.name}
-                          src={
-                            service.images && service.images.length > 0
-                              ? getImageUrl(service.images[0])
-                              : getPlaceholderImage()
-                          }
+                          src={getImageUrl(service.images?.[0] || service.thumbnail) || getPlaceholderImage()}
                           className="popular-service-image"
                         />
                         {/* Ranking badge */}
@@ -640,11 +636,7 @@ const Home = ({ onMount }) => {
                               <div style={{ height: '160px', overflow: 'hidden' }}>
                                 <img
                                   alt={service.name}
-                                  src={
-                                    service.images && service.images.length > 0
-                                      ? getImageUrl(service.images[0])
-                                      : getPlaceholderImage()
-                                  }
+                                  src={getImageUrl(service.images?.[0] || service.thumbnail) || getPlaceholderImage()}
                                   style={{
                                     width: '100%',
                                     height: '100%',

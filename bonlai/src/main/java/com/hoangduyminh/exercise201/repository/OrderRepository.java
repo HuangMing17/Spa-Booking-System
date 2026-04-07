@@ -4,14 +4,24 @@ import com.hoangduyminh.exercise201.entity.Order;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.stereotype.Repository;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Repository
 public interface OrderRepository extends JpaRepository<Order, String> {
+
+    @Override
+    @EntityGraph(attributePaths = {"orderItems", "customer", "orderStatus"})
+    List<Order> findAll();
+
+    @Override
+    @EntityGraph(attributePaths = {"orderItems", "customer", "orderStatus"})
+    Optional<Order> findById(String id);
 
         /**
          * Tìm đơn đặt lịch theo khách hàng
@@ -74,4 +84,18 @@ public interface OrderRepository extends JpaRepository<Order, String> {
          * Tìm đơn theo khoảng thời gian hẹn
          */
         List<Order> findByAppointmentDateBetween(Date startDate, Date endDate);
+
+        /**
+         * Kiểm tra trùng lịch hẹn (cùng service, cùng ngày giờ) bỏ qua lịch đã hủy
+         */
+        @Query("""
+            SELECT COUNT(o) > 0 FROM Order o JOIN OrderItem i ON i.order.id = o.id
+            WHERE i.product.id = :productId 
+            AND o.appointmentDate = :appointmentDate
+            AND o.orderStatus.statusName NOT IN ('CANCELLED', 'REJECTED', 'FAILED')
+        """)
+        boolean existsBySlot(
+          @Param("productId") UUID productId, 
+          @Param("appointmentDate") Date appointmentDate
+        );
 }

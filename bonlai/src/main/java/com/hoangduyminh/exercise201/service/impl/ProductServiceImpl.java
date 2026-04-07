@@ -241,6 +241,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public ProductDTO getProductById(UUID id) {
         Product product = productRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Dịch vụ", "id", id));
@@ -248,6 +249,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<ProductDTO> getAllProducts() {
         List<Product> products = productRepository.findAll();
         return products.stream()
@@ -504,10 +506,9 @@ public class ProductServiceImpl implements ProductService {
 
         // Xử lý gallery images và thumbnail
         if (request.getThumbnail() != null || request.getImages() != null) {
-            // Khởi tạo collection nếu null
-            if (product.getGalleries() == null) {
-                product.setGalleries(new ArrayList<>());
-            }
+            // Collection đã được khởi tạo ở Entity (new ArrayList<>())
+            
+
             // Clear items (orphanRemoval = true sẽ xóa trong DB)
             product.getGalleries().clear();
 
@@ -621,10 +622,8 @@ public class ProductServiceImpl implements ProductService {
                 productAttributeValue.setProductAttribute(productAttribute);
                 productAttributeValue.setAttributeValue(attributeValue);
                 
-                // Khởi tạo danh sách nếu là mảng null
-                if (productAttribute.getProductAttributeValues() == null) {
-                    productAttribute.setProductAttributeValues(new ArrayList<>());
-                }
+                // Loại bỏ thao tác setCollection(new ArrayList) gây lỗi orphanRemoval
+
                 productAttribute.getProductAttributeValues().add(productAttributeValue);
                 
                 // Thêm vào collection của Product
@@ -650,6 +649,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public ProductResponse getProductDetailById(UUID id) {
         Product product = productRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Dịch vụ", "id", id));
@@ -657,6 +657,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<ProductResponse> getAllProductDetails() {
         List<Product> products = productRepository.findAll();
         return products.stream()
@@ -665,6 +666,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<ProductResponse> searchProducts(String keyword) {
         List<Product> products = productRepository.searchProducts(keyword);
         return products.stream()
@@ -673,6 +675,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<ProductResponse> getProductsByCategory(UUID categoryId) {
         List<Product> products = productRepository.findByCategory(categoryId);
         return products.stream()
@@ -681,6 +684,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<ProductResponse> getProductsByTag(UUID tagId) {
         List<Product> products = productRepository.findByTag(tagId);
         return products.stream()

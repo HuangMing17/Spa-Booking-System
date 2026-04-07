@@ -308,7 +308,20 @@ const Booking = () => {
       setSuccessModalVisible(true);
     } catch (error) {
       console.error("Submit failed:", error);
-      message.error("Đã có lỗi xảy ra khi đặt lịch. Vui lòng thử lại!");
+      const isConflict = error.response?.status === 409 || error.status === 409;
+      if (isConflict) {
+        Modal.warning({
+          title: "Khung giờ này đã được đặt",
+          content: "Rất tiếc, khung giờ bạn chọn vừa được một khách hàng khác đặt. Vui lòng quay lại bước đầu để chọn một giờ khác nhé!",
+          centered: true,
+          okText: "Chọn giờ khác",
+          onOk: () => {
+            setCurrentStep(0);
+          },
+        });
+      } else {
+        message.error("Đã có lỗi xảy ra khi đặt lịch. Vui lòng thử lại!");
+      }
     } finally {
       setLoading(false);
     }

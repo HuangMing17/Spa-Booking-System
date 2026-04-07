@@ -6,12 +6,24 @@ services:
     container_name: bonlai-mysql
     restart: always
     environment:
-      MYSQL_DATABASE: webthuoc
-      MYSQL_ROOT_PASSWORD: root
-    ports:
-      - "3307:3306"
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+    # KHÔNG expose port 3306 ra ngoài Internet (Chỉ nội bộ Docker dùng)
+    expose:
+      - "3306"
     volumes:
       - mysql-data:/var/lib/mysql
+      - ./docker/mysql/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+      - ./docker/mysql/my.cnf:/etc/mysql/conf.d/my.cnf:ro
+    networks:
+      - bonlai-network
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "--password=${MYSQL_ROOT_PASSWORD}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   backend:
     build:
@@ -19,17 +31,31 @@ services:
       dockerfile: Dockerfile
     container_name: bonlai-api
     restart: always
-    ports:
-      - "8081:8080" # Optional, Nginx in frontend container proxies this anyway
+    # KHÔNG expose port 8080 ra ngoài Internet
+    expose:
+      - "8080"
     environment:
       - SPRING_PROFILES_ACTIVE=prod
-      - SPRING_DATASOURCE_URL=jdbc:mysql://db:3306/webthuoc?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
-      - SPRING_DATASOURCE_USERNAME=root
-      - SPRING_DATASOURCE_PASSWORD=root
+      # Dùng tên service 'db' thay vì localhost
+      - SPRING_DATASOURCE_URL=jdbc:mysql://db:3306/${MYSQL_DATABASE}?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+      - SPRING_DATASOURCE_USERNAME=${MYSQL_USER}
+      - SPRING_DATASOURCE_PASSWORD=${MYSQL_PASSWORD}
+      - JWT_SECRET=${JWT_SECRET}
+      - JWT_EXPIRATION=${JWT_EXPIRATION}
+      - FIREBASE_CREDENTIALS_BASE64=${FIREBASE_CREDENTIALS_BASE64}
+      - MAIL_HOST=${MAIL_HOST}
+      - MAIL_PORT=${MAIL_PORT}
+      - MAIL_USERNAME=${MAIL_USERNAME}
+      - MAIL_PASSWORD=${MAIL_PASSWORD}
+    env_file:
+      - .env
     volumes:
       - bonlai-uploads:/app/uploads
     depends_on:
-      - db
+      db:
+        condition: service_healthy
+    networks:
+      - bonlai-network
 
   frontend:
     build:
@@ -37,10 +63,18 @@ services:
       dockerfile: Dockerfile
     container_name: bonlai-frontend
     restart: always
+    # CHỈ mở port 80 và 443 cho Nginx phục vụ web
     ports:
-      - "8082:80"
+      - "80:80"
+      - "443:443"
     depends_on:
       - backend
+    networks:
+      - bonlai-network
+
+networks:
+  bonlai-network:
+    driver: bridge
 
 volumes:
   mysql-data:

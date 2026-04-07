@@ -32,7 +32,9 @@ const CategoryForm = ({ category, onSubmitSuccess, onCancel }) => {
       } else {
         categoryResponse = await axios.post("/api/categories", formData);
         message.success("Thêm danh mục mới thành công!");
-      }
+      } // If there's a thumbnail to update, make a separate API call to update the image
+
+
 
       // Notify parent component that submission was successful
       onSubmitSuccess();

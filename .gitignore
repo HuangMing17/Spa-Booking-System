@@ -101,7 +101,7 @@ frontendbonlai/yarn-error.log*
 # ============================================
 # NOTE: .env is COMMITTED for team collaboration
 # If you need to keep secrets, use .env.local instead
-# .env
+.env
 # .env.example is kept as template
 
 plans/

@@ -22,6 +22,8 @@ import axios from "../../../utils/axios";
 import CategoryForm from "./CategoryForm";
 import CategoryDetail from "./CategoryDetail";
 
+
+
 const { Text } = Typography;
 
 const CategoryList = () => {
