@@ -63,8 +63,8 @@ public class PaymentServiceImpl implements PaymentService {
             String fieldValue = vnp_Params.get(fieldName);
             if ((fieldValue != null) && (fieldValue.length() > 0)) {
                 // VNPay bắt buộc chuẩn URL Encode là UTF-8 thay space bằng %20 (thay vì dấu +)
-                String encodedFieldName = URLEncoder.encode(fieldName, StandardCharsets.US_ASCII).replace("+", "%20");
-                String encodedFieldValue = URLEncoder.encode(fieldValue, StandardCharsets.US_ASCII).replace("+", "%20");
+                String encodedFieldName = URLEncoder.encode(fieldName, StandardCharsets.UTF_8).replace("+", "%20");
+                String encodedFieldValue = URLEncoder.encode(fieldValue, StandardCharsets.UTF_8).replace("+", "%20");
 
                 // Build hash data
                 hashData.append(fieldName);
@@ -120,8 +120,8 @@ public class PaymentServiceImpl implements PaymentService {
             String fieldName = itr.next();
             String fieldValue = fields.get(fieldName);
             if ((fieldValue != null) && (fieldValue.length() > 0)) {
-                String encodedFieldName = URLEncoder.encode(fieldName, StandardCharsets.US_ASCII).replace("+", "%20");
-                String encodedFieldValue = URLEncoder.encode(fieldValue, StandardCharsets.US_ASCII).replace("+", "%20");
+                String encodedFieldName = URLEncoder.encode(fieldName, StandardCharsets.UTF_8).replace("+", "%20");
+                String encodedFieldValue = URLEncoder.encode(fieldValue, StandardCharsets.UTF_8).replace("+", "%20");
 
                 hashData.append(encodedFieldName);
                 hashData.append('=');
